@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explosão de Estrutura | PCP Eurofarma</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+  <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Lato', Arial, sans-serif; background: #f4f7fa; }
+    .main-header { background: #00358e; color: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .main-header img { height: 40px; }
+    .main-header nav a { color: #fff; margin-left: 2rem; font-weight: 600; text-decoration: none; }
+    .main-header nav a.active { border-bottom: 2px solid #ffd600; }
+    .container { max-width: 1200px; margin: 2rem auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); padding: 2rem; }
+    .title-section { font-size: 2rem; font-weight: 700; color: #00358e; margin-bottom: 1rem; }
+    .tree-estrutura { margin-bottom: 2rem; }
+    .tree-node { margin-left: 1.5rem; position: relative; }
+    .tree-label { font-weight: 600; color: #00358e; cursor: pointer; }
+    .tree-label .arrow { display: inline-block; margin-right: 6px; }
+    .tree-children { margin-top: 0.5rem; margin-left: 2rem; border-left: 2px solid #e0e0e0; padding-left: 1rem; }
+    .tree-info { font-size: 0.98rem; color: #444; margin-left: 1rem; }
+    .dashboard-section { margin-top: 2rem; }
+    .dashboard-title { font-size: 1.2rem; font-weight: 700; color: #00358e; margin-bottom: 0.7rem; }
+    .dashboard-indicadores { display: flex; gap: 2rem; margin-bottom: 1rem; }
+    .indicador { padding: 1rem 2rem; border-radius: 6px; background: #f4f7fa; box-shadow: 0 1px 3px rgba(0,53,142,0.08); font-weight: 600; color: #00358e; }
+    .indicador.gargalo { background: #ffeaea; color: #e53935; border: 1px solid #e53935; }
+    .indicador.atencao { background: #fffbe6; color: #ffd600; border: 1px solid #ffd600; }
+    .indicador.ok { background: #eafbe7; color: #43a047; border: 1px solid #43a047; }
+    .dashboard-link { color: #00358e; font-weight: 700; text-decoration: underline; margin-left: 1rem; }
+    .footer { text-align: center; color: #888; font-size: 0.9rem; margin-top: 2rem; }
+    @media (max-width: 800px) {
+      .container { padding: 1rem; }
+      .title-section { font-size: 1.3rem; }
+      .dashboard-indicadores { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+    <nav>
+      <a href="pmp-mensal.html">Plano Mestre</a>
+      <a href="explosao-estrutura.html" class="active">Explosão de Estrutura</a>
+      <a href="#">Dashboard PCP</a>
+    </nav>
+  </header>
+  <main class="container">
+    <div class="title-section">Explosão de Estrutura de Produto</div>
+    <div class="tree-estrutura" aria-label="Árvore de Estrutura de Produto">
+      <div class="tree-node">
+        <span class="tree-label" onclick="toggleNode('node1')"><span class="arrow">&#9654;</span>Amoxicilina 500mg (SKU: EF-AB123)</span>
+        <span class="tree-info">Necessidade: 10.000 | Lote: 1.000</span>
+        <div class="tree-children" id="node1" style="display:none;">
+          <div class="tree-node">
+            <span class="tree-label" onclick="toggleNode('node1-1')"><span class="arrow">&#9654;</span>Granel Amoxicilina</span>
+            <span class="tree-info">Necessidade: 8.500 | Lote: 1.000</span>
+            <div class="tree-children" id="node1-1" style="display:none;">
+              <div class="tree-node">
+                <span class="tree-label">Embalagem Primária: Blister</span>
+                <span class="tree-info">Necessidade: 8.500 | Capacidade: 9.000</span>
+              </div>
+              <div class="tree-node">
+                <span class="tree-label">Embalagem Secundária: Cartucho</span>
+                <span class="tree-info">Necessidade: 8.500 | Capacidade: 8.000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tree-node">
+        <span class="tree-label" onclick="toggleNode('node2')"><span class="arrow">&#9654;</span>Atorvastatina 20mg (SKU: EF-CD456)</span>
+        <span class="tree-info">Necessidade: 13.500 | Lote: 2.000</span>
+        <div class="tree-children" id="node2" style="display:none;">
+          <div class="tree-node">
+            <span class="tree-label" onclick="toggleNode('node2-1')"><span class="arrow">&#9654;</span>Granel Atorvastatina</span>
+            <span class="tree-info">Necessidade: 12.000 | Lote: 2.000</span>
+            <div class="tree-children" id="node2-1" style="display:none;">
+              <div class="tree-node">
+                <span class="tree-label">Embalagem Primária: Blister</span>
+                <span class="tree-info">Necessidade: 12.000 | Capacidade: 13.000</span>
+              </div>
+              <div class="tree-node">
+                <span class="tree-label">Embalagem Secundária: Cartucho</span>
+                <span class="tree-info">Necessidade: 12.000 | Capacidade: 12.500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Adicione outros SKUs conforme necessário -->
+    </div>
+    <div class="dashboard-section">
+      <div class="dashboard-title">Capacidade vs. Demanda - Linhas de Produção</div>
+      <div class="dashboard-indicadores">
+        <div class="indicador ok">Linha 1: Blister<br>Demanda: 20.500 | Capacidade: 22.000<br>Status: OK</div>
+        <div class="indicador atencao">Linha 2: Cartucho<br>Demanda: 20.500 | Capacidade: 21.000<br>Status: Atenção</div>
+        <div class="indicador gargalo">Linha 3: Granel<br>Demanda: 20.500 | Capacidade: 19.000<br>Status: Gargalo</div>
+      </div>
+      <div style="width:100%; max-width:700px; margin:2rem auto;">
+        <canvas id="grafico-capacidade"></canvas>
+      </div>
+    </div>
+    <div style="text-align:right;">
+      <a href="pmp-mensal.html" class="dashboard-link">← Voltar ao Plano Mestre</a>
+    </div>
+  </main>
+  <footer class="footer">
+    &copy; 2025 Eurofarma | PCP Industrial. Todos os direitos reservados.
+  </footer>
+  <script>
+    function toggleNode(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+    // Gráfico de barras Capacidade vs Demanda
+    window.onload = function() {
+      var ctx = document.getElementById('grafico-capacidade').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Blister', 'Cartucho', 'Granel'],
+          datasets: [
+            {
+              label: 'Demanda',
+              data: [20500, 20500, 20500],
+              backgroundColor: '#00358e',
+              borderRadius: 6
+            },
+            {
+              label: 'Capacidade',
+              data: [22000, 21000, 19000],
+              backgroundColor: '#ffd600',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          plugins: { legend: { position: 'top' } },
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Unidades' } }
+          }
+        }
+      });
+    };
+  </script>
+</body>
+</html>
