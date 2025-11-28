@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCP - Análise de Acuracidade de Previsão</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f6f7fa; }
+        .main-wrapper { max-width: 1200px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); padding: 32px; }
+        h1 { color: #00358e; font-weight: 700; margin-bottom: 24px; }
+        .nav-pcp { margin-bottom: 32px; }
+        .nav-pcp a { color: #00358e; font-weight: 600; margin-right: 24px; text-decoration: none; }
+        .nav-pcp a.active { text-decoration: underline; }
+        .charts-row { display: flex; gap: 40px; margin-bottom: 40px; }
+        .chart-box { flex: 1; background: #eaf1fb; border-radius: 8px; padding: 24px; }
+        .chart-title { color: #00358e; font-weight: 700; margin-bottom: 16px; font-size: 1.1rem; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #e0e0e0; text-align: left; }
+        th { background: #f1f6fb; color: #00358e; font-weight: 700; }
+        .suggestion { background: #eaf1fb; border-radius: 6px; padding: 18px; margin-bottom: 16px; color: #00358e; font-weight: 600; }
+        .btn-voltar { background: #00358e; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; font-weight: 600; transition: background 0.2s; text-decoration:none; }
+        .btn-voltar:hover { background: #0050c7; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="nav-pcp" aria-label="Navegação PCP">
+            <a href="dashboard.html">Dashboard PCP</a>
+            <a href="comunicacao-automatica.html">Comunicação Automática</a>
+            <a href="analise-forecast.html" class="active">Análise de Forecast</a>
+        </nav>
+        <h1>Análise de Acuracidade de Previsão de Vendas</h1>
+        <div class="charts-row">
+            <div class="chart-box">
+                <div class="chart-title">MAPE por Produto</div>
+                <canvas id="chartMAPE" width="380" height="220" aria-label="Gráfico MAPE por Produto"></canvas>
+            </div>
+            <div class="chart-box">
+                <div class="chart-title">Bias por Família</div>
+                <canvas id="chartBias" width="380" height="220" aria-label="Gráfico Bias por Família"></canvas>
+            </div>
+        </div>
+        <h2 style="color:#00358e; margin-bottom:16px;">Produtos com Alta Variabilidade</h2>
+        <table aria-label="Produtos com Alta Variabilidade">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Produto</th>
+                    <th>Família</th>
+                    <th>MAPE (%)</th>
+                    <th>Bias (%)</th>
+                    <th>Vendas Realizadas (Últ. 12 meses)</th>
+                    <th>Previsão Média</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1029</td>
+                    <td>Eurofarma Paracetamol 500mg</td>
+                    <td>Analgésicos</td>
+                    <td>18.7</td>
+                    <td>-7.2</td>
+                    <td>1.240.000</td>
+                    <td>1.350.000</td>
+                </tr>
+                <tr>
+                    <td>2045</td>
+                    <td>Eurofarma Amoxicilina 875mg</td>
+                    <td>Antibióticos</td>
+                    <td>22.1</td>
+                    <td>+9.8</td>
+                    <td>980.000</td>
+                    <td>1.100.000</td>
+                </tr>
+                <tr>
+                    <td>3098</td>
+                    <td>Eurofarma Losartana 50mg</td>
+                    <td>Cardiológicos</td>
+                    <td>25.4</td>
+                    <td>-12.5</td>
+                    <td>1.780.000</td>
+                    <td>2.050.000</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="suggestion">
+            <strong>Sugestão de Ajuste de Política de Estoque:</strong><br>
+            Os produtos acima apresentam alta variabilidade na previsão de vendas. Recomenda-se revisão da política de estoque para os SKUs 1029, 2045 e 3098, adotando cobertura adicional de segurança e revisão mensal dos parâmetros de forecast.
+        </div>
+        <div style="margin-top:32px;">
+            <a href="comunicacao-automatica.html" class="btn-voltar">Voltar para Comunicação Automática</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dados realistas para MAPE por produto
+        const mapeData = {
+            labels: ['Paracetamol 500mg', 'Amoxicilina 875mg', 'Losartana 50mg', 'Dipirona 1g', 'Ibuprofeno 400mg'],
+            datasets: [{
+                label: 'MAPE (%)',
+                data: [18.7, 22.1, 25.4, 12.3, 15.8],
+                backgroundColor: '#00358e',
+            }]
+        };
+        const biasData = {
+            labels: ['Analgésicos', 'Antibióticos', 'Cardiológicos', 'Antiinflamatórios', 'Antialérgicos'],
+            datasets: [{
+                label: 'Bias (%)',
+                data: [-7.2, 9.8, -12.5, 3.4, -2.1],
+                backgroundColor: '#e6b800',
+            }]
+        };
+        new Chart(document.getElementById('chartMAPE').getContext('2d'), {
+            type: 'bar',
+            data: mapeData,
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'MAPE (%)' }, grid: { color: '#e0e0e0' } },
+                    x: { grid: { color: '#e0e0e0' } }
+                }
+            }
+        });
+        new Chart(document.getElementById('chartBias').getContext('2d'), {
+            type: 'bar',
+            data: biasData,
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Bias (%)' }, grid: { color: '#e0e0e0' } },
+                    x: { grid: { color: '#e0e0e0' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
