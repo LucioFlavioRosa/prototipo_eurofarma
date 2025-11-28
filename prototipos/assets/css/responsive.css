@@ -1,0 +1,76 @@
+/* Responsividade para PCP Eurofarma - tablets e desktops */
+
+/* Layout base: grid adaptável para tabelas, gráficos e Gantt Charts */
+.container, .main-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 1200px) {
+  .container, .main-wrapper {
+    max-width: 1000px;
+    padding: 0 16px;
+  }
+  .gantt-chart, .dashboard-graph {
+    min-width: 700px;
+    overflow-x: auto;
+  }
+  .table-pcp {
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 900px) {
+  .container, .main-wrapper {
+    max-width: 700px;
+    padding: 0 8px;
+  }
+  .gantt-chart, .dashboard-graph {
+    min-width: 500px;
+    overflow-x: auto;
+  }
+  .table-pcp th, .table-pcp td {
+    padding: 6px 4px;
+  }
+}
+
+/* Tabelas responsivas */
+.table-pcp {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
+}
+.table-pcp th, .table-pcp td {
+  padding: 8px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Gráficos e Gantt Charts responsivos */
+.dashboard-graph, .gantt-chart {
+  width: 100%;
+  min-width: 900px;
+  overflow-x: auto;
+}
+
+/* Botões e formulários */
+.btn, .btn-yellow, .btn-primary {
+  min-width: 120px;
+  font-size: 1em;
+  padding: 10px 20px;
+}
+
+/* Modal responsivo */
+.modal-content {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+}
+
+/* Tooltip responsivo */
+.tooltip {
+  font-size: 0.95em;
+  max-width: 250px;
+}
