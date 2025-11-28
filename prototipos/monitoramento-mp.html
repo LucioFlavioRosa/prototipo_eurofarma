@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Monitoramento de Matéria-Prima - PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css" />
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-header { background: #00358e; color: #fff; padding: 24px 0; text-align: center; }
+        .nav-bar { background: #f4f4f4; padding: 12px 0; text-align: center; }
+        .nav-bar a { color: #00358e; font-weight: 600; margin: 0 16px; text-decoration: none; }
+        .nav-bar a.active { text-decoration: underline; }
+        .alerta-risco { background: #ffcdd2; color: #d32f2f; border-radius: 8px; padding: 12px 18px; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; }
+        .alerta-risco svg { margin-right: 8px; }
+        .table-lotes th, .table-lotes td { vertical-align: middle; }
+        .status-liberado { background: #c8e6c9; color: #388e3c; border-radius: 8px; padding: 4px 12px; font-weight: 600; }
+        .status-bloqueado { background: #ffcdd2; color: #d32f2f; border-radius: 8px; padding: 4px 12px; font-weight: 600; }
+        .status-analise { background: #ffe082; color: #00358e; border-radius: 8px; padding: 4px 12px; font-weight: 600; }
+        .dashboard-card { background: #f4f4f4; border-radius: 10px; padding: 18px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,53,142,0.08); }
+        .dashboard-card h3 { color: #00358e; margin-bottom: 12px; }
+        .chart-container { width: 100%; max-width: 600px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1>Monitoramento de Matéria-Prima</h1>
+        <p>Saúde dos insumos críticos para produção</p>
+    </div>
+    <div class="nav-bar">
+        <a href="dashboard.html">Dashboard PCP</a>
+        <a href="monitoramento-mp.html" class="active">Monitoramento Matéria-Prima</a>
+        <a href="workflow-aprovacao.html">Workflow de Aprovação</a>
+    </div>
+    <main class="container mt-4 mb-5">
+        <section class="dashboard-card">
+            <h3>Alertas de Risco de Ruptura</h3>
+            <div class="alerta-risco" role="alert">
+                <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#d32f2f"/><path d="M12 7v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15.5" r="1" fill="#fff"/></svg>
+                <span>Matéria-prima "Paracetamol API" em risco de ruptura para produção de 'Eurofarma 500mg' na semana 25/2024. Estoque disponível: 120kg. Necessidade: 200kg.</span>
+            </div>
+            <div class="alerta-risco" role="alert">
+                <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#d32f2f"/><path d="M12 7v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15.5" r="1" fill="#fff"/></svg>
+                <span>Embalagem "Blister 10x" bloqueada aguardando liberação da qualidade. Pedido de compra em trânsito: 50.000 unidades.</span>
+            </div>
+        </section>
+        <section class="dashboard-card">
+            <h3>Tabela de Status dos Lotes de Matéria-Prima</h3>
+            <table class="table table-lotes">
+                <thead>
+                    <tr>
+                        <th>Lote</th>
+                        <th>Matéria-Prima</th>
+                        <th>Quantidade (kg/un)</th>
+                        <th>Status</th>
+                        <th>Validade</th>
+                        <th>Origem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MP-20240610-01</td>
+                        <td>Paracetamol API</td>
+                        <td>120 kg</td>
+                        <td><span class="status-bloqueado">Bloqueado</span></td>
+                        <td>10/2025</td>
+                        <td>Fornecedor A</td>
+                    </tr>
+                    <tr>
+                        <td>MP-20240609-02</td>
+                        <td>Celulose Microcristalina</td>
+                        <td>500 kg</td>
+                        <td><span class="status-liberado">Liberado</span></td>
+                        <td>08/2025</td>
+                        <td>Fornecedor B</td>
+                    </tr>
+                    <tr>
+                        <td>MP-20240608-03</td>
+                        <td>Blister 10x</td>
+                        <td>50.000 un</td>
+                        <td><span class="status-analise">Em análise</span></td>
+                        <td>12/2026</td>
+                        <td>Fornecedor C</td>
+                    </tr>
+                    <tr>
+                        <td>MP-20240607-04</td>
+                        <td>Amido de Milho</td>
+                        <td>300 kg</td>
+                        <td><span class="status-liberado">Liberado</span></td>
+                        <td>07/2025</td>
+                        <td>Fornecedor D</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="dashboard-card">
+            <h3>Gráfico Disponibilidade vs. Necessidade (Semana 25/2024)</h3>
+            <div class="chart-container">
+                <canvas id="grafico-disponibilidade"></canvas>
+            </div>
+        </section>
+    </main>
+    <footer class="main-footer text-center mt-5">
+        <p>&copy; 2024 Eurofarma - PCP Plataforma Industrial</p>
+    </footer>
+    <script>
+        // Dados simulados para gráfico
+        const data = {
+            labels: ['Paracetamol API', 'Celulose Microcristalina', 'Blister 10x', 'Amido de Milho'],
+            datasets: [
+                {
+                    label: 'Disponível',
+                    data: [120, 500, 0, 300],
+                    backgroundColor: '#00358e',
+                },
+                {
+                    label: 'Necessidade',
+                    data: [200, 400, 50, 250],
+                    backgroundColor: '#ffe082',
+                }
+            ]
+        };
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantidade (kg/un)'
+                        }
+                    }
+                }
+            },
+        };
+        window.onload = function() {
+            const ctx = document.getElementById('grafico-disponibilidade').getContext('2d');
+            new Chart(ctx, config);
+        };
+    </script>
+</body>
+</html>
