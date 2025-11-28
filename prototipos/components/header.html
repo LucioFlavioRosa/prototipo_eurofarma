@@ -1,0 +1,224 @@
+<header class="ef-header">
+  <div class="ef-header__container">
+    <a href="/" class="ef-header__logo" aria-label="Ir para página inicial">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" height="38"/>
+    </a>
+    <nav class="ef-header__nav" aria-label="Menu principal">
+      <button class="ef-header__nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="ef-header__nav-list">
+        <li><a href="/dashboard.html" class="ef-header__nav-link">Dashboard</a></li>
+        <li><a href="/pmp.html" class="ef-header__nav-link">Plano Mestre</a></li>
+        <li><a href="/capacidade.html" class="ef-header__nav-link">Capacidade</a></li>
+        <li><a href="/sequenciamento.html" class="ef-header__nav-link">Sequenciamento</a></li>
+        <li><a href="/pedidos.html" class="ef-header__nav-link">Pedidos</a></li>
+        <li><a href="/kpis.html" class="ef-header__nav-link">KPIs</a></li>
+      </ul>
+    </nav>
+    <div class="ef-header__actions">
+      <button class="ef-header__notif" aria-label="Notificações">
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2Zm6-6V11a6 6 0 1 0-12 0v5l-2 2v1h16v-1l-2-2Z" fill="#003399"/></svg>
+        <span class="ef-header__notif-badge" aria-label="5 notificações não lidas">5</span>
+      </button>
+      <div class="ef-header__user-dropdown">
+        <button class="ef-header__user-btn" aria-label="Abrir menu do usuário">
+          <svg width="28" height="28" fill="none" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="10" r="5" fill="#FFD600"/><path d="M14 16c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" fill="#003399"/></svg>
+        </button>
+        <ul class="ef-header__user-menu">
+          <li><a href="/perfil.html">Perfil</a></li>
+          <li><a href="/configuracoes.html">Configurações</a></li>
+          <li><a href="/logout.html">Sair</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <style>
+    .ef-header {
+      background: #fff;
+      border-bottom: 2px solid #FFD600;
+      font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+      box-shadow: 0 2px 8px rgba(0,51,153,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ef-header__container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2vw;
+      height: 64px;
+    }
+    .ef-header__logo img {
+      height: 38px;
+      vertical-align: middle;
+    }
+    .ef-header__nav {
+      flex: 1 1 auto;
+      margin-left: 32px;
+      position: relative;
+    }
+    .ef-header__nav-list {
+      display: flex;
+      gap: 2vw;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .ef-header__nav-link {
+      color: #003399;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 2px solid transparent;
+      transition: border 0.2s;
+    }
+    .ef-header__nav-link:hover, .ef-header__nav-link.active {
+      border-bottom: 2px solid #FFD600;
+      color: #00995D;
+    }
+    .ef-header__actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-left: 24px;
+    }
+    .ef-header__notif {
+      background: none;
+      border: none;
+      position: relative;
+      cursor: pointer;
+      padding: 0 8px;
+    }
+    .ef-header__notif-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: #E53935;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 12px;
+      padding: 2px 6px;
+      min-width: 20px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    }
+    .ef-header__user-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .ef-header__user-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+    }
+    .ef-header__user-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #fff;
+      border: 1px solid #F5F7FA;
+      box-shadow: 0 4px 16px rgba(0,51,153,0.07);
+      border-radius: 8px;
+      min-width: 160px;
+      list-style: none;
+      margin: 0;
+      padding: 8px 0;
+      z-index: 100;
+    }
+    .ef-header__user-menu li a {
+      display: block;
+      padding: 10px 20px;
+      color: #003399;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .ef-header__user-menu li a:hover {
+      background: #F5F7FA;
+      color: #00995D;
+    }
+    .ef-header__user-dropdown.open .ef-header__user-menu {
+      display: block;
+    }
+    .ef-header__nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      margin-right: 8px;
+    }
+    .ef-header__nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: #003399;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    @media (max-width: 900px) {
+      .ef-header__container {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 0 1vw;
+      }
+      .ef-header__nav-list {
+        flex-direction: column;
+        background: #fff;
+        position: absolute;
+        left: 0;
+        top: 60px;
+        width: 100vw;
+        box-shadow: 0 4px 16px rgba(0,51,153,0.07);
+        border-radius: 0 0 12px 12px;
+        display: none;
+        z-index: 99;
+      }
+      .ef-header__nav-list.open {
+        display: flex;
+      }
+      .ef-header__nav-toggle {
+        display: flex;
+      }
+      .ef-header__nav {
+        margin-left: 0;
+      }
+    }
+  </style>
+  <script>
+    // Menu mobile toggle
+    (function() {
+      const navToggle = document.querySelector('.ef-header__nav-toggle');
+      const navList = document.querySelector('.ef-header__nav-list');
+      navToggle && navToggle.addEventListener('click', function() {
+        const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+        navToggle.setAttribute('aria-expanded', !expanded);
+        navList.classList.toggle('open');
+      });
+      // Dropdown usuário
+      const userDropdown = document.querySelector('.ef-header__user-dropdown');
+      const userBtn = document.querySelector('.ef-header__user-btn');
+      userBtn && userBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', function(e) {
+        if (userDropdown && !userDropdown.contains(e.target)) {
+          userDropdown.classList.remove('open');
+        }
+      });
+    })();
+  </script>
+</header>
