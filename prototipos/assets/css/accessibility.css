@@ -1,0 +1,85 @@
+/* Acessibilidade PCP Eurofarma */
+
+/* Contraste de cores para botões e textos */
+.btn, .btn-yellow, .btn-primary {
+  color: #00358e;
+  background-color: #fff200;
+  border: 2px solid #00358e;
+}
+.btn:focus, .btn-yellow:focus, .btn-primary:focus {
+  outline: 3px solid #00358e;
+  outline-offset: 2px;
+}
+
+/* Foco visível em elementos interativos */
+input:focus, select:focus, textarea:focus, a:focus {
+  outline: 2px solid #00358e;
+  outline-offset: 2px;
+}
+
+/* Navegação por teclado: ordem de tabulação */
+[tabindex] {
+  outline: 2px dashed #00358e;
+}
+
+/* ARIA labels para leitores de tela */
+[aria-label], [role] {
+  border-bottom: 1px dotted #00358e;
+}
+
+/* Tooltips acessíveis */
+.tooltip {
+  background: #00358e;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 1em;
+  z-index: 1000;
+}
+
+/* Mensagens de feedback acessíveis */
+.form-feedback {
+  font-size: 1em;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border-radius: 4px;
+}
+.form-feedback.error {
+  background: #e74c3c;
+  color: #fff;
+}
+.form-feedback.success {
+  background: #27ae60;
+  color: #fff;
+}
+
+/* Modal acessível */
+.modal-confirm {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,53,142,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-confirm .modal-content {
+  background: #fff;
+  color: #00358e;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(0,53,142,0.18);
+}
+.modal-confirm button {
+  margin: 8px 12px 0 0;
+  padding: 8px 16px;
+  font-size: 1em;
+  background: #00358e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.modal-confirm button:focus {
+  outline: 2px solid #00358e;
+}
