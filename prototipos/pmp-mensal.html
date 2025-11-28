@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMP Mensal | Plataforma PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <style>
+      body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f5f7fa; }
+      .container { max-width: 1280px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px; }
+      .filters-row { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; }
+      .filters-row .form-group { min-width: 180px; }
+      .btn-primary { background: #002776; border: none; color: #fff; padding: 10px 24px; border-radius: 6px; font-weight: 600; transition: background .2s; }
+      .btn-primary:hover { background: #0050b3; }
+      .badge-status { padding: 4px 12px; border-radius: 12px; font-size: 0.95em; font-weight: 600; }
+      .badge-verde { background: #e6f4ea; color: #218838; }
+      .badge-amarelo { background: #fffbe6; color: #856404; }
+      .badge-vermelho { background: #f8d7da; color: #a71d2a; }
+      .dt-center { text-align: center; }
+      .chart-container { margin: 36px 0 0 0; background: #f9fafb; border-radius: 10px; padding: 24px; }
+      @media (max-width: 900px) { .container { padding: 12px; } .filters-row { flex-direction: column; gap: 12px; } }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" style="height:48px;">
+      <nav>
+        <a href="pmp-mensal.html" style="margin-right:24px;color:#002776;font-weight:700;">PMP Mensal</a>
+        <a href="explosao-bom.html" style="margin-right:24px;color:#555;">Explosão BOM</a>
+        <a href="capacidade-fabril.html" style="color:#555;">Capacidade Fabril</a>
+      </nav>
+    </header>
+    <h1 style="font-size:2.1em;font-weight:800;color:#002776;margin-bottom:12px;">Plano Mestre de Produção (PMP) - Visão Mensal</h1>
+    <p style="color:#444;margin-bottom:24px;">Visualize e gerencie a necessidade de produção mensal considerando estoque, previsão de vendas e capacidade fabril. Acompanhe alertas de capacidade e ajuste parâmetros em tempo real.</p>
+    <form id="filtrosPMP" class="filters-row" autocomplete="off">
+      <div class="form-group">
+        <label for="mesAno">Mês/Ano</label>
+        <input type="month" id="mesAno" name="mesAno" class="form-control" value="2024-07">
+      </div>
+      <div class="form-group">
+        <label for="planta">Planta</label>
+        <select id="planta" name="planta" class="form-control">
+          <option value="Todas">Todas</option>
+          <option value="Itapevi">Itapevi</option>
+          <option value="Ribeirão Preto">Ribeirão Preto</option>
+          <option value="Barueri">Barueri</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="familia">Família de Produtos</label>
+        <select id="familia" name="familia" class="form-control">
+          <option value="Todas">Todas</option>
+          <option value="Antibióticos">Antibióticos</option>
+          <option value="Oncológicos">Oncológicos</option>
+          <option value="Genéricos">Genéricos</option>
+          <option value="OTC">OTC</option>
+        </select>
+      </div>
+      <button type="button" class="btn-primary" id="btnRecalcular" aria-label="Recalcular PMP">Recalcular</button>
+    </form>
+    <div style="overflow-x:auto;">
+      <table id="tabelaPMP" class="table table-striped" style="width:100%;">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>Estoque Atual</th>
+            <th>Previsão de Vendas</th>
+            <th>Política de Estoque</th>
+            <th>Necessidade de Produção</th>
+            <th>Capacidade Disponível</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ABX-500MG-30</td>
+            <td>Amoxicilina 500mg c/30</td>
+            <td class="dt-center">12.000</td>
+            <td class="dt-center">15.000</td>
+            <td class="dt-center">5.000</td>
+            <td class="dt-center">8.000</td>
+            <td class="dt-center">10.000</td>
+            <td class="dt-center"><span class="badge-status badge-verde">OK</span></td>
+          </tr>
+          <tr>
+            <td>ONC-20MG-10</td>
+            <td>Oncozol 20mg c/10</td>
+            <td class="dt-center">3.000</td>
+            <td class="dt-center">8.000</td>
+            <td class="dt-center">2.000</td>
+            <td class="dt-center">7.000</td>
+            <td class="dt-center">5.000</td>
+            <td class="dt-center"><span class="badge-status badge-amarelo">Atenção</span></td>
+          </tr>
+          <tr>
+            <td>GEN-1G-20</td>
+            <td>Genérico 1g c/20</td>
+            <td class="dt-center">1.000</td>
+            <td class="dt-center">9.000</td>
+            <td class="dt-center">3.000</td>
+            <td class="dt-center">11.000</td>
+            <td class="dt-center">8.000</td>
+            <td class="dt-center"><span class="badge-status badge-vermelho">Excedido</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-container">
+      <h2 style="font-size:1.3em;color:#002776;font-weight:700;margin-bottom:18px;">Necessidade vs. Capacidade por Mês</h2>
+      <div id="graficoPMP" style="height:320px;width:100%;"></div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#tabelaPMP').DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        ordering: false,
+        responsive: true,
+        language: { emptyTable: 'Nenhum dado disponível' }
+      });
+    });
+    // Gráfico de barras empilhadas
+    Highcharts.chart('graficoPMP', {
+      chart: { type: 'column' },
+      title: { text: null },
+      xAxis: { categories: [
+        'Jul/24','Ago/24','Set/24','Out/24','Nov/24','Dez/24','Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25'] },
+      yAxis: {
+        min: 0,
+        title: { text: 'Unidades' },
+        stackLabels: { enabled: true, style: { fontWeight: 'bold', color: '#333' } }
+      },
+      legend: { align: 'right', verticalAlign: 'top', y: 0, x: -20, floating: true, backgroundColor: '#fff', borderColor: '#ccc', borderWidth: 1, shadow: false },
+      tooltip: { shared: true },
+      plotOptions: {
+        column: { stacking: 'normal', dataLabels: { enabled: true, color: '#333', style: { fontWeight: 'bold' } } }
+      },
+      series: [
+        { name: 'Necessidade de Produção', data: [8000, 9000, 9500, 10000, 11000, 12000, 9500, 9000, 8500, 8000, 7800, 7600], color: '#002776' },
+        { name: 'Capacidade Disponível', data: [10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000], color: '#8dc63f' }
+      ]
+    });
+    // Simulação de recálculo
+    $('#btnRecalcular').click(function() {
+      $(this).prop('disabled', true).text('Recalculando...');
+      setTimeout(function() {
+        // Exemplo: Atualizar uma linha da tabela (simulação)
+        var table = $('#tabelaPMP').DataTable();
+        table.cell(1,5).data('8.500').draw();
+        table.cell(1,7).data('<span class="badge-status badge-verde">OK</span>').draw();
+        $('#btnRecalcular').prop('disabled', false).text('Recalcular');
+        Highcharts.charts[0].series[0].setData([8000, 8500, 9000, 9500, 10000, 11000, 9000, 8500, 8000, 7800, 7600, 7400]);
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
