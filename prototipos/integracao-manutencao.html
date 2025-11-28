@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Dashboard de Integração com Manutenção Preditiva - PCP Eurofarma">
+    <meta name="author" content="Eurofarma">
+    <title>Integração com Manutenção Preditiva | Plataforma PCP</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body {
+            background: #f4f7fa;
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            margin: 0;
+            color: #222;
+        }
+        header {
+            background: #002776;
+            color: #fff;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin: 0 0 4px 0;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        header p {
+            font-size: 1.05rem;
+            opacity: 0.85;
+        }
+        .dashboard-container {
+            max-width: 1240px;
+            margin: 32px auto 0 auto;
+            padding: 0 16px 32px 16px;
+        }
+        .equip-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .equip-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,39,118,0.07);
+            padding: 24px 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+        .equip-card:hover {
+            box-shadow: 0 4px 20px rgba(0,39,118,0.13);
+        }
+        .equip-name {
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #002776;
+        }
+        .equip-status {
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+        }
+        .status-operacional {
+            color: #1cae4c;
+            font-weight: 600;
+        }
+        .status-manutencao {
+            color: #f5a623;
+            font-weight: 600;
+        }
+        .status-alerta {
+            color: #e53935;
+            font-weight: 700;
+        }
+        .gauge-container {
+            margin: 12px 0 10px 0;
+        }
+        .meta-oee {
+            font-size: 0.92rem;
+            color: #888;
+            margin-bottom: 2px;
+        }
+        .next-maintenance {
+            font-size: 0.92rem;
+            color: #555;
+            margin-top: 4px;
+        }
+        .alert-section {
+            background: #fff3e0;
+            border-left: 5px solid #e53935;
+            border-radius: 8px;
+            padding: 20px 18px 14px 18px;
+            margin-bottom: 30px;
+        }
+        .alert-section h2 {
+            color: #e53935;
+            font-size: 1.16rem;
+            margin: 0 0 10px 0;
+        }
+        .alert-list {
+            margin: 0;
+            padding: 0 0 0 12px;
+            list-style: disc;
+        }
+        .alert-list li {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        .table-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 8px rgba(0,39,118,0.05);
+            padding: 20px 12px 18px 12px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+        .table-section h2 {
+            font-size: 1.12rem;
+            color: #002776;
+            margin-bottom: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+            min-width: 650px;
+        }
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+        }
+        th {
+            background: #e3eaf6;
+            color: #002776;
+            font-weight: 700;
+        }
+        tr:nth-child(even) {
+            background: #f7fafd;
+        }
+        .impacto-negativo {
+            color: #e53935;
+            font-weight: 600;
+        }
+        .impacto-baixo {
+            color: #1cae4c;
+            font-weight: 600;
+        }
+        .chart-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 8px rgba(0,39,118,0.05);
+            padding: 20px 12px 18px 12px;
+            margin-bottom: 32px;
+        }
+        .chart-section h2 {
+            font-size: 1.12rem;
+            color: #002776;
+            margin-bottom: 16px;
+        }
+        .chart-canvas {
+            width: 100%;
+            max-width: 900px;
+            height: 320px;
+            margin: 0 auto;
+            display: block;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+        .btn-primary {
+            background: #002776;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1.06rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #0041b2;
+        }
+        .btn-link {
+            background: none;
+            color: #1976d2;
+            border: none;
+            font-size: 1.06rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 8px;
+        }
+        .toast {
+            position: fixed;
+            top: 32px;
+            right: 32px;
+            background: #1cae4c;
+            color: #fff;
+            padding: 18px 32px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,39,118,0.14);
+            font-size: 1.08rem;
+            font-weight: 600;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        @media (max-width: 900px) {
+            .equip-cards {
+                grid-template-columns: 1fr;
+            }
+            .chart-canvas {
+                max-width: 100%;
+                height: 210px;
+            }
+            table {
+                min-width: 540px;
+            }
+        }
+        @media (max-width: 600px) {
+            .dashboard-container {
+                padding: 0 2px 16px 2px;
+            }
+            .chart-canvas {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Integração com Manutenção Preditiva</h1>
+        <p>Monitoramento em tempo real da saúde dos equipamentos críticos e impacto no planejamento de produção</p>
+    </header>
+    <div class="dashboard-container">
+        <div class="actions">
+            <button class="btn-primary" id="btn-ajustar-capacidade" aria-label="Ajustar Capacidade no PMP">Ajustar Capacidade no PMP</button>
+            <button class="btn-link" id="btn-ver-impacto" aria-label="Ver Impacto no Sequenciamento">Ver Impacto no Sequenciamento</button>
+        </div>
+        <section class="equip-cards" aria-label="Equipamentos Críticos">
+            <!-- Cards de Equipamentos -->
+            <div class="equip-card">
+                <div class="equip-name">Compressor 1</div>
+                <div class="equip-status status-operacional">Operacional</div>
+                <div class="gauge-container">
+                    <canvas id="gauge-compressor1" width="110" height="70" aria-label="OEE Compressor 1"></canvas>
+                </div>
+                <div class="meta-oee">OEE Atual: <b>92%</b> | Meta: 90%</div>
+                <div class="next-maintenance">Próxima Manutenção: 22/07/2024</div>
+            </div>
+            <div class="equip-card">
+                <div class="equip-name">Enchedora 2</div>
+                <div class="equip-status status-operacional">Operacional</div>
+                <div class="gauge-container">
+                    <canvas id="gauge-enchedora2" width="110" height="70" aria-label="OEE Enchedora 2"></canvas>
+                </div>
+                <div class="meta-oee">OEE Atual: <b>88%</b> | Meta: 90%</div>
+                <div class="next-maintenance">Próxima Manutenção: 05/08/2024</div>
+            </div>
+            <div class="equip-card">
+                <div class="equip-name">Embaladora A</div>
+                <div class="equip-status status-manutencao">Manutenção Programada</div>
+                <div class="gauge-container">
+                    <canvas id="gauge-embaladoraA" width="110" height="70" aria-label="OEE Embaladora A"></canvas>
+                </div>
+                <div class="meta-oee">OEE Atual: <b>75%</b> | Meta: 88%</div>
+                <div class="next-maintenance">Próxima Manutenção: Em andamento</div>
+            </div>
+            <div class="equip-card">
+                <div class="equip-name">Misturador 4</div>
+                <div class="equip-status status-operacional">Operacional</div>
+                <div class="gauge-container">
+                    <canvas id="gauge-misturador4" width="110" height="70" aria-label="OEE Misturador 4"></canvas>
+                </div>
+                <div class="meta-oee">OEE Atual: <b>95%</b> | Meta: 93%</div>
+                <div class="next-maintenance">Próxima Manutenção: 18/09/2024</div>
+            </div>
+            <div class="equip-card">
+                <div class="equip-name">Linha Líquidos 3</div>
+                <div class="equip-status status-alerta">Alerta</div>
+                <div class="gauge-container">
+                    <canvas id="gauge-liquidos3" width="110" height="70" aria-label="OEE Linha Líquidos 3"></canvas>
+                </div>
+                <div class="meta-oee">OEE Atual: <b>81%</b> | Meta: 90%</div>
+                <div class="next-maintenance">Próxima Manutenção: 29/07/2024</div>
+            </div>
+            <div class="equip-card">
+                <div class="equip-name">Tableteira B</div>
+                <div class="equip-status status-operacional">Operacional</div>
+                <div class="gauge-container">
+                    <canvas id="gauge-tableteiraB" width="110" height="70" aria-label="OEE Tableteira B"></canvas>
+                </div>
+                <div class="meta-oee">OEE Atual: <b>87%</b> | Meta: 88%</div>
+                <div class="next-maintenance">Próxima Manutenção: 12/08/2024</div>
+            </div>
+        </section>
+        <section class="alert-section" aria-label="Alertas de OEE Baixo">
+            <h2>Equipamentos com OEE Abaixo da Meta</h2>
+            <ul class="alert-list">
+                <li><b>Embaladora A</b> - OEE Atual: <span style="color:#e53935;">75%</span> (Meta: 88%)</li>
+                <li><b>Linha Líquidos 3</b> - OEE Atual: <span style="color:#e53935;">81%</span> (Meta: 90%)</li>
+            </ul>
+        </section>
+        <section class="table-section" aria-label="Manutenções Programadas">
+            <h2>Manutenções Programadas</h2>
+            <table aria-label="Tabela de Manutenções Programadas">
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Tipo de Manutenção</th>
+                        <th>Data Início</th>
+                        <th>Data Fim</th>
+                        <th>Impacto na Capacidade (h)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Embaladora A</td>
+                        <td>Preventiva</td>
+                        <td>10/07/2024</td>
+                        <td>15/07/2024</td>
+                        <td class="impacto-negativo">-32</td>
+                    </tr>
+                    <tr>
+                        <td>Linha Líquidos 3</td>
+                        <td>Corretiva</td>
+                        <td>25/07/2024</td>
+                        <td>29/07/2024</td>
+                        <td class="impacto-negativo">-24</td>
+                    </tr>
+                    <tr>
+                        <td>Compressor 1</td>
+                        <td>Inspeção</td>
+                        <td>22/07/2024</td>
+                        <td>22/07/2024</td>
+                        <td class="impacto-baixo">-2</td>
+                    </tr>
+                    <tr>
+                        <td>Tableteira B</td>
+                        <td>Preventiva</td>
+                        <td>12/08/2024</td>
+                        <td>13/08/2024</td>
+                        <td class="impacto-baixo">-4</td>
+                    </tr>
+                    <tr>
+                        <td>Enchedora 2</td>
+                        <td>Lubrificação</td>
+                        <td>05/08/2024</td>
+                        <td>05/08/2024</td>
+                        <td class="impacto-baixo">-1</td>
+                    </tr>
+                    <tr>
+                        <td>Misturador 4</td>
+                        <td>Preventiva</td>
+                        <td>18/09/2024</td>
+                        <td>19/09/2024</td>
+                        <td class="impacto-baixo">-3</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="chart-section" aria-label="Histórico de OEE">
+            <h2>Histórico de OEE por Equipamento (Últimos 6 meses)</h2>
+            <canvas id="oee-historico-chart" class="chart-canvas" aria-label="Gráfico de Histórico de OEE"></canvas>
+        </section>
+    </div>
+    <div id="toast" class="toast" role="alert" aria-live="polite">Capacidade ajustada no PMP com sucesso!</div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        // Gauge simples para OEE
+        function drawGauge(canvasId, value, meta) {
+            var canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            var centerX = canvas.width / 2;
+            var centerY = canvas.height - 10;
+            var radius = 48;
+            var startAngle = Math.PI;
+            var endAngle = 0;
+            // Fundo
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+            ctx.lineWidth = 14;
+            ctx.strokeStyle = '#e3eaf6';
+            ctx.stroke();
+            // Valor
+            var percent = value/100;
+            var metaPercent = meta/100;
+            var angle = Math.PI + percent * Math.PI;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, startAngle, angle, false);
+            ctx.lineWidth = 14;
+            ctx.strokeStyle = value >= meta ? '#1cae4c' : (value >= meta-5 ? '#f5a623' : '#e53935');
+            ctx.stroke();
+            // Meta
+            var metaAngle = Math.PI + metaPercent * Math.PI;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius+2, metaAngle-0.03, metaAngle+0.03, false);
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#002776';
+            ctx.stroke();
+            // Texto
+            ctx.font = 'bold 1.15rem Lato, Arial';
+            ctx.fillStyle = '#222';
+            ctx.textAlign = 'center';
+            ctx.fillText(value + '%', centerX, centerY+6);
+        }
+        drawGauge('gauge-compressor1', 92, 90);
+        drawGauge('gauge-enchedora2', 88, 90);
+        drawGauge('gauge-embaladoraA', 75, 88);
+        drawGauge('gauge-misturador4', 95, 93);
+        drawGauge('gauge-liquidos3', 81, 90);
+        drawGauge('gauge-tableteiraB', 87, 88);
+
+        // Gráfico de linha: Histórico OEE
+        var ctxHist = document.getElementById('oee-historico-chart').getContext('2d');
+        var chartHist = new Chart(ctxHist, {
+            type: 'line',
+            data: {
+                labels: ['Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'],
+                datasets: [
+                    {
+                        label: 'Compressor 1',
+                        data: [91, 92, 93, 91, 92, 92],
+                        borderColor: '#002776',
+                        backgroundColor: 'rgba(0,39,118,0.08)',
+                        tension: 0.35,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Enchedora 2',
+                        data: [89, 90, 88, 87, 88, 88],
+                        borderColor: '#1976d2',
+                        backgroundColor: 'rgba(25,118,210,0.08)',
+                        tension: 0.35,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Embaladora A',
+                        data: [84, 82, 80, 77, 76, 75],
+                        borderColor: '#e53935',
+                        backgroundColor: 'rgba(229,57,53,0.08)',
+                        tension: 0.35,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Misturador 4',
+                        data: [93, 94, 95, 95, 94, 95],
+                        borderColor: '#1cae4c',
+                        backgroundColor: 'rgba(28,174,76,0.08)',
+                        tension: 0.35,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Linha Líquidos 3',
+                        data: [88, 87, 85, 83, 82, 81],
+                        borderColor: '#f5a623',
+                        backgroundColor: 'rgba(245,166,35,0.08)',
+                        tension: 0.35,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Tableteira B',
+                        data: [87, 88, 89, 88, 87, 87],
+                        borderColor: '#6d4c41',
+                        backgroundColor: 'rgba(109,76,65,0.08)',
+                        tension: 0.35,
+                        pointRadius: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { size: 13, family: 'Lato' }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                },
+                scales: {
+                    y: {
+                        min: 70,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'OEE (%)',
+                            font: { size: 13 }
+                        },
+                        grid: {
+                            color: '#e3eaf6',
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#f4f7fa',
+                        }
+                    }
+                }
+            }
+        });
+
+        // Toast e navegação
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(function(){ toast.classList.remove('show'); }, 3200);
+        }
+        document.getElementById('btn-ajustar-capacidade').addEventListener('click', function() {
+            showToast('Capacidade ajustada no PMP com sucesso!');
+            setTimeout(function(){ window.location.href = 'pmp-mensal.html?capacidade=ajustada'; }, 1600);
+        });
+        document.getElementById('btn-ver-impacto').addEventListener('click', function() {
+            window.location.href = 'sequenciamento-gantt.html?impacto=linha_liquidos3';
+        });
+    </script>
+</body>
+</html>
