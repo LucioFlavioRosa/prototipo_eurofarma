@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>PCP Eurofarma - Dashboard Executivo</title>
+    <meta name="description" content="Dashboard Executivo PCP - Eurofarma">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Source+Sans+Pro:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/pcp-styles.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="../assets/js/pcp-core.js"></script>
+</head>
+<body class="frontend eurofarma main-container pg-home type-home">
+    <header class="main-header">
+        <div class="header-content">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo-header">
+            <nav class="pcp-nav">
+                <ul>
+                    <li><a href="#" class="active" aria-label="Dashboard Executivo">Dashboard</a></li>
+                    <li><a href="#" aria-label="Plano Mestre de Produção">Plano Mestre</a></li>
+                    <li><a href="#" aria-label="Explosão de Estrutura">Explosão de Estrutura</a></li>
+                    <li><a href="#" aria-label="Sequenciamento Ótimo">Sequenciamento</a></li>
+                    <li><a href="#" aria-label="Carteira de Pedidos">Carteira de Pedidos</a></li>
+                    <li><a href="#" aria-label="Simulação de Cenários">Simulação 'E Se'</a></li>
+                    <li><a href="#" aria-label="Gestão de Terceirização">Terceirização</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="main-wrapper">
+        <section class="dashboard-section">
+            <h1 class="dashboard-title">Dashboard Executivo do PCP</h1>
+            <div class="kpi-cards">
+                <div class="kpi-card">
+                    <h2>Acuracidade do Plano</h2>
+                    <div class="kpi-value" id="kpi-acuracidade">97,2%</div>
+                    <div class="kpi-desc">Planejado vs. Realizado (Último mês)</div>
+                </div>
+                <div class="kpi-card">
+                    <h2>Taxa de Atendimento</h2>
+                    <div class="kpi-value" id="kpi-atendimento">99,1%</div>
+                    <div class="kpi-desc">Pedidos entregues no prazo</div>
+                </div>
+                <div class="kpi-card">
+                    <h2>Ociosidade de Máquinas</h2>
+                    <div class="kpi-value" id="kpi-ociosidade">6,5%</div>
+                    <div class="kpi-desc">Tempo ocioso vs. total disponível</div>
+                </div>
+                <div class="kpi-card">
+                    <h2>Faturamento Realizado</h2>
+                    <div class="kpi-value" id="kpi-faturamento">R$ 48.200.000</div>
+                    <div class="kpi-desc">Mês Atual</div>
+                </div>
+            </div>
+            <div class="dashboard-visuals">
+                <div class="dashboard-graph">
+                    <h3>Faturamento vs. Planejado (2024)</h3>
+                    <canvas id="chart-faturamento" aria-label="Gráfico Faturamento" height="220"></canvas>
+                </div>
+                <div class="dashboard-graph">
+                    <h3>Taxa de Atendimento por Planta</h3>
+                    <canvas id="chart-atendimento" aria-label="Gráfico Atendimento" height="220"></canvas>
+                </div>
+            </div>
+            <div class="dashboard-tables">
+                <h3>Resumo de KPIs por Planta</h3>
+                <table class="pcp-table" aria-label="KPIs por Planta">
+                    <thead>
+                        <tr>
+                            <th>Planta</th>
+                            <th>Acuracidade</th>
+                            <th>Atendimento</th>
+                            <th>Ociosidade</th>
+                            <th>Faturamento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Montes Claros</td>
+                            <td>98,1%</td>
+                            <td>99,5%</td>
+                            <td>5,2%</td>
+                            <td>R$ 12.800.000</td>
+                        </tr>
+                        <tr>
+                            <td>Itapevi</td>
+                            <td>96,7%</td>
+                            <td>98,9%</td>
+                            <td>7,1%</td>
+                            <td>R$ 18.400.000</td>
+                        </tr>
+                        <tr>
+                            <td>Ribeirão Preto</td>
+                            <td>97,0%</td>
+                            <td>99,0%</td>
+                            <td>7,2%</td>
+                            <td>R$ 17.000.000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="dashboard-actions">
+                <h3>Acesso Rápido aos Módulos</h3>
+                <div class="actions-grid">
+                    <a href="#" class="action-card" aria-label="Ir para Plano Mestre">
+                        <span class="action-icon">📊</span>
+                        <span class="action-title">Plano Mestre</span>
+                        <span class="action-desc">Necessidade de produção mensal</span>
+                    </a>
+                    <a href="#" class="action-card" aria-label="Ir para Explosão de Estrutura">
+                        <span class="action-icon">🧬</span>
+                        <span class="action-title">Explosão de Estrutura</span>
+                        <span class="action-desc">Validação de capacidade fabril</span>
+                    </a>
+                    <a href="#" class="action-card" aria-label="Ir para Sequenciamento Ótimo">
+                        <span class="action-icon">⏱️</span>
+                        <span class="action-title">Sequenciamento</span>
+                        <span class="action-desc">Otimização de ordens de produção</span>
+                    </a>
+                    <a href="#" class="action-card" aria-label="Ir para Carteira de Pedidos">
+                        <span class="action-icon">📦</span>
+                        <span class="action-title">Carteira de Pedidos</span>
+                        <span class="action-desc">Alertas de ruptura e antecipação</span>
+                    </a>
+                    <a href="#" class="action-card" aria-label="Ir para Simulação de Cenários">
+                        <span class="action-icon">🔮</span>
+                        <span class="action-title">Simulação 'E Se'</span>
+                        <span class="action-desc">Testes de hipóteses e impacto</span>
+                    </a>
+                    <a href="#" class="action-card" aria-label="Ir para Terceirização">
+                        <span class="action-icon">🤝</span>
+                        <span class="action-title">Terceirização</span>
+                        <span class="action-desc">Gestão de ordens externas</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Eurofarma. PCP Plataforma Industrial.</p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gráfico Faturamento vs Planejado
+            if (window.Chart) {
+                var ctxFaturamento = document.getElementById('chart-faturamento').getContext('2d');
+                new Chart(ctxFaturamento, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [
+                            {
+                                label: 'Planejado',
+                                data: [40000, 42000, 43000, 44000, 45000, 47000, 48000, 49000, 50000, 51000, 52000, 53000],
+                                borderColor: '#00358e',
+                                backgroundColor: 'rgba(0,53,142,0.08)',
+                                fill: false,
+                                tension: 0.2
+                            },
+                            {
+                                label: 'Realizado',
+                                data: [39800, 41800, 43200, 43800, 45200, 46800, 48200, 48800, 50100, 50900, 51800, 52900],
+                                borderColor: '#f4c542',
+                                backgroundColor: 'rgba(244,197,66,0.08)',
+                                fill: false,
+                                tension: 0.2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+                // Gráfico Taxa de Atendimento por Planta
+                var ctxAtendimento = document.getElementById('chart-atendimento').getContext('2d');
+                new Chart(ctxAtendimento, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Montes Claros', 'Itapevi', 'Ribeirão Preto'],
+                        datasets: [{
+                            label: 'Taxa de Atendimento (%)',
+                            data: [99.5, 98.9, 99.0],
+                            backgroundColor: ['#00358e', '#00358e', '#00358e'],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
