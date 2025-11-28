@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Monitoramento de Matéria-Prima | PCP Eurofarma</title>
+    <meta name="description" content="Dashboard de monitoramento de insumos críticos, cobertura de estoque, alertas e pedidos em trânsito.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css" />
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <style>
+      body {
+        font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+        background: #f7f9fa;
+        margin: 0;
+        color: #1a2340;
+      }
+      header {
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      }
+      .logo {
+        height: 40px;
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+      }
+      nav a {
+        color: #1a2340;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      nav a.active, nav a:hover {
+        color: #0057b8;
+      }
+      main {
+        max-width: 1280px;
+        margin: 32px auto;
+        padding: 0 24px 48px 24px;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+      .card-insumo {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 20px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        min-height: 170px;
+      }
+      .card-insumo .status {
+        font-size: 0.95rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 8px;
+        display: inline-block;
+      }
+      .status.liberado { background: #e6f8e6; color: #2e7d32; }
+      .status.bloqueado { background: #ffeaea; color: #c62828; }
+      .status.analise { background: #fffbe6; color: #f9a825; }
+      .barra-progresso {
+        width: 100%;
+        height: 12px;
+        background: #e3e6f0;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .barra-progresso-inner {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.7s;
+      }
+      .dias-cobertura {
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-top: 2px;
+      }
+      .alertas-section {
+        background: #fffbe6;
+        border: 1px solid #ffe082;
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 32px;
+      }
+      .alertas-section h2 {
+        font-size: 1.2rem;
+        color: #c62828;
+        margin-bottom: 10px;
+      }
+      .alertas-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .alerta-item {
+        background: #ffeaea;
+        color: #c62828;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 0.98rem;
+        font-weight: 600;
+      }
+      .section-tabela {
+        margin-bottom: 40px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      th, td {
+        padding: 10px 12px;
+        text-align: left;
+      }
+      th {
+        background: #f2f6fa;
+        font-weight: 700;
+        color: #0057b8;
+      }
+      tr:nth-child(even) { background: #f7f9fa; }
+      .status-pedido.liberado { color: #2e7d32; font-weight: 600; }
+      .status-pedido.analise { color: #f9a825; font-weight: 600; }
+      .status-pedido.bloqueado { color: #c62828; font-weight: 600; }
+      .grafico-section {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 18px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 32px;
+      }
+      .grafico-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 14px;
+      }
+      .botao-notificar {
+        background: #0057b8;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 24px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-right: 16px;
+      }
+      .botao-notificar:hover {
+        background: #003e7e;
+      }
+      .link-pedidos-impactados {
+        color: #0057b8;
+        font-weight: 600;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0; top: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(26,35,64,0.18);
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background: #fff;
+        border-radius: 12px;
+        padding: 32px 28px;
+        box-shadow: 0 6px 32px rgba(0,0,0,0.12);
+        min-width: 320px;
+        max-width: 90vw;
+        text-align: center;
+      }
+      .modal-content h3 {
+        margin-bottom: 18px;
+        font-size: 1.2rem;
+        color: #0057b8;
+      }
+      .modal-content button {
+        margin: 18px 8px 0 8px;
+        padding: 10px 24px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+      }
+      .modal-content .confirm {
+        background: #0057b8;
+        color: #fff;
+        font-weight: 700;
+      }
+      .modal-content .cancel {
+        background: #e3e6f0;
+        color: #1a2340;
+        font-weight: 600;
+      }
+      /* Toast */
+      .toast {
+        visibility: hidden;
+        min-width: 260px;
+        background-color: #0057b8;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 16px;
+        position: fixed;
+        z-index: 99999;
+        left: 50%;
+        bottom: 40px;
+        transform: translateX(-50%);
+        font-size: 1rem;
+        font-weight: 700;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      }
+      .toast.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.2s;
+      }
+      @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 40px; opacity: 1;}
+      }
+      @keyframes fadeout {
+        from {bottom: 40px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+      }
+      @media (max-width: 800px) {
+        main { padding: 0 8px 32px 8px; }
+        .dashboard-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+</head>
+<body>
+  <header>
+    <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo" aria-label="Eurofarma">
+    <nav>
+      <a href="dashboard.html">Dashboard PCP</a>
+      <a href="materia-prima.html" class="active">Matéria-Prima</a>
+      <a href="pedidos-carteira.html">Pedidos</a>
+      <a href="sequenciamento.html">Sequenciamento</a>
+      <a href="kpis.html">KPIs</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Monitoramento de Matéria-Prima</h1>
+    <p style="margin-bottom: 18px; color: #444; font-size: 1.08rem;">Acompanhe em tempo real o status dos insumos críticos, cobertura de estoque, alertas de ruptura e pedidos em trânsito. Antecipe riscos e otimize a tomada de decisão.</p>
+    <!-- Dashboard Cards -->
+    <section class="dashboard-grid" aria-label="Insumos Críticos">
+      <!-- Cards gerados dinamicamente -->
+    </section>
+    <!-- Alertas de Ruptura -->
+    <section class="alertas-section" aria-label="Alertas de Ruptura">
+      <h2>Risco de Ruptura (< 15 dias de cobertura)</h2>
+      <div class="alertas-list" id="alertas-list"></div>
+    </section>
+    <!-- Gráfico de Cobertura -->
+    <section class="grafico-section" aria-label="Cobertura de Estoque">
+      <h2>Cobertura de Estoque por Insumo Crítico (dias)</h2>
+      <canvas id="graficoCobertura" height="220" aria-label="Gráfico de Cobertura de Estoque"></canvas>
+    </section>
+    <!-- Tabela de Pedidos em Trânsito -->
+    <section class="section-tabela" aria-label="Pedidos de Compra em Trânsito">
+      <h2 style="font-size:1.1rem; margin-bottom:10px;">Pedidos de Compra em Trânsito</h2>
+      <table aria-label="Tabela de Pedidos">
+        <thead>
+          <tr>
+            <th>Pedido #</th>
+            <th>Fornecedor</th>
+            <th>Insumo</th>
+            <th>Quantidade</th>
+            <th>Data Prevista de Chegada</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-pedidos"></tbody>
+      </table>
+    </section>
+    <!-- Botões de ação -->
+    <div style="margin-top:24px; display:flex; align-items:center; gap:18px;">
+      <button class="botao-notificar" id="btnNotificarCompras" aria-label="Notificar Compras">Notificar Compras</button>
+      <span class="link-pedidos-impactados" id="linkPedidosImpactados" tabindex="0" aria-label="Ver Pedidos Impactados">Ver Pedidos Impactados</span>
+    </div>
+  </main>
+  <!-- Modal de confirmação -->
+  <div class="modal" id="modalConfirmacao" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h3 id="modalTitle">Confirmar Notificação</h3>
+      <p>Deseja enviar alerta para a equipe de Compras sobre risco de ruptura?</p>
+      <button class="confirm" id="btnConfirmarModal">Confirmar</button>
+      <button class="cancel" id="btnCancelarModal">Cancelar</button>
+    </div>
+  </div>
+  <!-- Toast de sucesso -->
+  <div id="toastSucesso" class="toast" role="status" aria-live="polite">Notificação enviada com sucesso!</div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    // Dados de exemplo realistas
+    const insumos = [
+      { nome: 'Princípio Ativo A', estoque: 320, necessidade: 400, status: 'Liberado', diasCobertura: 24 },
+      { nome: 'Excipiente B', estoque: 150, necessidade: 220, status: 'Em Análise', diasCobertura: 12 },
+      { nome: 'Embalagem Primária C', estoque: 80, necessidade: 120, status: 'Bloqueado', diasCobertura: 9 },
+      { nome: 'Princípio Ativo D', estoque: 500, necessidade: 480, status: 'Liberado', diasCobertura: 31 },
+      { nome: 'Excipiente E', estoque: 200, necessidade: 300, status: 'Em Análise', diasCobertura: 16 },
+      { nome: 'Embalagem Secundária F', estoque: 60, necessidade: 100, status: 'Bloqueado', diasCobertura: 7 },
+      { nome: 'Princípio Ativo G', estoque: 210, necessidade: 250, status: 'Liberado', diasCobertura: 18 },
+      { nome: 'Excipiente H', estoque: 90, necessidade: 160, status: 'Em Análise', diasCobertura: 11 },
+      { nome: 'Embalagem Primária I', estoque: 120, necessidade: 180, status: 'Liberado', diasCobertura: 15 },
+      { nome: 'Princípio Ativo J', estoque: 60, necessidade: 120, status: 'Bloqueado', diasCobertura: 8 },
+      { nome: 'Excipiente K', estoque: 300, necessidade: 340, status: 'Liberado', diasCobertura: 22 },
+      { nome: 'Embalagem Secundária L', estoque: 45, necessidade: 90, status: 'Bloqueado', diasCobertura: 6 }
+    ];
+    const pedidosTransito = [
+      { pedido: '20231201', fornecedor: 'Farmabio', insumo: 'Princípio Ativo A', quantidade: 100, data: '2024-07-05', status: 'Liberado' },
+      { pedido: '20231202', fornecedor: 'Quimex', insumo: 'Excipiente B', quantidade: 70, data: '2024-07-03', status: 'Em Análise' },
+      { pedido: '20231203', fornecedor: 'Embalagens BR', insumo: 'Embalagem Primária C', quantidade: 50, data: '2024-07-08', status: 'Bloqueado' },
+      { pedido: '20231204', fornecedor: 'Farmabio', insumo: 'Princípio Ativo D', quantidade: 120, data: '2024-07-10', status: 'Liberado' },
+      { pedido: '20231205', fornecedor: 'Quimex', insumo: 'Excipiente E', quantidade: 60, data: '2024-07-06', status: 'Em Análise' },
+      { pedido: '20231206', fornecedor: 'Embalagens BR', insumo: 'Embalagem Secundária F', quantidade: 40, data: '2024-07-09', status: 'Bloqueado' },
+      { pedido: '20231207', fornecedor: 'Farmabio', insumo: 'Princípio Ativo G', quantidade: 80, data: '2024-07-07', status: 'Liberado' },
+      { pedido: '20231208', fornecedor: 'Quimex', insumo: 'Excipiente H', quantidade: 50, data: '2024-07-04', status: 'Em Análise' },
+      { pedido: '20231209', fornecedor: 'Embalagens BR', insumo: 'Embalagem Primária I', quantidade: 60, data: '2024-07-11', status: 'Liberado' },
+      { pedido: '20231210', fornecedor: 'Farmabio', insumo: 'Princípio Ativo J', quantidade: 40, data: '2024-07-12', status: 'Bloqueado' },
+      { pedido: '20231211', fornecedor: 'Quimex', insumo: 'Excipiente K', quantidade: 90, data: '2024-07-13', status: 'Liberado' },
+      { pedido: '20231212', fornecedor: 'Embalagens BR', insumo: 'Embalagem Secundária L', quantidade: 30, data: '2024-07-14', status: 'Bloqueado' }
+    ];
+    // Render cards de insumos
+    const grid = document.querySelector('.dashboard-grid');
+    insumos.forEach(insumo => {
+      const card = document.createElement('div');
+      card.className = 'card-insumo';
+      let statusClass = '';
+      if(insumo.status === 'Liberado') statusClass = 'liberado';
+      else if(insumo.status === 'Bloqueado') statusClass = 'bloqueado';
+      else statusClass = 'analise';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:1.08rem; font-weight:700;">${insumo.nome}</span>
+          <span class="status ${statusClass}">${insumo.status}</span>
+        </div>
+        <div>Estoque Atual: <strong>${insumo.estoque} kg</strong></div>
+        <div>Necessidade (30 dias): <strong>${insumo.necessidade} kg</strong></div>
+        <div class="dias-cobertura">Dias de Cobertura: <strong>${insumo.diasCobertura}</strong></div>
+        <div class="barra-progresso">
+          <div class="barra-progresso-inner" style="width:${Math.min(insumo.diasCobertura/40*100,100)}%; background:${insumo.diasCobertura>=20?'#2e7d32':(insumo.diasCobertura>=15?'#f9a825':'#c62828')};"></div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    // Alertas de ruptura (<15 dias)
+    const alertasList = document.getElementById('alertas-list');
+    insumos.filter(i=>i.diasCobertura<15).forEach(i=>{
+      const alerta = document.createElement('div');
+      alerta.className = 'alerta-item';
+      alerta.innerText = `${i.nome} (${i.diasCobertura} dias)`;
+      alertasList.appendChild(alerta);
+    });
+    // Tabela de pedidos em trânsito
+    const tabelaPedidos = document.getElementById('tabela-pedidos');
+    pedidosTransito.forEach(p=>{
+      const tr = document.createElement('tr');
+      let statusClass = '';
+      if(p.status === 'Liberado') statusClass = 'liberado';
+      else if(p.status === 'Bloqueado') statusClass = 'bloqueado';
+      else statusClass = 'analise';
+      tr.innerHTML = `
+        <td>${p.pedido}</td>
+        <td>${p.fornecedor}</td>
+        <td>${p.insumo}</td>
+        <td>${p.quantidade} kg</td>
+        <td>${p.data}</td>
+        <td class="status-pedido ${statusClass}">${p.status}</td>
+      `;
+      tabelaPedidos.appendChild(tr);
+    });
+    // Gráfico de barras - Cobertura de estoque
+    const ctx = document.getElementById('graficoCobertura').getContext('2d');
+    const grafico = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: insumos.map(i=>i.nome),
+        datasets: [{
+          label: 'Dias de Cobertura',
+          data: insumos.map(i=>i.diasCobertura),
+          backgroundColor: insumos.map(i=>i.diasCobertura>=20?'#2e7d32':(i.diasCobertura>=15?'#f9a825':'#c62828')),
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => `${ctx.parsed.y} dias` } }
+        },
+        scales: {
+          x: { ticks: { font: { weight: 'bold' } }, grid: { display: false } },
+          y: { beginAtZero: true, max: 40, title: { display: true, text: 'Dias' }, grid: { color: '#e3e6f0' } }
+        }
+      }
+    });
+    // Modal de confirmação e toast
+    const btnNotificar = document.getElementById('btnNotificarCompras');
+    const modal = document.getElementById('modalConfirmacao');
+    const btnConfirmar = document.getElementById('btnConfirmarModal');
+    const btnCancelar = document.getElementById('btnCancelarModal');
+    const toast = document.getElementById('toastSucesso');
+    btnNotificar.onclick = () => { modal.classList.add('active'); };
+    btnCancelar.onclick = () => { modal.classList.remove('active'); };
+    btnConfirmar.onclick = () => {
+      modal.classList.remove('active');
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 2700);
+    };
+    // Link para pedidos impactados
+    document.getElementById('linkPedidosImpactados').onclick = () => {
+      window.location.href = 'pedidos-carteira.html?filtro=ruptura';
+    };
+    document.getElementById('linkPedidosImpactados').addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' ') window.location.href = 'pedidos-carteira.html?filtro=ruptura';
+    });
+  </script>
+</body>
+</html>
