@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCP - Integração com Manutenção Preditiva</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="prototipos/assets/js/maintenance-integration.js"></script>
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f6f8fa; }
+        .main-wrapper { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+        .dashboard-title { font-size: 2.2rem; color: #00358e; font-weight: 700; margin-bottom: 18px; }
+        .equipamentos-grid { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+        .equipamento-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.06); padding: 24px; flex: 1 1 320px; min-width: 320px; position: relative; }
+        .equipamento-nome { font-size: 1.2rem; font-weight: 600; color: #00358e; margin-bottom: 8px; }
+        .oee-bar { height: 18px; border-radius: 9px; background: #e0e6f6; margin-bottom: 8px; overflow: hidden; }
+        .oee-fill { height: 100%; border-radius: 9px; }
+        .oee-label { font-size: 1rem; font-weight: 500; }
+        .alerta { position: absolute; top: 18px; right: 18px; background: #ffd700; color: #00358e; font-weight: 700; padding: 6px 14px; border-radius: 6px; font-size: 0.98rem; box-shadow: 0 2px 8px rgba(255,215,0,0.18); display: flex; align-items: center; gap: 6px; }
+        .alerta svg { width: 18px; height: 18px; }
+        .calendar-section { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.06); padding: 24px; margin-bottom: 32px; }
+        .calendar-title { font-size: 1.15rem; color: #00358e; font-weight: 600; margin-bottom: 10px; }
+        .calendar-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+        .calendar-table th, .calendar-table td { padding: 8px 12px; border: 1px solid #e0e6f6; text-align: left; }
+        .calendar-table th { background: #e0e6f6; color: #00358e; font-weight: 600; }
+        .calendar-table td.status-manutencao { color: #d9534f; font-weight: 700; }
+        .calendar-table td.status-operando { color: #28a745; font-weight: 700; }
+        .calendar-table td.status-prevista { color: #f0ad4e; font-weight: 700; }
+        .alertas-section { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.06); padding: 24px; }
+        .alertas-title { font-size: 1.15rem; color: #00358e; font-weight: 600; margin-bottom: 10px; }
+        .alertas-list { list-style: none; padding: 0; margin: 0; }
+        .alertas-list li { margin-bottom: 8px; color: #d9534f; font-weight: 500; }
+        .btn-voltar { display: inline-block; margin-top: 24px; background: #00358e; color: #fff; font-weight: 600; border-radius: 6px; padding: 10px 22px; text-decoration: none; transition: background 0.2s; }
+        .btn-voltar:hover { background: #002060; }
+        @media (max-width: 900px) { .equipamentos-grid { flex-direction: column; } }
+    </style>
+</head>
+<body class="frontend eurofarma main-container pg-integracao-manutencao">
+    <div class="main-wrapper">
+        <h1 class="dashboard-title">Integração com Manutenção Preditiva</h1>
+        <section class="equipamentos-grid" id="equipamentos-dashboard">
+            <!-- Cards de equipamentos são preenchidos via JS -->
+        </section>
+        <section class="calendar-section">
+            <div class="calendar-title">Calendário de Manutenções Programadas</div>
+            <table class="calendar-table" aria-label="Calendário de Manutenções">
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-body">
+                    <!-- Preenchido via JS -->
+                </tbody>
+            </table>
+        </section>
+        <section class="alertas-section">
+            <div class="alertas-title">Alertas de Performance</div>
+            <ul class="alertas-list" id="alertas-list">
+                <!-- Preenchido via JS -->
+            </ul>
+        </section>
+        <a href="pcp-dashboard.html" class="btn-voltar" aria-label="Voltar para Dashboard PCP">Voltar para Dashboard PCP</a>
+    </div>
+    <script>
+      // Simulação de dados para dashboard
+      const equipamentos = [
+        {
+          nome: 'Linha 1 - Comprimidos',
+          oee: 85,
+          threshold: 80,
+          status: 'Operando',
+          id: 'eq1'
+        },
+        {
+          nome: 'Linha 2 - Líquidos',
+          oee: 72,
+          threshold: 80,
+          status: 'Operando',
+          id: 'eq2'
+        },
+        {
+          nome: 'Linha 3 - Embalagem',
+          oee: 90,
+          threshold: 80,
+          status: 'Operando',
+          id: 'eq3'
+        },
+        {
+          nome: 'Linha 4 - Granulação',
+          oee: 78,
+          threshold: 80,
+          status: 'Operando',
+          id: 'eq4'
+        }
+      ];
+      const calendar = [
+        {equipamento: 'Linha 1 - Comprimidos', data: '2024-07-10', status: 'Manutenção', tipo: 'Preventiva'},
+        {equipamento: 'Linha 2 - Líquidos', data: '2024-07-15', status: 'Prevista', tipo: 'Corretiva'},
+        {equipamento: 'Linha 3 - Embalagem', data: '2024-07-20', status: 'Operando', tipo: '-'},
+        {equipamento: 'Linha 4 - Granulação', data: '2024-07-18', status: 'Manutenção', tipo: 'Preventiva'}
+      ];
+      function renderEquipamentos() {
+        const grid = document.getElementById('equipamentos-dashboard');
+        grid.innerHTML = '';
+        equipamentos.forEach(eq => {
+          let alerta = '';
+          if (eq.oee < eq.threshold) {
+            alerta = `<div class="alerta" aria-label="Alerta de OEE Baixo">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700"/><text x="12" y="16" text-anchor="middle" font-size="14" fill="#00358e">!</text></svg>
+              OEE abaixo do ideal
+            </div>`;
+          }
+          grid.innerHTML += `<div class="equipamento-card" tabindex="0" aria-label="${eq.nome} OEE ${eq.oee}%">
+            <div class="equipamento-nome">${eq.nome}</div>
+            <div class="oee-bar">
+              <div class="oee-fill" style="width:${eq.oee}%;background:${eq.oee >= eq.threshold ? '#28a745' : '#d9534f'}"></div>
+            </div>
+            <div class="oee-label">OEE: <strong>${eq.oee}%</strong></div>
+            ${alerta}
+          </div>`;
+        });
+      }
+      function renderCalendar() {
+        const tbody = document.getElementById('calendar-body');
+        tbody.innerHTML = '';
+        calendar.forEach(row => {
+          let statusClass = '';
+          if (row.status === 'Manutenção') statusClass = 'status-manutencao';
+          else if (row.status === 'Operando') statusClass = 'status-operando';
+          else if (row.status === 'Prevista') statusClass = 'status-prevista';
+          tbody.innerHTML += `<tr>
+            <td>${row.equipamento}</td>
+            <td>${row.data}</td>
+            <td class="${statusClass}">${row.status}</td>
+            <td>${row.tipo}</td>
+          </tr>`;
+        });
+      }
+      function renderAlertas() {
+        const ul = document.getElementById('alertas-list');
+        ul.innerHTML = '';
+        equipamentos.forEach(eq => {
+          if (eq.oee < eq.threshold) {
+            ul.innerHTML += `<li>Equipamento <strong>${eq.nome}</strong> está com OEE abaixo do threshold (${eq.oee}% &lt; ${eq.threshold}%). Verifique causas e agende manutenção corretiva.</li>`;
+          }
+        });
+        if (ul.innerHTML === '') ul.innerHTML = '<li>Nenhum alerta crítico no momento.</li>';
+      }
+      renderEquipamentos();
+      renderCalendar();
+      renderAlertas();
+    </script>
+</body>
+</html>
