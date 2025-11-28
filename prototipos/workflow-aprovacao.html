@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Workflow de Aprovação - PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css" />
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="assets/js/approval-workflow.js"></script>
+    <style>
+        .status-indicator { border-radius: 8px; padding: 4px 12px; font-weight: 600; font-size: 0.95em; }
+        .status-aguardando { background: #ffe082; color: #00358e; }
+        .status-aprovado { background: #c8e6c9; color: #388e3c; }
+        .status-rejeitado { background: #ffcdd2; color: #d32f2f; }
+        .audit-log { font-size: 0.95em; color: #555; }
+        .workflow-table th, .workflow-table td { vertical-align: middle; }
+        .btn-aprovar { background: #388e3c; color: #fff; border: none; padding: 6px 18px; border-radius: 5px; margin-right: 8px; cursor: pointer; font-weight: 600; }
+        .btn-rejeitar { background: #d32f2f; color: #fff; border: none; padding: 6px 18px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .comment-box { width: 100%; min-height: 40px; border-radius: 5px; border: 1px solid #ccc; padding: 6px; margin-top: 6px; }
+        .toast { position: fixed; top: 24px; right: 24px; background: #00358e; color: #fff; padding: 14px 24px; border-radius: 8px; font-weight: 600; z-index: 9999; display: none; }
+        .workflow-header { background: #00358e; color: #fff; padding: 24px 0; text-align: center; }
+        .nav-bar { background: #f4f4f4; padding: 12px 0; text-align: center; }
+        .nav-bar a { color: #00358e; font-weight: 600; margin: 0 16px; text-decoration: none; }
+        .nav-bar a.active { text-decoration: underline; }
+        .audit-log-table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+        .audit-log-table th, .audit-log-table td { border: 1px solid #e0e0e0; padding: 8px; }
+        .audit-log-table th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <div class="workflow-header">
+        <h1>Workflow de Aprovação</h1>
+        <p>Gestão de aprovações de sequenciamento de produção entre plantas</p>
+    </div>
+    <div class="nav-bar">
+        <a href="dashboard.html">Dashboard PCP</a>
+        <a href="monitoramento-mp.html">Monitoramento Matéria-Prima</a>
+        <a href="workflow-aprovacao.html" class="active">Workflow de Aprovação</a>
+    </div>
+    <main class="container mt-4 mb-5">
+        <section>
+            <h2>Solicitações de Aprovação Pendentes</h2>
+            <table class="table workflow-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Solicitante</th>
+                        <th>Planta</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="pending-approvals">
+                    <tr>
+                        <td>REQ-20240612-01</td>
+                        <td>João Silva (Supervisor Planta SP)</td>
+                        <td>São Paulo</td>
+                        <td>Alteração no sequenciamento: priorizar lote urgente para cliente Europharma.</td>
+                        <td><span class="status-indicator status-aguardando">Aguardando</span></td>
+                        <td>
+                            <button class="btn-aprovar" onclick="approveRequest('REQ-20240612-01')">Aprovar</button>
+                            <button class="btn-rejeitar" onclick="rejectRequest('REQ-20240612-01')">Rejeitar</button>
+                            <textarea class="comment-box" placeholder="Comentário (opcional)" id="comment-REQ-20240612-01"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>REQ-20240612-02</td>
+                        <td>Maria Souza (Gerente PCP Corporativo)</td>
+                        <td>Rio de Janeiro</td>
+                        <td>Inclusão de turno extra para linha de embalagem secundária.</td>
+                        <td><span class="status-indicator status-aguardando">Aguardando</span></td>
+                        <td>
+                            <button class="btn-aprovar" onclick="approveRequest('REQ-20240612-02')">Aprovar</button>
+                            <button class="btn-rejeitar" onclick="rejectRequest('REQ-20240612-02')">Rejeitar</button>
+                            <textarea class="comment-box" placeholder="Comentário (opcional)" id="comment-REQ-20240612-02"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="mt-5">
+            <h2>Histórico de Decisões</h2>
+            <table class="audit-log-table" aria-label="Histórico de Aprovações">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>ID Solicitação</th>
+                        <th>Decisão</th>
+                        <th>Responsável</th>
+                        <th>Comentário</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="audit-log">
+                    <tr>
+                        <td>12/06/2024 09:15</td>
+                        <td>REQ-20240611-04</td>
+                        <td>Aprovado</td>
+                        <td>Carlos Lima (Gerente PCP)</td>
+                        <td>Turno extra aprovado para atender pedido urgente.</td>
+                        <td><span class="status-indicator status-aprovado">Aprovado</span></td>
+                    </tr>
+                    <tr>
+                        <td>11/06/2024 17:40</td>
+                        <td>REQ-20240611-03</td>
+                        <td>Rejeitado</td>
+                        <td>Fernanda Alves (Supervisor Planta RJ)</td>
+                        <td>Não há capacidade disponível para alteração proposta.</td>
+                        <td><span class="status-indicator status-rejeitado">Rejeitado</span></td>
+                    </tr>
+                    <tr>
+                        <td>11/06/2024 14:20</td>
+                        <td>REQ-20240611-02</td>
+                        <td>Aprovado</td>
+                        <td>João Silva (Supervisor Planta SP)</td>
+                        <td>-</td>
+                        <td><span class="status-indicator status-aprovado">Aprovado</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <div class="toast" id="toast-notification"></div>
+    <footer class="main-footer text-center mt-5">
+        <p>&copy; 2024 Eurofarma - PCP Plataforma Industrial</p>
+    </footer>
+</body>
+</html>
