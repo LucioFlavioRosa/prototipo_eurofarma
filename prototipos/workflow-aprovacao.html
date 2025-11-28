@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Workflow de Aprovação - PCP Eurofarma</title>
+    <meta name="description" content="Workflow de aprovação de alterações no planejamento de produção.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f5f7fa; margin: 0; color: #1d2d44; }
+        header {
+            background: #fff;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+        }
+        .logo { height: 48px; }
+        nav a {
+            color: #1d2d44;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color .2s;
+        }
+        nav a.active, nav a:hover { color: #0072ce; }
+        .container-main {
+            max-width: 1100px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .indicadores {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        .indicador {
+            background: #f0f4fa;
+            border-radius: 8px;
+            padding: 1rem 2rem;
+            text-align: center;
+            min-width: 140px;
+        }
+        .indicador .valor {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0072ce;
+        }
+        .indicador .label {
+            font-size: 1rem;
+            color: #1d2d44;
+        }
+        .notificacoes {
+            margin-left: auto;
+            position: relative;
+        }
+        .sino {
+            font-size: 2rem;
+            color: #0072ce;
+            cursor: pointer;
+        }
+        .badge {
+            background: #e74c3c;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 0.3em 0.6em;
+            position: absolute;
+            top: -0.5em;
+            right: -0.5em;
+            animation: pulse 1.2s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 #e74c3c44; }
+            100% { box-shadow: 0 0 0 8px #e74c3c11; }
+        }
+        .cards-pendentes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .card-pendente {
+            background: #f8fafc;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            padding: 1.2rem 1.5rem;
+            min-width: 270px;
+            flex: 1 1 270px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            border-left: 5px solid #0072ce;
+        }
+        .card-pendente .tipo {
+            font-weight: 600;
+            color: #0072ce;
+        }
+        .card-pendente .plantas {
+            font-size: 0.97em;
+            color: #555;
+        }
+        .card-pendente .data {
+            font-size: 0.95em;
+            color: #888;
+        }
+        .card-pendente .botoes {
+            margin-top: 0.5rem;
+        }
+        .btn {
+            background: #0072ce;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.7rem;
+            transition: background .2s;
+        }
+        .btn:hover { background: #005fa3; }
+        .btn-outline {
+            background: #fff;
+            color: #0072ce;
+            border: 2px solid #0072ce;
+        }
+        .btn-outline:hover { background: #e6f0fa; }
+        .historico {
+            margin-top: 2.5rem;
+        }
+        .historico h4 {
+            color: #0072ce;
+            margin-bottom: 0.7rem;
+        }
+        .historico-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.2rem;
+            font-size: 0.98rem;
+        }
+        .historico-table th, .historico-table td {
+            text-align: left;
+            padding: 0.6rem 0.7rem;
+        }
+        .historico-table th {
+            background: #f0f4fa;
+            font-weight: 700;
+        }
+        @media (max-width: 900px) {
+            .container-main { padding: 1rem; }
+            .cards-pendentes { flex-direction: column; }
+        }
+        .modal-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.25);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            padding: 2rem 2.5rem;
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo"/>
+        <nav>
+            <a href="carteira-pedidos.html">Carteira de Pedidos</a>
+            <a href="replanejamento-drag-drop.html">Replanejamento</a>
+            <a href="workflow-aprovacao.html" class="active">Workflow de Aprovação</a>
+        </nav>
+    </header>
+    <main class="container-main">
+        <div class="indicadores">
+            <div class="indicador">
+                <div class="valor" id="aprov-pend">3</div>
+                <div class="label">Aprovações Pendentes</div>
+            </div>
+            <div class="indicador">
+                <div class="valor" id="aprov-mes">7</div>
+                <div class="label">Aprovações do Mês</div>
+            </div>
+            <div class="indicador">
+                <div class="valor" id="taxa-aprov">81%</div>
+                <div class="label">Taxa de Aprovação</div>
+            </div>
+            <div class="notificacoes">
+                <span class="sino" aria-label="Notificações"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path fill="#0072ce" d="M12 2a6 6 0 0 0-6 6v2.278c0 .309-.12.606-.337.827C4.11 12.14 3 14.03 3 16v1c0 .553.447 1 1 1h16a1 1 0 0 0 1-1v-1c0-1.97-1.11-3.86-2.663-4.895A1.12 1.12 0 0 1 18 10.278V8a6 6 0 0 0-6-6Zm0 18a2.001 2.001 0 0 1-1.995-1.85l-.005-.15h4a2 2 0 0 1-2 2Z"></path></svg><span class="badge" id="badge-notif">3</span></span>
+            </div>
+        </div>
+        <h2 style="color:#0072ce;">Workflow de Aprovação</h2>
+        <div class="cards-pendentes" id="cards-pendentes">
+            <!-- Cards via JS -->
+        </div>
+        <section class="historico">
+            <h4>Histórico de Aprovações</h4>
+            <table class="historico-table" aria-label="Histórico de Aprovações">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Solicitante</th>
+                        <th>Tipo</th>
+                        <th>Plantas</th>
+                        <th>Status</th>
+                        <th>Justificativa</th>
+                    </tr>
+                </thead>
+                <tbody id="historico-tbody">
+                    <!-- Linhas via JS -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <!-- Modal de justificativa -->
+    <div id="modal-justificativa" class="modal-bg" style="display:none;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalJustificativaTitulo">
+            <button class="modal-close" aria-label="Fechar" onclick="closeModal()">&times;</button>
+            <h3 id="modalJustificativaTitulo" style="color:#0072ce;">Justificativa</h3>
+            <form id="form-justificativa">
+                <input type="hidden" id="modal-acao"/>
+                <input type="hidden" id="modal-id"/>
+                <label for="justificativa" style="font-weight:600;">Justifique sua decisão:</label><br>
+                <textarea id="justificativa" name="justificativa" rows="4" style="width:100%;margin-top:0.5rem;border-radius:6px;border:1px solid #e2e8f0;padding:0.7rem;font-size:1rem;resize:vertical;" required></textarea>
+                <div style="margin-top:1.5rem;text-align:right;">
+                    <button type="submit" class="btn">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Dados realistas
+        let pendentes = [
+            { id: 1, solicitante: 'Ana Lima', tipo: 'Replanejamento', plantas: 'Itapevi', data: '2024-07-02', status: 'Pendente' },
+            { id: 2, solicitante: 'Carlos Souza', tipo: 'Antecipação', plantas: 'Ribeirão Preto', data: '2024-07-03', status: 'Pendente' },
+            { id: 3, solicitante: 'Juliana Alves', tipo: 'Mudança de Capacidade', plantas: 'Itapevi, Ribeirão Preto', data: '2024-07-03', status: 'Pendente' }
+        ];
+        let historico = [
+            { data: '2024-06-28', solicitante: 'Ana Lima', tipo: 'Replanejamento', plantas: 'Itapevi', status: 'Aprovado', justificativa: 'Ajuste devido a manutenção.' },
+            { data: '2024-06-29', solicitante: 'Carlos Souza', tipo: 'Antecipação', plantas: 'Ribeirão Preto', status: 'Rejeitado', justificativa: 'Capacidade insuficiente.' },
+            { data: '2024-07-01', solicitante: 'Juliana Alves', tipo: 'Mudança de Capacidade', plantas: 'Itapevi', status: 'Aprovado', justificativa: 'Demanda extra confirmada.' },
+            { data: '2024-07-01', solicitante: 'Ana Lima', tipo: 'Replanejamento', plantas: 'Itapevi', status: 'Aprovado', justificativa: 'Sequenciamento otimizado.' }
+        ];
+        function renderCards() {
+            const el = document.getElementById('cards-pendentes');
+            el.innerHTML = '';
+            pendentes.forEach(p => {
+                let card = document.createElement('div');
+                card.className = 'card-pendente';
+                card.innerHTML = `
+                    <div class="tipo">${p.tipo}</div>
+                    <div><b>Solicitante:</b> ${p.solicitante}</div>
+                    <div class="plantas"><b>Plantas:</b> ${p.plantas}</div>
+                    <div class="data"><b>Data:</b> ${(new Date(p.data)).toLocaleDateString('pt-BR')}</div>
+                    <div class="botoes">
+                        <button class="btn" onclick="abrirModal('Aprovar',${p.id})">Aprovar</button>
+                        <button class="btn-outline" onclick="abrirModal('Rejeitar',${p.id})">Rejeitar</button>
+                    </div>
+                `;
+                el.appendChild(card);
+            });
+            document.getElementById('aprov-pend').textContent = pendentes.length;
+            document.getElementById('badge-notif').textContent = pendentes.length;
+        }
+        function renderHistorico() {
+            const tbody = document.getElementById('historico-tbody');
+            tbody.innerHTML = '';
+            historico.forEach(h => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${(new Date(h.data)).toLocaleDateString('pt-BR')}</td>
+                    <td>${h.solicitante}</td>
+                    <td>${h.tipo}</td>
+                    <td>${h.plantas}</td>
+                    <td>${h.status}</td>
+                    <td>${h.justificativa}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        function abrirModal(acao, id) {
+            document.getElementById('modal-acao').value = acao;
+            document.getElementById('modal-id').value = id;
+            document.getElementById('justificativa').value = '';
+            document.getElementById('modal-justificativa').style.display = '';
+        }
+        function closeModal() {
+            document.getElementById('modal-justificativa').style.display = 'none';
+        }
+        document.getElementById('form-justificativa').onsubmit = function(e) {
+            e.preventDefault();
+            let acao = document.getElementById('modal-acao').value;
+            let id = parseInt(document.getElementById('modal-id').value);
+            let justificativa = document.getElementById('justificativa').value;
+            let idx = pendentes.findIndex(p=>p.id===id);
+            if(idx!==-1) {
+                let p = pendentes[idx];
+                historico.unshift({
+                    data: (new Date()).toISOString().slice(0,10),
+                    solicitante: p.solicitante,
+                    tipo: p.tipo,
+                    plantas: p.plantas,
+                    status: acao==='Aprovar'?'Aprovado':'Rejeitado',
+                    justificativa
+                });
+                pendentes.splice(idx,1);
+                renderCards();
+                renderHistorico();
+                closeModal();
+            }
+        };
+        // Badge animada de notificações
+        setInterval(()=>{
+            let badge = document.getElementById('badge-notif');
+            badge.style.transform = 'scale(1.15)';
+            setTimeout(()=>{ badge.style.transform = 'scale(1)'; }, 300);
+        }, 2200);
+        // Inicialização
+        renderCards();
+        renderHistorico();
+    </script>
+</body>
+</html>
