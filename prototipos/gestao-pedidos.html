@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Gestão de Carteira de Pedidos | PCP Eurofarma</title>
+    <meta name="description" content="Gestão de pedidos em risco, antecipação de produção e alertas de ruptura para PCP industrial Eurofarma.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="assets/js/order-risk-analyzer.js"></script>
+    <style>
+      body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f5f7fa; }
+      .main-header { background: #00358e; color: #fff; padding: 20px 0; }
+      .main-header .logo { height: 40px; }
+      .container { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+      h1 { color: #00358e; font-size: 2.2rem; margin-bottom: 16px; }
+      .filters { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+      .filters select, .filters input { padding: 8px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 1rem; }
+      .table-responsive { overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+      th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 1rem; }
+      th { background: #00358e; color: #fff; font-weight: 600; }
+      .alerta-ruptura { color: #b91c1c; font-weight: bold; }
+      .btn-sugerir { background: #ffc700; color: #00358e; border: none; border-radius: 4px; padding: 8px 18px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+      .btn-sugerir:hover { background: #ffe066; }
+      .status-risco { font-weight: bold; padding: 4px 10px; border-radius: 4px; }
+      .status-risco.risco { background: #fff0f0; color: #b91c1c; }
+      .status-risco.ok { background: #e6f7e6; color: #15803d; }
+      .status-risco.atencao { background: #fffbe6; color: #b45309; }
+      .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background: rgba(0,53,142,0.18); }
+      .modal-content { background: #fff; margin: 5% auto; padding: 32px 24px; border-radius: 10px; max-width: 600px; box-shadow: 0 4px 24px rgba(0,53,142,0.13); }
+      .modal-header { font-size: 1.3rem; font-weight: bold; color: #00358e; margin-bottom: 16px; }
+      .close-modal { float: right; font-size: 1.4rem; font-weight: bold; color: #00358e; cursor: pointer; }
+      .modal-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+      .modal-table th, .modal-table td { padding: 10px 6px; border-bottom: 1px solid #e5e7eb; }
+      .modal-table th { background: #f5f7fa; color: #00358e; }
+      .modal-actions { margin-top: 20px; text-align: right; }
+      .btn-aplicar { background: #00358e; color: #fff; border: none; border-radius: 4px; padding: 8px 18px; font-weight: 600; cursor: pointer; }
+      .btn-aplicar:hover { background: #002060; }
+      .grafico-container { margin: 32px 0; background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); }
+      .grafico-title { font-size: 1.1rem; color: #00358e; margin-bottom: 8px; }
+      @media (max-width: 700px) {
+        .container { padding: 16px 4px; }
+        .modal-content { padding: 18px 8px; }
+        th, td { font-size: 0.95rem; }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo" height="40">
+      <nav>
+        <a href="dashboard.html" style="color: #fff; margin-right: 24px; font-weight: 500;">Dashboard PCP</a>
+        <a href="gestao-pedidos.html" style="color: #ffc700; font-weight: bold;">Gestão de Pedidos</a>
+        <a href="gantt-sequenciamento.html" style="color: #fff; margin-left: 24px; font-weight: 500;">Sequenciamento</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Gestão de Carteira de Pedidos</h1>
+    <div class="filters" aria-label="Filtros de pedidos">
+      <select id="filtro-cliente" aria-label="Filtrar por cliente">
+        <option value="">Todos os clientes</option>
+        <option value="Hospital São Lucas">Hospital São Lucas</option>
+        <option value="Drogaria Pacheco">Drogaria Pacheco</option>
+        <option value="Distribuidora Farma">Distribuidora Farma</option>
+      </select>
+      <select id="filtro-produto" aria-label="Filtrar por produto">
+        <option value="">Todos os produtos</option>
+        <option value="Amoxilina 500mg">Amoxilina 500mg</option>
+        <option value="Dipirona 1g">Dipirona 1g</option>
+        <option value="Losartana 50mg">Losartana 50mg</option>
+      </select>
+      <input type="date" id="filtro-data" aria-label="Filtrar por data de entrega">
+      <button class="btn-sugerir" onclick="filtrarPedidos()">Filtrar</button>
+    </div>
+    <div class="table-responsive">
+      <table id="tabela-pedidos" aria-label="Tabela de pedidos em risco">
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Qtd. Solicitada</th>
+            <th>Estoque Atual</th>
+            <th>Data Entrega</th>
+            <th>Status</th>
+            <th>Alerta</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#20240601</td>
+            <td>Hospital São Lucas</td>
+            <td>Amoxilina 500mg</td>
+            <td>12.000</td>
+            <td>8.000</td>
+            <td>2024-06-15</td>
+            <td><span class="status-risco risco">Risco de Ruptura</span></td>
+            <td class="alerta-ruptura">Estoque insuficiente</td>
+            <td><button class="btn-sugerir" onclick="abrirModalAntecipacao('20240601')">Sugerir Antecipação</button></td>
+          </tr>
+          <tr>
+            <td>#20240602</td>
+            <td>Drogaria Pacheco</td>
+            <td>Dipirona 1g</td>
+            <td>20.000</td>
+            <td>22.000</td>
+            <td>2024-06-18</td>
+            <td><span class="status-risco ok">OK</span></td>
+            <td>-</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>#20240603</td>
+            <td>Distribuidora Farma</td>
+            <td>Losartana 50mg</td>
+            <td>15.000</td>
+            <td>14.000</td>
+            <td>2024-06-20</td>
+            <td><span class="status-risco atencao">Atenção</span></td>
+            <td>Estoque quase insuficiente</td>
+            <td><button class="btn-sugerir" onclick="abrirModalAntecipacao('20240603')">Sugerir Antecipação</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grafico-container">
+      <div class="grafico-title">Pedidos em Risco por Produto</div>
+      <canvas id="grafico-pedidos-risco" height="120"></canvas>
+    </div>
+  </main>
+  <div id="modal-antecipacao" class="modal" aria-modal="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <span class="close-modal" onclick="fecharModalAntecipacao()" aria-label="Fechar">&times;</span>
+      <div class="modal-header" id="modal-title">Cenário de Antecipação de Produção</div>
+      <div id="modal-cenario-content">
+        <!-- Conteúdo dinâmico JS -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn-aplicar" onclick="aplicarCenarioAntecipacao()">Aplicar Cenário</button>
+      </div>
+    </div>
+  </div>
+  <footer class="main-footer" style="background: #00358e; color: #fff; text-align: center; padding: 16px 0; margin-top: 48px;">
+    <p>&copy; 2024 Eurofarma. PCP Industrial. Todos os direitos reservados.</p>
+  </footer>
+  <script>
+    // Gráfico de pedidos em risco
+    const ctx = document.getElementById('grafico-pedidos-risco').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Amoxilina 500mg', 'Dipirona 1g', 'Losartana 50mg'],
+        datasets: [{
+          label: 'Pedidos em Risco',
+          data: [1, 0, 1],
+          backgroundColor: ['#b91c1c', '#15803d', '#b45309']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+
+    // Filtro de pedidos
+    function filtrarPedidos() {
+      // Exemplo: filtro estático, pode ser integrado com backend
+      const cliente = document.getElementById('filtro-cliente').value;
+      const produto = document.getElementById('filtro-produto').value;
+      const data = document.getElementById('filtro-data').value;
+      const rows = document.querySelectorAll('#tabela-pedidos tbody tr');
+      rows.forEach(row => {
+        let show = true;
+        if (cliente && row.children[1].textContent !== cliente) show = false;
+        if (produto && row.children[2].textContent !== produto) show = false;
+        if (data && row.children[5].textContent !== data) show = false;
+        row.style.display = show ? '' : 'none';
+      });
+    }
+
+    // Modal de antecipação
+    function abrirModalAntecipacao(pedidoId) {
+      document.getElementById('modal-antecipacao').style.display = 'block';
+      let cenario = '';
+      if (pedidoId === '20240601') {
+        cenario = `<table class='modal-table'>
+          <tr><th>Produto</th><th>Qtd. a Antecipar</th><th>Impacto Faturamento</th><th>Impacto Margem</th></tr>
+          <tr><td>Amoxilina 500mg</td><td>4.000</td><td>+R$ 12.800</td><td>+R$ 4.200</td></tr>
+        </table>
+        <p style='margin-top:12px;color:#b91c1c;'>* Antecipação sugerida para atender pedido crítico. Requer ajuste no sequenciamento.</p>`;
+      } else if (pedidoId === '20240603') {
+        cenario = `<table class='modal-table'>
+          <tr><th>Produto</th><th>Qtd. a Antecipar</th><th>Impacto Faturamento</th><th>Impacto Margem</th></tr>
+          <tr><td>Losartana 50mg</td><td>1.000</td><td>+R$ 3.500</td><td>+R$ 1.100</td></tr>
+        </table>
+        <p style='margin-top:12px;color:#b45309;'>* Antecipação recomendada para evitar risco de ruptura.</p>`;
+      } else {
+        cenario = `<p>Nenhum cenário de antecipação disponível para este pedido.</p>`;
+      }
+      document.getElementById('modal-cenario-content').innerHTML = cenario;
+    }
+    function fecharModalAntecipacao() {
+      document.getElementById('modal-antecipacao').style.display = 'none';
+    }
+    function aplicarCenarioAntecipacao() {
+      alert('Cenário de antecipação aplicado. Sequenciamento será ajustado.');
+      fecharModalAntecipacao();
+    }
+    window.onclick = function(event) {
+      const modal = document.getElementById('modal-antecipacao');
+      if (event.target === modal) fecharModalAntecipacao();
+    }
+  </script>
+</body>
+</html>
