@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plano Mestre de Produção Mensal | PCP Eurofarma</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+  <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+  <script src="assets/js/pmp-calculator.js"></script>
+  <style>
+    body { font-family: 'Lato', Arial, sans-serif; background: #f4f7fa; }
+    .main-header { background: #00358e; color: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .main-header img { height: 40px; }
+    .main-header nav a { color: #fff; margin-left: 2rem; font-weight: 600; text-decoration: none; }
+    .main-header nav a.active { border-bottom: 2px solid #ffd600; }
+    .container { max-width: 1200px; margin: 2rem auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); padding: 2rem; }
+    .title-section { font-size: 2rem; font-weight: 700; color: #00358e; margin-bottom: 1rem; }
+    .filters-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .filters-row select, .filters-row input { padding: 0.5rem; border-radius: 4px; border: 1px solid #cfd8dc; font-size: 1rem; }
+    .table-responsive { overflow-x: auto; }
+    table.pmp-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+    table.pmp-table th, table.pmp-table td { padding: 0.7rem 0.5rem; text-align: center; border-bottom: 1px solid #e0e0e0; }
+    table.pmp-table th { background: #f4f7fa; color: #00358e; font-weight: 700; }
+    table.pmp-table td.sku { text-align: left; font-weight: 600; }
+    .alert-indicator { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+    .alert-green { background: #43a047; }
+    .alert-yellow { background: #ffd600; }
+    .alert-red { background: #e53935; }
+    .btn-recalcular { background: #00358e; color: #fff; border: none; padding: 0.7rem 2rem; border-radius: 4px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+    .btn-recalcular:hover { background: #002060; }
+    .legend-alerts { margin-bottom: 1.5rem; }
+    .legend-alerts span { margin-right: 2rem; font-size: 0.95rem; }
+    .legend-alerts .alert-indicator { margin-right: 6px; }
+    .dashboard-link { color: #00358e; font-weight: 700; text-decoration: underline; margin-left: 1rem; }
+    .footer { text-align: center; color: #888; font-size: 0.9rem; margin-top: 2rem; }
+    @media (max-width: 800px) {
+      .container { padding: 1rem; }
+      .title-section { font-size: 1.3rem; }
+      table.pmp-table th, table.pmp-table td { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+    <nav>
+      <a href="pmp-mensal.html" class="active">Plano Mestre</a>
+      <a href="explosao-estrutura.html">Explosão de Estrutura</a>
+      <a href="#">Dashboard PCP</a>
+    </nav>
+  </header>
+  <main class="container">
+    <div class="title-section">Plano Mestre de Produção Mensal</div>
+    <div class="legend-alerts">
+      <span><span class="alert-indicator alert-green"></span>Capacidade OK</span>
+      <span><span class="alert-indicator alert-yellow"></span>Próximo do limite</span>
+      <span><span class="alert-indicator alert-red"></span>Excedeu capacidade</span>
+    </div>
+    <div class="filters-row">
+      <select id="filter-categoria">
+        <option value="">Todas as Categorias</option>
+        <option value="Antibióticos">Antibióticos</option>
+        <option value="Cardiológicos">Cardiológicos</option>
+        <option value="Dermatológicos">Dermatológicos</option>
+        <option value="Oncológicos">Oncológicos</option>
+      </select>
+      <input type="text" id="filter-sku" placeholder="Buscar SKU ou Produto...">
+      <button class="btn-recalcular" onclick="recalcularPMP()">Recalcular</button>
+    </div>
+    <div class="table-responsive">
+      <table class="pmp-table" aria-label="Tabela de Necessidade de Produção Mensal">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Estoque Atual</th>
+            <th>Previsão de Vendas</th>
+            <th>Política de Estoque</th>
+            <th>Múltiplo de Lote</th>
+            <th>Necessidade de Produção</th>
+            <th>Capacidade Disponível</th>
+            <th>Alerta</th>
+          </tr>
+        </thead>
+        <tbody id="pmp-table-body">
+          <!-- Exemplo realista de dados, preenchido pelo JS -->
+        </tbody>
+      </table>
+    </div>
+    <div id="grafico-mensal" style="width:100%; max-width:700px; margin:2rem auto;"></div>
+    <div style="text-align:right;">
+      <a href="explosao-estrutura.html" class="dashboard-link">Ir para Explosão de Estrutura →</a>
+    </div>
+  </main>
+  <footer class="footer">
+    &copy; 2025 Eurofarma | PCP Industrial. Todos os direitos reservados.
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Dados de exemplo realista para PCP
+    const pmpData = [
+      {
+        sku: 'EF-AB123', produto: 'Amoxicilina 500mg', categoria: 'Antibióticos', estoque: 12000, previsao: [8000,9000,9500,10000,10500,11000,9000,9500,10000,9500,9000,8500], politica: 5000, lote: 1000, capacidade: 12000
+      },
+      {
+        sku: 'EF-CD456', produto: 'Atorvastatina 20mg', categoria: 'Cardiológicos', estoque: 15000, previsao: [12000,13000,12500,13500,14000,14500,13000,12500,13500,14000,13000,12000], politica: 6000, lote: 2000, capacidade: 16000
+      },
+      {
+        sku: 'EF-DT789', produto: 'Clindamicina Gel 1%', categoria: 'Dermatológicos', estoque: 5000, previsao: [4000,4500,4200,4300,4400,4500,4600,4700,4800,4900,5000,5100], politica: 2000, lote: 500, capacidade: 6000
+      },
+      {
+        sku: 'EF-ON321', produto: 'Letrozol 2.5mg', categoria: 'Oncológicos', estoque: 3000, previsao: [2500,2600,2700,2800,2900,3000,3100,3200,3300,3400,3500,3600], politica: 1000, lote: 250, capacidade: 3500
+      }
+    ];
+    let filteredData = [...pmpData];
+    function renderTable() {
+      const tbody = document.getElementById('pmp-table-body');
+      tbody.innerHTML = '';
+      filteredData.forEach((row, idx) => {
+        // Cálculo para o mês atual (exemplo: mês 1)
+        const mesAtual = 0;
+        const necessidade = Math.max(row.previsao[mesAtual] - row.estoque + row.politica, 0);
+        const necessidadeLote = Math.ceil(necessidade / row.lote) * row.lote;
+        let alertaClass = 'alert-green';
+        if (necessidadeLote > row.capacidade) alertaClass = 'alert-red';
+        else if (necessidadeLote > row.capacidade * 0.85) alertaClass = 'alert-yellow';
+        tbody.innerHTML += `<tr>
+          <td class="sku">${row.sku}</td>
+          <td>${row.produto}</td>
+          <td>${row.categoria}</td>
+          <td>${row.estoque.toLocaleString()}</td>
+          <td>${row.previsao[mesAtual].toLocaleString()}</td>
+          <td>${row.politica.toLocaleString()}</td>
+          <td>${row.lote.toLocaleString()}</td>
+          <td><strong>${necessidadeLote.toLocaleString()}</strong></td>
+          <td>${row.capacidade.toLocaleString()}</td>
+          <td><span class="alert-indicator ${alertaClass}" aria-label="Alerta de capacidade"></span></td>
+        </tr>`;
+      });
+    }
+    function renderGrafico() {
+      const ctxId = 'grafico-mensal-canvas';
+      let canvas = document.getElementById(ctxId);
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = ctxId;
+        document.getElementById('grafico-mensal').appendChild(canvas);
+      }
+      const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      const datasets = filteredData.map(row => ({
+        label: row.produto,
+        data: row.previsao.map((v,i) => Math.max(v - row.estoque + row.politica, 0)),
+        backgroundColor: 'rgba(0,53,142,0.08)',
+        borderColor: '#00358e',
+        borderWidth: 2,
+        fill: false
+      }));
+      new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: meses,
+          datasets: datasets
+        },
+        options: {
+          plugins: { legend: { position: 'top' } },
+          scales: {
+            y: { title: { display: true, text: 'Necessidade de Produção (unidades)' } }
+          }
+        }
+      });
+    }
+    function filtrarTabela() {
+      const categoria = document.getElementById('filter-categoria').value;
+      const sku = document.getElementById('filter-sku').value.toLowerCase();
+      filteredData = pmpData.filter(row => {
+        const matchCategoria = !categoria || row.categoria === categoria;
+        const matchSku = !sku || row.sku.toLowerCase().includes(sku) || row.produto.toLowerCase().includes(sku);
+        return matchCategoria && matchSku;
+      });
+      renderTable();
+      renderGrafico();
+    }
+    document.getElementById('filter-categoria').addEventListener('change', filtrarTabela);
+    document.getElementById('filter-sku').addEventListener('input', filtrarTabela);
+    function recalcularPMP() {
+      // Simula recálculo: em protótipo, apenas renderiza novamente
+      renderTable();
+      renderGrafico();
+    }
+    window.onload = function() {
+      renderTable();
+      renderGrafico();
+    };
+  </script>
+</body>
+</html>
