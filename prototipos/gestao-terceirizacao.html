@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Terceirização | PCP Eurofarma</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="assets/js/outsourcing-manager.js"></script>
+    <style>
+      body { background: #f7f8fa; font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; }
+      .main-wrapper { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+      .section-title { font-size: 2rem; font-weight: 700; color: #00358e; margin-bottom: 24px; }
+      .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); padding: 24px; margin-bottom: 32px; }
+      .dashboard-grid { display: flex; gap: 24px; flex-wrap: wrap; }
+      .dashboard-card { flex: 1; min-width: 260px; background: #eaf2fb; border-radius: 8px; padding: 18px 20px; }
+      .dashboard-card h4 { font-size: 1.1rem; color: #00358e; margin-bottom: 8px; }
+      .dashboard-card .value { font-size: 1.8rem; font-weight: 700; color: #0b2c6a; }
+      .alert { background: #fff3cd; color: #856404; border-radius: 6px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; }
+      .alert svg { margin-right: 8px; }
+      .table-responsive { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; margin-bottom: 24px; }
+      th, td { padding: 12px 14px; text-align: left; }
+      th { background: #eaf2fb; color: #00358e; font-weight: 600; }
+      tr:nth-child(even) { background: #f7f8fa; }
+      .status-ok { color: #28a745; font-weight: 700; }
+      .status-delay { color: #dc3545; font-weight: 700; }
+      .btn { background: #00358e; color: #fff; border: none; border-radius: 4px; padding: 8px 18px; font-size: 1rem; cursor: pointer; transition: background .2s; }
+      .btn:hover { background: #0b2c6a; }
+      .nav-flow { margin-bottom: 24px; }
+      .nav-flow a { color: #00358e; text-decoration: none; margin-right: 18px; font-weight: 600; }
+      .nav-flow a.active { color: #f5b700; }
+      .form-inline { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+      .form-inline input, .form-inline select { padding: 6px 10px; border: 1px solid #d0d7e7; border-radius: 4px; font-size: 1rem; }
+      .chart-container { background: #fff; border-radius: 8px; padding: 18px 24px; margin-bottom: 32px; }
+      .chart-title { font-size: 1.1rem; color: #00358e; margin-bottom: 10px; }
+      .gantt-chart { width: 100%; height: 240px; background: #eaf2fb; border-radius: 8px; display: flex; align-items: flex-end; padding: 18px; margin-bottom: 18px; }
+      .gantt-bar { height: 28px; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; color: #fff; font-weight: 600; }
+      .gantt-bar.interna { background: #00358e; min-width: 120px; }
+      .gantt-bar.terceirizada { background: #f5b700; min-width: 120px; }
+      .gantt-bar.atrasada { background: #dc3545; min-width: 120px; }
+      .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; }
+      .badge-ok { background: #eaf2fb; color: #00358e; }
+      .badge-delay { background: #fff3cd; color: #856404; }
+      .badge-risk { background: #f8d7da; color: #721c24; }
+      .form-section { margin-bottom: 32px; }
+    </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <nav class="nav-flow" aria-label="Navegação PCP">
+      <a href="dashboard.html">Dashboard PCP</a>
+      <a href="gestao-terceirizacao.html" class="active">Gestão de Terceirização</a>
+      <a href="sequenciamento.html">Sequenciamento</a>
+      <a href="forecast.html">Forecast</a>
+    </nav>
+    <h1 class="section-title">Gestão de Terceirização de Produção</h1>
+    <div class="card form-section">
+      <h2 style="font-size:1.3rem;color:#00358e;font-weight:600;margin-bottom:14px;">Cadastro de Fornecedor Terceirizado</h2>
+      <form class="form-inline" id="formFornecedor" autocomplete="off">
+        <input type="text" name="nome" placeholder="Nome do Fornecedor" required aria-label="Nome do Fornecedor">
+        <input type="number" name="leadtime" placeholder="Lead Time (dias)" min="1" required aria-label="Lead Time">
+        <select name="categoria" aria-label="Categoria">
+          <option value="Embalagem">Embalagem</option>
+          <option value="Granel">Granel</option>
+          <option value="Produto Acabado">Produto Acabado</option>
+        </select>
+        <button type="submit" class="btn">Cadastrar</button>
+      </form>
+      <div id="fornecedores-list"></div>
+    </div>
+    <div class="card">
+      <h2 style="font-size:1.15rem;color:#00358e;font-weight:600;margin-bottom:14px;">Pedidos Terceirizados</h2>
+      <div class="table-responsive">
+        <table aria-label="Tabela de pedidos terceirizados">
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>SKU</th>
+              <th>Fornecedor</th>
+              <th>Qtd</th>
+              <th>Lead Time</th>
+              <th>Prazo Entrega</th>
+              <th>Status</th>
+              <th>Integração Sequenciamento</th>
+            </tr>
+          </thead>
+          <tbody id="pedidos-terceirizados">
+            <tr>
+              <td>PO-2025-0012</td>
+              <td>AMOX500MG-30</td>
+              <td>LabFarma</td>
+              <td>12.000</td>
+              <td>8 dias</td>
+              <td>18/07/2025</td>
+              <td><span class="status-ok">No prazo</span></td>
+              <td><span class="badge badge-ok">Sequenciado</span></td>
+            </tr>
+            <tr>
+              <td>PO-2025-0013</td>
+              <td>PARA650MG-20</td>
+              <td>BioTerceiros</td>
+              <td>7.500</td>
+              <td>10 dias</td>
+              <td>15/07/2025</td>
+              <td><span class="status-delay">Atrasado</span></td>
+              <td><span class="badge badge-delay">Reagendar</span></td>
+            </tr>
+            <tr>
+              <td>PO-2025-0014</td>
+              <td>VITA1000MG-60</td>
+              <td>LabFarma</td>
+              <td>5.000</td>
+              <td>8 dias</td>
+              <td>22/07/2025</td>
+              <td><span class="status-ok">No prazo</span></td>
+              <td><span class="badge badge-ok">Sequenciado</span></td>
+            </tr>
+            <tr>
+              <td>PO-2025-0015</td>
+              <td>OMEP20MG-14</td>
+              <td>TerceirizaMais</td>
+              <td>10.000</td>
+              <td>12 dias</td>
+              <td>10/07/2025</td>
+              <td><span class="status-delay">Atrasado</span></td>
+              <td><span class="badge badge-risk">Risco de Ruptura</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert" aria-live="polite">
+        <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="10" fill="#f5b700"/><path d="M10 5v5" stroke="#00358e" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="13" r="1" fill="#00358e"/></svg>
+        <span>2 pedidos em atraso! Verifique com fornecedores e ajuste o sequenciamento interno.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2 style="font-size:1.15rem;color:#00358e;font-weight:600;margin-bottom:14px;">Dashboard de Performance de Fornecedores</h2>
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h4>LabFarma</h4>
+          <div class="value">98%</div>
+          <div>Pedidos entregues no prazo</div>
+        </div>
+        <div class="dashboard-card">
+          <h4>BioTerceiros</h4>
+          <div class="value">87%</div>
+          <div>Pedidos entregues no prazo</div>
+        </div>
+        <div class="dashboard-card">
+          <h4>TerceirizaMais</h4>
+          <div class="value">74%</div>
+          <div>Pedidos entregues no prazo</div>
+        </div>
+      </div>
+    </div>
+    <div class="card chart-container">
+      <div class="chart-title">Integração Visual com Sequenciamento Interno (Gantt)</div>
+      <div class="gantt-chart" aria-label="Sequenciamento de produção">
+        <div class="gantt-bar interna" style="width:180px">Interna: AMOX500MG-30</div>
+        <div class="gantt-bar terceirizada" style="width:140px">Terceirizada: PARA650MG-20</div>
+        <div class="gantt-bar interna" style="width:120px">Interna: VITA1000MG-60</div>
+        <div class="gantt-bar atrasada" style="width:140px">Atrasada: OMEP20MG-14</div>
+      </div>
+      <div style="font-size:0.95rem;color:#00358e;">Pedidos atrasados impactam o sequenciamento interno. Reagende ou priorize produção interna para evitar rupturas.</div>
+    </div>
+    <div style="text-align:right;margin-top:28px;">
+      <a href="sequenciamento.html" class="btn" aria-label="Ir para Sequenciamento">Ir para Sequenciamento</a>
+    </div>
+  </div>
+</body>
+</html>
