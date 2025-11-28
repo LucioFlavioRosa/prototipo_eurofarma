@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de Acuracidade de Previsão de Vendas | PCP Eurofarma</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body { font-family: 'Lato', Arial, sans-serif; background: #f8fafc; }
+    .container-xxl { max-width: 1280px; margin: 0 auto; padding: 32px 16px; }
+    .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: none; }
+    .card-header { background: #f4f6fb; border-bottom: 1px solid #e1e7ef; font-weight: 600; font-size: 1.1rem; }
+    .filter-bar { gap: 16px; }
+    .badge-variabilidade-alta { background: #ff4d4f; color: #fff; }
+    .badge-variabilidade-media { background: #ffc107; color: #333; }
+    .badge-variabilidade-baixa { background: #28a745; color: #fff; }
+    .table thead th { background: #e9f0fb; }
+    .table tbody tr td { vertical-align: middle; }
+    .export-btn { background: #003366; color: #fff; border-radius: 6px; border: none; padding: 8px 20px; font-weight: 600; }
+    .export-btn:hover { background: #00509e; }
+    .recomendacoes-list li { margin-bottom: 8px; }
+    @media (max-width: 991.98px) {
+      .container-xxl { padding: 16px 4px; }
+      .chart-row { flex-direction: column; gap: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main class="container-xxl">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="mb-0" style="color:#003366;font-size:2rem;">Acuracidade de Previsão de Vendas</h1>
+      <button class="export-btn" onclick="exportarExcel()"><i class="bi bi-file-earmark-excel me-2"></i>Exportar Análise</button>
+    </div>
+    <div class="card mb-4 p-3">
+      <form class="row filter-bar align-items-end">
+        <div class="col-md-3 mb-2">
+          <label class="form-label">Período</label>
+          <select class="form-select" id="filtro-periodo">
+            <option value="12m">Últimos 12 meses</option>
+            <option value="6m">Últimos 6 meses</option>
+            <option value="3m">Últimos 3 meses</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label">Família de Produtos</label>
+          <select class="form-select" id="filtro-familia">
+            <option value="todas">Todas</option>
+            <option value="analgésicos">Analgésicos</option>
+            <option value="antibióticos">Antibióticos</option>
+            <option value="vitaminas">Vitaminas</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label">Região</label>
+          <select class="form-select" id="filtro-regiao">
+            <option value="todas">Todas</option>
+            <option value="sudeste">Sudeste</option>
+            <option value="sul">Sul</option>
+            <option value="nordeste">Nordeste</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2 text-end">
+          <button type="button" class="btn btn-primary px-4" onclick="aplicarFiltros()"><i class="bi bi-funnel me-2"></i>Aplicar Filtros</button>
+        </div>
+      </form>
+    </div>
+    <div class="row chart-row mb-4" style="gap:32px;">
+      <div class="col-lg-8">
+        <div class="card p-3 h-100">
+          <div class="card-header">Evolução do MAPE (%) - Últimos 12 meses</div>
+          <canvas id="chart-mape" height="110"></canvas>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card p-3 h-100">
+          <div class="card-header">Dispersão: Previsto vs. Realizado</div>
+          <canvas id="chart-dispersao" height="110"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card mb-4 p-3">
+      <div class="card-header">Análise por Produto</div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Família</th>
+              <th>Previsão Média</th>
+              <th>Venda Média</th>
+              <th>MAPE (%)</th>
+              <th>Bias (%)</th>
+              <th>Classificação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-produtos">
+            <tr>
+              <td>Dipirona 500mg</td>
+              <td>Analgésicos</td>
+              <td>12.400</td>
+              <td>11.800</td>
+              <td>5,1</td>
+              <td>-2,3</td>
+              <td><span class="badge badge-variabilidade-baixa">Baixa</span></td>
+            </tr>
+            <tr>
+              <td>Amoxicilina 500mg</td>
+              <td>Antibióticos</td>
+              <td>8.200</td>
+              <td>7.100</td>
+              <td>15,8</td>
+              <td>-6,2</td>
+              <td><span class="badge badge-variabilidade-media">Média</span></td>
+            </tr>
+            <tr>
+              <td>Vitamina C 1g</td>
+              <td>Vitaminas</td>
+              <td>6.500</td>
+              <td>5.100</td>
+              <td>32,7</td>
+              <td>-21,5</td>
+              <td><span class="badge badge-variabilidade-alta">Alta</span></td>
+            </tr>
+            <tr>
+              <td>Ibuprofeno 400mg</td>
+              <td>Analgésicos</td>
+              <td>9.700</td>
+              <td>9.900</td>
+              <td>2,3</td>
+              <td>2,1</td>
+              <td><span class="badge badge-variabilidade-baixa">Baixa</span></td>
+            </tr>
+            <tr>
+              <td>Azitromicina 500mg</td>
+              <td>Antibióticos</td>
+              <td>4.800</td>
+              <td>5.700</td>
+              <td>19,5</td>
+              <td>12,5</td>
+              <td><span class="badge badge-variabilidade-media">Média</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-lg-6">
+        <div class="card p-3 h-100">
+          <div class="card-header">Recomendações</div>
+          <ul class="recomendacoes-list mt-2">
+            <li><span class="bi bi-exclamation-triangle-fill text-danger me-2"></span>Revisar política de estoque para <strong>Vitamina C 1g</strong> (alta variabilidade).</li>
+            <li><span class="bi bi-exclamation-triangle-fill text-danger me-2"></span>Revisar política de estoque para <strong>Azitromicina 500mg</strong> (média-alta variabilidade).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.3/dist/chart.umd.min.js"></script>
+  <script>
+    // Header dinâmico
+    fetch('components/header.html').then(r=>r.text()).then(html=>{
+      document.getElementById('header-placeholder').innerHTML = html;
+    });
+    // MAPE Chart
+    const ctxMape = document.getElementById('chart-mape').getContext('2d');
+    const chartMape = new Chart(ctxMape, {
+      type: 'line',
+      data: {
+        labels: ['Jul/23','Ago/23','Set/23','Out/23','Nov/23','Dez/23','Jan/24','Fev/24','Mar/24','Abr/24','Mai/24','Jun/24'],
+        datasets: [{
+          label: 'MAPE (%)',
+          data: [18, 16, 14, 13, 12, 10, 9, 8, 10, 12, 14, 13],
+          borderColor: '#003366',
+          backgroundColor: 'rgba(0,51,102,0.08)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#003366',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { beginAtZero: true, max: 35, ticks: { stepSize: 5 } }
+        }
+      }
+    });
+    // Dispersão Previsto x Realizado
+    const ctxDisp = document.getElementById('chart-dispersao').getContext('2d');
+    const chartDisp = new Chart(ctxDisp, {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Produtos',
+            data: [
+              {x:12400, y:11800}, // Dipirona
+              {x:8200, y:7100},  // Amoxicilina
+              {x:6500, y:5100},  // Vitamina C
+              {x:9700, y:9900},  // Ibuprofeno
+              {x:4800, y:5700}   // Azitromicina
+            ],
+            backgroundColor: [
+              '#28a745', // Baixa
+              '#ffc107', // Média
+              '#ff4d4f', // Alta
+              '#28a745', // Baixa
+              '#ffc107'  // Média
+            ],
+            pointRadius: 7
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const produtos = ['Dipirona 500mg','Amoxicilina 500mg','Vitamina C 1g','Ibuprofeno 400mg','Azitromicina 500mg'];
+                return produtos[ctx.dataIndex]+': Previsto '+ctx.parsed.x+', Realizado '+ctx.parsed.y;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Previsto' }, min: 4000, max: 13000 },
+          y: { title: { display: true, text: 'Realizado' }, min: 4000, max: 13000 }
+        }
+      }
+    });
+    // Exportar para Excel (simulação)
+    function exportarExcel() {
+      alert('Exportação para Excel simulada. Integração real será implementada no produto final.');
+    }
+    // Filtros dinâmicos (simulação)
+    function aplicarFiltros() {
+      alert('Filtros aplicados! (Simulação para protótipo)');
+    }
+  </script>
+</body>
+</html>
