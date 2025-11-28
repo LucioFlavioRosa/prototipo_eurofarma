@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Carteira de Pedidos - Plataforma PCP</title>
+    <meta name="description" content="Gestão de Carteira de Pedidos - Plataforma PCP Eurofarma">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      body {
+        font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+        background: #f6f8fa;
+        margin: 0;
+        color: #1a1a1a;
+      }
+      header {
+        background: #003366;
+        color: #fff;
+        padding: 18px 0 12px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .header-content img {
+        height: 38px;
+      }
+      .header-content nav a {
+        color: #fff;
+        font-weight: 600;
+        margin-left: 32px;
+        text-decoration: none;
+        transition: color .2s;
+      }
+      .header-content nav a.active, .header-content nav a:hover {
+        color: #ffd600;
+      }
+      main {
+        max-width: 1200px;
+        margin: 32px auto 0 auto;
+        padding: 0 24px 48px 24px;
+      }
+      .alert-cards {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+      .alert-card {
+        flex: 1;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 22px 18px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .alert-card .icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #fff;
+      }
+      .alert-card.risco .icon { background: #ff9800; }
+      .alert-card.critico .icon { background: #e53935; }
+      .alert-card.atendivel .icon { background: #43a047; }
+      .alert-card .card-title {
+        font-size: 1.08em;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .alert-card .card-value {
+        font-size: 1.6em;
+        font-weight: 700;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+      .top-actions .filters {
+        display: flex;
+        gap: 18px;
+      }
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .filter-group label {
+        font-size: 0.95em;
+        font-weight: 500;
+        margin-bottom: 3px;
+      }
+      .filter-group select, .filter-group input {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #cfd8dc;
+        font-size: 1em;
+        background: #fff;
+      }
+      .btn-sync {
+        background: #003366;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 22px;
+        font-size: 1em;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        transition: background .2s;
+      }
+      .btn-sync:hover {
+        background: #0055a5;
+      }
+      .main-content {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+      }
+      .table-section {
+        flex: 2;
+        min-width: 420px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 18px 16px 24px 16px;
+        overflow-x: auto;
+      }
+      .pedidos-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.98em;
+      }
+      .pedidos-table th {
+        background: #f1f5fb;
+        font-weight: 700;
+        padding: 10px 8px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .pedidos-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 14px;
+        font-size: 0.95em;
+        font-weight: 600;
+        color: #fff;
+      }
+      .badge.atendivel { background: #43a047; }
+      .badge.risco { background: #ff9800; }
+      .badge.critico { background: #e53935; }
+      .btn-antecipar {
+        background: #ffd600;
+        color: #003366;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 7px 18px;
+        font-size: 0.98em;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        transition: background .2s;
+      }
+      .btn-antecipar:hover {
+        background: #ffe066;
+      }
+      .chart-section {
+        flex: 1;
+        min-width: 320px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 18px 16px 24px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .chart-title {
+        font-size: 1.08em;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.32);
+      }
+      .modal-content {
+        background: #fff;
+        margin: 60px auto;
+        border-radius: 10px;
+        padding: 32px 28px 24px 28px;
+        max-width: 440px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+        position: relative;
+      }
+      .modal-header {
+        font-size: 1.18em;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 18px;
+        font-size: 1.5em;
+        color: #888;
+        cursor: pointer;
+      }
+      .modal-body {
+        margin-bottom: 18px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+      .btn-modal {
+        background: #003366;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 22px;
+        font-size: 1em;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        transition: background .2s;
+      }
+      .btn-modal:hover {
+        background: #0055a5;
+      }
+      .btn-link {
+        background: none;
+        color: #003366;
+        border: none;
+        padding: 0;
+        font-size: 0.98em;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      @media (max-width: 900px) {
+        main { padding: 0 8px 32px 8px; }
+        .main-content { flex-direction: column; gap: 24px; }
+        .table-section, .chart-section { min-width: 0; width: 100%; }
+      }
+    </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+      <nav>
+        <a href="../dashboard.html">Dashboard</a>
+        <a href="pedidos-carteira.html" class="active">Carteira de Pedidos</a>
+        <a href="sequenciamento-gantt.html">Sequenciamento</a>
+        <a href="estoque-granel.html">Estoque de Granel</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="alert-cards">
+      <div class="alert-card risco">
+        <div class="icon" aria-label="Pedidos em Risco">&#9888;</div>
+        <div>
+          <div class="card-title">Pedidos em Risco</div>
+          <div class="card-value" id="risco-count">7</div>
+        </div>
+      </div>
+      <div class="alert-card critico">
+        <div class="icon" aria-label="Pedidos Críticos">&#9940;</div>
+        <div>
+          <div class="card-title">Pedidos Críticos</div>
+          <div class="card-value" id="critico-count">3</div>
+        </div>
+      </div>
+      <div class="alert-card atendivel">
+        <div class="icon" aria-label="Pedidos Atendíveis">&#10003;</div>
+        <div>
+          <div class="card-title">Pedidos Atendíveis</div>
+          <div class="card-value" id="atendivel-count">15</div>
+        </div>
+      </div>
+    </section>
+    <div class="top-actions">
+      <div class="filters">
+        <div class="filter-group">
+          <label for="filter-status">Status</label>
+          <select id="filter-status">
+            <option value="">Todos</option>
+            <option value="atendivel">Atendível</option>
+            <option value="risco">Em Risco</option>
+            <option value="critico">Crítico</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-cliente">Cliente</label>
+          <select id="filter-cliente">
+            <option value="">Todos</option>
+            <option>Drogaria São Paulo</option>
+            <option>Raia Drogasil</option>
+            <option>Hospital Albert Einstein</option>
+            <option>Hospital Sírio-Libanês</option>
+            <option>Grupo Pague Menos</option>
+            <option>Hospital Oswaldo Cruz</option>
+            <option>Hospital Santa Catarina</option>
+            <option>Hospital Samaritano</option>
+            <option>Hospital São Luiz</option>
+            <option>Hospital Leforte</option>
+            <option>Hospital Nove de Julho</option>
+            <option>Hospital Moinhos de Vento</option>
+            <option>Hospital BP</option>
+            <option>Hospital Sabará</option>
+            <option>Hospital Vera Cruz</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-produto">Produto</label>
+          <input type="text" id="filter-produto" placeholder="Buscar produto...">
+        </div>
+        <div class="filter-group">
+          <label for="filter-data">Data de Entrega</label>
+          <input type="date" id="filter-data">
+        </div>
+      </div>
+      <button class="btn-sync" id="btn-sync">Sincronizar com SAP</button>
+    </div>
+    <div class="main-content">
+      <section class="table-section">
+        <table class="pedidos-table" id="pedidos-table" aria-label="Tabela de Carteira de Pedidos">
+          <thead>
+            <tr>
+              <th>Pedido #</th>
+              <th>Cliente</th>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Data de Entrega</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Exemplo realista de 25 pedidos -->
+            <tr>
+              <td>100234</td>
+              <td>Drogaria São Paulo</td>
+              <td>Eurofarma Dipirona 500mg 30cp</td>
+              <td>2.000</td>
+              <td>2024-07-02</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100234">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100235</td>
+              <td>Raia Drogasil</td>
+              <td>Eurofarma Amoxilina 500mg 20cp</td>
+              <td>1.500</td>
+              <td>2024-07-03</td>
+              <td><span class="badge risco">Em Risco</span></td>
+              <td><button class="btn-antecipar" data-pedido="100235">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100236</td>
+              <td>Hospital Albert Einstein</td>
+              <td>Eurofarma Cefalexina 1g 10cp</td>
+              <td>800</td>
+              <td>2024-07-05</td>
+              <td><span class="badge critico">Crítico</span></td>
+              <td><button class="btn-antecipar" data-pedido="100236">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100237</td>
+              <td>Hospital Sírio-Libanês</td>
+              <td>Eurofarma Paracetamol 750mg 20cp</td>
+              <td>1.200</td>
+              <td>2024-07-04</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100237">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100238</td>
+              <td>Grupo Pague Menos</td>
+              <td>Eurofarma Ibuprofeno 400mg 30cp</td>
+              <td>1.000</td>
+              <td>2024-07-07</td>
+              <td><span class="badge risco">Em Risco</span></td>
+              <td><button class="btn-antecipar" data-pedido="100238">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100239</td>
+              <td>Hospital Oswaldo Cruz</td>
+              <td>Eurofarma Azitromicina 500mg 6cp</td>
+              <td>600</td>
+              <td>2024-07-08</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100239">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100240</td>
+              <td>Hospital Santa Catarina</td>
+              <td>Eurofarma Losartana 50mg 30cp</td>
+              <td>1.300</td>
+              <td>2024-07-10</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100240">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100241</td>
+              <td>Hospital Samaritano</td>
+              <td>Eurofarma Metformina 850mg 60cp</td>
+              <td>2.500</td>
+              <td>2024-07-12</td>
+              <td><span class="badge risco">Em Risco</span></td>
+              <td><button class="btn-antecipar" data-pedido="100241">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100242</td>
+              <td>Hospital São Luiz</td>
+              <td>Eurofarma Rosuvastatina 20mg 30cp</td>
+              <td>1.100</td>
+              <td>2024-07-14</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100242">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100243</td>
+              <td>Hospital Leforte</td>
+              <td>Eurofarma Enalapril 10mg 20cp</td>
+              <td>900</td>
+              <td>2024-07-15</td>
+              <td><span class="badge critico">Crítico</span></td>
+              <td><button class="btn-antecipar" data-pedido="100243">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100244</td>
+              <td>Hospital Nove de Julho</td>
+              <td>Eurofarma Omeprazol 20mg 14cp</td>
+              <td>1.400</td>
+              <td>2024-07-17</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100244">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100245</td>
+              <td>Hospital Moinhos de Vento</td>
+              <td>Eurofarma Simvastatina 20mg 30cp</td>
+              <td>1.600</td>
+              <td>2024-07-19</td>
+              <td><span class="badge risco">Em Risco</span></td>
+              <td><button class="btn-antecipar" data-pedido="100245">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100246</td>
+              <td>Hospital BP</td>
+              <td>Eurofarma Levotiroxina 100mcg 30cp</td>
+              <td>1.800</td>
+              <td>2024-07-20</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100246">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100247</td>
+              <td>Hospital Sabará</td>
+              <td>Eurofarma Prednisona 5mg 20cp</td>
+              <td>1.100</td>
+              <td>2024-07-22</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100247">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100248</td>
+              <td>Hospital Vera Cruz</td>
+              <td>Eurofarma Clopidogrel 75mg 30cp</td>
+              <td>1.000</td>
+              <td>2024-07-23</td>
+              <td><span class="badge critico">Crítico</span></td>
+              <td><button class="btn-antecipar" data-pedido="100248">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100249</td>
+              <td>Drogaria São Paulo</td>
+              <td>Eurofarma Dipirona 500mg 30cp</td>
+              <td>2.000</td>
+              <td>2024-07-24</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100249">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100250</td>
+              <td>Raia Drogasil</td>
+              <td>Eurofarma Amoxilina 500mg 20cp</td>
+              <td>1.500</td>
+              <td>2024-07-25</td>
+              <td><span class="badge risco">Em Risco</span></td>
+              <td><button class="btn-antecipar" data-pedido="100250">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100251</td>
+              <td>Hospital Albert Einstein</td>
+              <td>Eurofarma Cefalexina 1g 10cp</td>
+              <td>800</td>
+              <td>2024-07-26</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100251">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100252</td>
+              <td>Hospital Sírio-Libanês</td>
+              <td>Eurofarma Paracetamol 750mg 20cp</td>
+              <td>1.200</td>
+              <td>2024-07-27</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100252">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100253</td>
+              <td>Grupo Pague Menos</td>
+              <td>Eurofarma Ibuprofeno 400mg 30cp</td>
+              <td>1.000</td>
+              <td>2024-07-28</td>
+              <td><span class="badge risco">Em Risco</span></td>
+              <td><button class="btn-antecipar" data-pedido="100253">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100254</td>
+              <td>Hospital Oswaldo Cruz</td>
+              <td>Eurofarma Azitromicina 500mg 6cp</td>
+              <td>600</td>
+              <td>2024-07-29</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100254">Antecipar Produção</button></td>
+            </tr>
+            <tr>
+              <td>100255</td>
+              <td>Hospital Santa Catarina</td>
+              <td>Eurofarma Losartana 50mg 30cp</td>
+              <td>1.300</td>
+              <td>2024-07-30</td>
+              <td><span class="badge atendivel">Atendível</span></td>
+              <td><button class="btn-antecipar" data-pedido="100255">Antecipar Produção</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="chart-section">
+        <div class="chart-title">Distribuição de Pedidos por Status</div>
+        <canvas id="statusChart" width="260" height="260" aria-label="Gráfico de pizza de status de pedidos"></canvas>
+      </section>
+    </div>
+  </main>
+  <div id="modal-antecipar" class="modal" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <span class="modal-close" id="modal-close" aria-label="Fechar">&times;</span>
+      <div class="modal-header" id="modal-title">Antecipar Produção</div>
+      <div class="modal-body" id="modal-body">
+        <!-- Conteúdo dinâmico -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal" id="btn-confirm-antecipar">Confirmar Antecipação</button>
+        <button class="btn-link" id="btn-ver-granel">Ver Estoque de Granel</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Dados de exemplo para gráfico de pizza
+    const pedidosData = [
+      {status: 'atendivel'}, {status: 'risco'}, {status: 'critico'}, {status: 'atendivel'}, {status: 'risco'},
+      {status: 'atendivel'}, {status: 'atendivel'}, {status: 'risco'}, {status: 'atendivel'}, {status: 'critico'},
+      {status: 'atendivel'}, {status: 'risco'}, {status: 'atendivel'}, {status: 'atendivel'}, {status: 'critico'},
+      {status: 'atendivel'}, {status: 'risco'}, {status: 'atendivel'}, {status: 'atendivel'}, {status: 'risco'},
+      {status: 'atendivel'}, {status: 'atendivel'}, {status: 'risco'}, {status: 'atendivel'}, {status: 'atendivel'}
+    ];
+    function countStatus(status) {
+      return pedidosData.filter(p => p.status === status).length;
+    }
+    document.getElementById('risco-count').textContent = countStatus('risco');
+    document.getElementById('critico-count').textContent = countStatus('critico');
+    document.getElementById('atendivel-count').textContent = countStatus('atendivel');
+    // Gráfico de pizza
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Atendível', 'Em Risco', 'Crítico'],
+        datasets: [{
+          data: [countStatus('atendivel'), countStatus('risco'), countStatus('critico')],
+          backgroundColor: ['#43a047', '#ff9800', '#e53935'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 14 } } }
+        }
+      }
+    });
+    // Filtros
+    document.getElementById('filter-status').addEventListener('change', filtrarTabela);
+    document.getElementById('filter-cliente').addEventListener('change', filtrarTabela);
+    document.getElementById('filter-produto').addEventListener('input', filtrarTabela);
+    document.getElementById('filter-data').addEventListener('change', filtrarTabela);
+    function filtrarTabela() {
+      const status = document.getElementById('filter-status').value;
+      const cliente = document.getElementById('filter-cliente').value;
+      const produto = document.getElementById('filter-produto').value.toLowerCase();
+      const data = document.getElementById('filter-data').value;
+      const table = document.getElementById('pedidos-table');
+      for (let i = 1; i < table.rows.length; i++) {
+        const row = table.rows[i];
+        let show = true;
+        if (status) {
+          show = show && row.cells[5].textContent.toLowerCase().includes(status);
+        }
+        if (cliente) {
+          show = show && row.cells[1].textContent === cliente;
+        }
+        if (produto) {
+          show = show && row.cells[2].textContent.toLowerCase().includes(produto);
+        }
+        if (data) {
+          show = show && row.cells[4].textContent === data;
+        }
+        row.style.display = show ? '' : 'none';
+      }
+    }
+    // Modal Antecipar Produção
+    let pedidoSelecionado = null;
+    document.querySelectorAll('.btn-antecipar').forEach(btn => {
+      btn.addEventListener('click', function() {
+        pedidoSelecionado = this.getAttribute('data-pedido');
+        abrirModalAntecipar(pedidoSelecionado);
+      });
+    });
+    function abrirModalAntecipar(pedidoId) {
+      const pedidoRow = Array.from(document.querySelectorAll('#pedidos-table tbody tr')).find(tr => tr.cells[0].textContent === pedidoId);
+      const produto = pedidoRow.cells[2].textContent;
+      const cliente = pedidoRow.cells[1].textContent;
+      const quantidade = pedidoRow.cells[3].textContent;
+      const dataEntrega = pedidoRow.cells[4].textContent;
+      document.getElementById('modal-body').innerHTML = `
+        <div><b>Pedido:</b> ${pedidoId}</div>
+        <div><b>Cliente:</b> ${cliente}</div>
+        <div><b>Produto:</b> ${produto}</div>
+        <div><b>Quantidade:</b> ${quantidade}</div>
+        <div><b>Data de Entrega:</b> ${dataEntrega}</div>
+        <hr style='margin:16px 0;'>
+        <div style='margin-bottom:8px;'><b>Cenários de Antecipação:</b></div>
+        <ul style='margin-bottom:10px;'>
+          <li>Antecipar para produção imediata (libera capacidade extra)</li>
+          <li>Realocar produção entre plantas (reduz lead time)</li>
+          <li>Priorizar pedido no sequenciamento (impacta outros pedidos)</li>
+        </ul>
+        <div style='font-size:0.98em;color:#555;'>Ao confirmar, o pedido será destacado no sequenciamento e você poderá visualizar o impacto nos KPIs.</div>
+      `;
+      document.getElementById('modal-antecipar').style.display = 'block';
+    }
+    document.getElementById('modal-close').onclick = function() {
+      document.getElementById('modal-antecipar').style.display = 'none';
+    };
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('modal-antecipar')) {
+        document.getElementById('modal-antecipar').style.display = 'none';
+      }
+    };
+    // Botão Confirmar Antecipação
+    document.getElementById('btn-confirm-antecipar').onclick = function() {
+      if (pedidoSelecionado) {
+        window.location.href = 'sequenciamento-gantt.html?antecipado=' + pedidoSelecionado;
+      }
+    };
+    // Botão Ver Estoque de Granel
+    document.getElementById('btn-ver-granel').onclick = function() {
+      window.location.href = 'estoque-granel.html';
+    };
+    // Botão Sincronizar com SAP
+    document.getElementById('btn-sync').onclick = function() {
+      this.disabled = true;
+      this.textContent = 'Sincronizando...';
+      setTimeout(() => {
+        this.disabled = false;
+        this.textContent = 'Sincronizar com SAP';
+        alert('Sincronização concluída com SAP!');
+      }, 1800);
+    };
+  </script>
+</body>
+</html>
