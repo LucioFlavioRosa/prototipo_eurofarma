@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cockpit de Replanejamento | PCP Eurofarma</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+  <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+  <script src="assets/js/aps-optimizer.js"></script>
+  <style>
+    body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f6f7fb; }
+    .cockpit-wrapper { display: flex; min-height: 100vh; }
+    .cockpit-sidebar { background: #00358e; color: #fff; width: 340px; padding: 32px 24px; box-shadow: 2px 0 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+    .cockpit-sidebar h2 { font-size: 1.4rem; margin-bottom: 24px; font-weight: 700; }
+    .cockpit-kpi { margin-bottom: 18px; }
+    .cockpit-kpi span { font-weight: 600; font-size: 1.1rem; }
+    .cockpit-kpi .cockpit-kpi-value { font-size: 1.3rem; font-weight: 900; margin-left: 8px; }
+    .btn-salvar { background: #ffd600; color: #00358e; font-weight: 700; border: none; border-radius: 4px; padding: 12px 24px; font-size: 1.1rem; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+    .btn-salvar:hover { background: #ffe46b; }
+    .cockpit-main { flex: 1; padding: 40px 32px; }
+    .cockpit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .cockpit-header h1 { font-size: 2rem; color: #00358e; font-weight: 900; }
+    .cockpit-header .cockpit-nav { font-size: 1rem; }
+    .cockpit-header .cockpit-nav a { color: #00358e; text-decoration: underline; margin-left: 18px; }
+    .cockpit-gantt-container { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,53,142,0.07); padding: 32px; }
+    .cockpit-gantt-title { font-size: 1.3rem; font-weight: 700; color: #00358e; margin-bottom: 16px; }
+    .cockpit-gantt-chart { width: 100%; overflow-x: auto; margin-bottom: 24px; }
+    .cockpit-gantt-table { border-collapse: collapse; width: 100%; }
+    .cockpit-gantt-table th, .cockpit-gantt-table td { border: 1px solid #e0e5f2; padding: 8px 10px; text-align: left; }
+    .cockpit-gantt-table th { background: #f0f4fa; color: #00358e; font-weight: 700; }
+    .cockpit-gantt-bar { height: 28px; border-radius: 6px; display: inline-block; position: relative; cursor: grab; }
+    .cockpit-gantt-bar[data-status="setup"] { background: #ffd600; }
+    .cockpit-gantt-bar[data-status="prod"] { background: #00358e; }
+    .cockpit-gantt-bar[data-status="wait"] { background: #e0e5f2; }
+    .cockpit-gantt-bar[data-status="blocked"] { background: #ff4d4f; }
+    .cockpit-gantt-bar .cockpit-gantt-label { position: absolute; left: 8px; top: 4px; color: #fff; font-size: 0.95rem; font-weight: 700; }
+    .cockpit-gantt-bar[data-status="setup"] .cockpit-gantt-label { color: #00358e; }
+    .cockpit-gantt-bar[data-status="blocked"] .cockpit-gantt-label { color: #fff; }
+    .cockpit-gantt-legend { margin-top: 12px; font-size: 0.95rem; }
+    .cockpit-gantt-legend span { margin-right: 18px; }
+    .cockpit-gantt-legend .legend-setup { color: #ffd600; font-weight: 700; }
+    .cockpit-gantt-legend .legend-prod { color: #00358e; font-weight: 700; }
+    .cockpit-gantt-legend .legend-blocked { color: #ff4d4f; font-weight: 700; }
+    .cockpit-gantt-legend .legend-wait { color: #e0e5f2; font-weight: 700; }
+    .cenarios-comparacao { display: flex; gap: 32px; margin-top: 40px; }
+    .cenario-panel { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,53,142,0.07); padding: 24px; flex: 1; }
+    .cenario-panel h3 { color: #00358e; font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+    .cenario-panel table { width: 100%; border-collapse: collapse; }
+    .cenario-panel th, .cenario-panel td { border: 1px solid #e0e5f2; padding: 6px 8px; text-align: left; }
+    .cenario-panel th { background: #f0f4fa; color: #00358e; font-weight: 700; }
+    .cenario-panel .kpi-diff-up { color: #27ae60; font-weight: 700; }
+    .cenario-panel .kpi-diff-down { color: #e74c3c; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="cockpit-wrapper">
+    <aside class="cockpit-sidebar">
+      <h2>KPIs do Cenário Atual</h2>
+      <div class="cockpit-kpi"><span>Faturamento Previsto:</span> <span class="cockpit-kpi-value" id="cockpit-kpi-faturamento">R$ 2.450.000</span></div>
+      <div class="cockpit-kpi"><span>Margem Líquida:</span> <span class="cockpit-kpi-value" id="cockpit-kpi-margem">R$ 1.120.000</span></div>
+      <div class="cockpit-kpi"><span>Taxa de Atendimento:</span> <span class="cockpit-kpi-value" id="cockpit-kpi-atendimento">97,2%</span></div>
+      <button class="btn-salvar" id="btn-salvar" aria-label="Salvar Cenário">Salvar Cenário</button>
+    </aside>
+    <main class="cockpit-main">
+      <div class="cockpit-header">
+        <h1>Cockpit de Replanejamento</h1>
+        <nav class="cockpit-nav">
+          <a href="sequenciamento-aps.html">Sequenciamento Ótimo</a>
+        </nav>
+      </div>
+      <section class="cockpit-gantt-container">
+        <div class="cockpit-gantt-title">Gantt Chart - Drag-and-Drop (Maio 2025)</div>
+        <div class="cockpit-gantt-chart">
+          <table class="cockpit-gantt-table" aria-label="Replanejamento de Produção">
+            <thead>
+              <tr>
+                <th>Equipamento</th>
+                <th>SKU</th>
+                <th>Ordem</th>
+                <th>Início</th>
+                <th>Término</th>
+                <th>Status</th>
+                <th>Sequência</th>
+              </tr>
+            </thead>
+            <tbody id="cockpit-gantt-body">
+              <tr draggable="true">
+                <td>Reator 01</td>
+                <td>AMOX-500MG</td>
+                <td>#O-10234</td>
+                <td>02/05 08:00</td>
+                <td>02/05 16:00</td>
+                <td>Produção</td>
+                <td><div class="cockpit-gantt-bar" data-status="prod" style="width:120px"><span class="cockpit-gantt-label">AMOX-500MG</span></div></td>
+              </tr>
+              <tr draggable="true">
+                <td>Reator 01</td>
+                <td>AMOX-875MG</td>
+                <td>#O-10236</td>
+                <td>02/05 19:00</td>
+                <td>03/05 05:00</td>
+                <td>Produção</td>
+                <td><div class="cockpit-gantt-bar" data-status="prod" style="width:110px"><span class="cockpit-gantt-label">AMOX-875MG</span></div></td>
+              </tr>
+              <tr draggable="true">
+                <td>Envasadora 02</td>
+                <td>AMOX-500MG</td>
+                <td>#O-20211</td>
+                <td>03/05 08:00</td>
+                <td>03/05 15:00</td>
+                <td>Produção</td>
+                <td><div class="cockpit-gantt-bar" data-status="prod" style="width:100px"><span class="cockpit-gantt-label">AMOX-500MG</span></div></td>
+              </tr>
+              <tr draggable="true">
+                <td>Envasadora 02</td>
+                <td>AMOX-875MG</td>
+                <td>#O-20213</td>
+                <td>03/05 18:00</td>
+                <td>04/05 02:00</td>
+                <td>Produção</td>
+                <td><div class="cockpit-gantt-bar" data-status="prod" style="width:105px"><span class="cockpit-gantt-label">AMOX-875MG</span></div></td>
+              </tr>
+              <tr draggable="true">
+                <td>Blister 03</td>
+                <td>AMOX-500MG</td>
+                <td>#O-30301</td>
+                <td>04/05 09:00</td>
+                <td>04/05 17:00</td>
+                <td>Produção</td>
+                <td><div class="cockpit-gantt-bar" data-status="prod" style="width:110px"><span class="cockpit-gantt-label">AMOX-500MG</span></div></td>
+              </tr>
+              <tr draggable="true">
+                <td>Blister 03</td>
+                <td>AMOX-875MG</td>
+                <td>#O-30303</td>
+                <td>04/05 20:00</td>
+                <td>05/05 04:00</td>
+                <td>Produção</td>
+                <td><div class="cockpit-gantt-bar" data-status="prod" style="width:100px"><span class="cockpit-gantt-label">AMOX-875MG</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cockpit-gantt-legend">
+          <span class="legend-setup">■ Setup</span>
+          <span class="legend-prod">■ Produção</span>
+          <span class="legend-blocked">■ Bloqueado</span>
+          <span class="legend-wait">■ Espera</span>
+        </div>
+      </section>
+      <section class="cenarios-comparacao">
+        <div class="cenario-panel">
+          <h3>Cenário Base</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Faturamento</th>
+                <th>Margem (%)</th>
+                <th>Taxa Atendimento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AMOX-500MG</td>
+                <td>980.000</td>
+                <td>46%</td>
+                <td>98%</td>
+              </tr>
+              <tr>
+                <td>AMOX-875MG</td>
+                <td>1.470.000</td>
+                <td>52%</td>
+                <td>96%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cenario-panel">
+          <h3>Cenário Simulado</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Faturamento</th>
+                <th>Margem (%)</th>
+                <th>Taxa Atendimento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AMOX-500MG</td>
+                <td>1.020.000 <span class="kpi-diff-up">▲</span></td>
+                <td>47% <span class="kpi-diff-up">▲</span></td>
+                <td>99% <span class="kpi-diff-up">▲</span></td>
+              </tr>
+              <tr>
+                <td>AMOX-875MG</td>
+                <td>1.430.000 <span class="kpi-diff-down">▼</span></td>
+                <td>51% <span class="kpi-diff-down">▼</span></td>
+                <td>95% <span class="kpi-diff-down">▼</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    // Drag-and-drop Gantt Chart
+    const tbody = document.getElementById('cockpit-gantt-body');
+    let dragSrcRow = null;
+    tbody.addEventListener('dragstart', function(e) {
+      dragSrcRow = e.target;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    tbody.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    });
+    tbody.addEventListener('drop', function(e) {
+      e.preventDefault();
+      if (dragSrcRow && e.target.closest('tr') && dragSrcRow !== e.target.closest('tr')) {
+        tbody.insertBefore(dragSrcRow, e.target.closest('tr').nextSibling);
+        dragSrcRow = null;
+        recalculateKPIs();
+      }
+    });
+    function recalculateKPIs() {
+      // Simulação de recálculo dos KPIs ao mover ordens
+      document.getElementById('cockpit-kpi-faturamento').textContent = 'R$ 2.470.000';
+      document.getElementById('cockpit-kpi-margem').textContent = 'R$ 1.130.000';
+      document.getElementById('cockpit-kpi-atendimento').textContent = '98,1%';
+    }
+    // Botão Salvar Cenário
+    document.getElementById('btn-salvar').addEventListener('click', function() {
+      alert('Cenário salvo para aprovação. Workflow iniciado.');
+    });
+  </script>
+</body>
+</html>
