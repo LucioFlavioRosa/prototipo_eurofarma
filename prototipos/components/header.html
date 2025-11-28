@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Header PCP Eurofarma</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <style>
+    .pcp-header {
+      background: #00358e;
+      color: #fff;
+      font-family: 'Lato', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 72px;
+      box-shadow: 0 2px 8px rgba(0,53,142,0.07);
+      z-index: 100;
+    }
+    .pcp-header .logo {
+      display: flex;
+      align-items: center;
+    }
+    .pcp-header .logo img {
+      height: 44px;
+      margin-right: 16px;
+    }
+    .pcp-header .nav {
+      display: flex;
+      gap: 24px;
+    }
+    .pcp-header .nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .pcp-header .nav a.active, .pcp-header .nav a:hover {
+      background: #002c6e;
+    }
+    .pcp-header .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .pcp-header .user-menu .lang-select {
+      background: #fff;
+      color: #00358e;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .pcp-header .user-menu .user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-weight: 500;
+    }
+    .pcp-header .user-menu .user-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      color: #00358e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header class="pcp-header">
+    <div class="logo">
+      <a href="/pcp-dashboard.html" aria-label="Ir para Dashboard PCP">
+        <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma PCP">
+      </a>
+      <span style="font-size:1.4em;font-weight:700;letter-spacing:1px;">PCP Eurofarma</span>
+    </div>
+    <nav class="nav" aria-label="Navegação Principal PCP">
+      <a href="/pcp-dashboard.html" class="active">Dashboard</a>
+      <a href="/modulo-pmp.html">Plano Mestre (E01)</a>
+      <a href="/modulo-explosao.html">Explosão Estrutura (E02)</a>
+      <a href="/modulo-integracao-sap.html">Integração SAP MRP (E03)</a>
+      <a href="/modulo-sequenciamento.html">Sequenciamento Ótimo (E04)</a>
+      <a href="/modulo-replanejamento.html">Cockpit Replanejamento (E05)</a>
+      <a href="/modulo-pedidos.html">Gestão de Pedidos (E06)</a>
+      <a href="/modulo-workflow.html">Workflow Aprovação (E07)</a>
+      <a href="/modulo-materia-prima.html">Monitoramento Matéria-Prima (E08)</a>
+      <a href="/modulo-kpi.html">Dashboard KPIs (E09)</a>
+      <a href="/modulo-simulacao.html">Simulação 'E Se' (E10)</a>
+      <a href="/modulo-granel.html">Gestão Granel (E11)</a>
+      <a href="/modulo-manutencao.html">Manutenção Preditiva (E12)</a>
+      <a href="/modulo-comunicacao.html">Comunicação Automática (E13)</a>
+      <a href="/modulo-acuracidade.html">Acuracidade Forecast (E14)</a>
+      <a href="/modulo-terceirizacao.html">Gestão Terceirização (E15)</a>
+    </nav>
+    <div class="user-menu">
+      <select class="lang-select" aria-label="Selecionar idioma">
+        <option value="pt" selected>PT</option>
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+      </select>
+      <div class="user">
+        <span class="user-icon" aria-label="Usuário">A</span>
+        <span>Administrador</span>
+      </div>
+    </div>
+  </header>
+</body>
+</html>
