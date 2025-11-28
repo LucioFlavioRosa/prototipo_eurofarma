@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>Sidebar PCP Eurofarma</title>
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+  <style>
+    .pcp-sidebar {
+      width: 260px;
+      background: #00358e;
+      color: #fff;
+      font-family: 'Lato', Arial, sans-serif;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #e0e0e0;
+      box-shadow: 2px 0 8px rgba(0,53,142,0.05);
+    }
+    .pcp-sidebar .sidebar-logo {
+      display: flex;
+      align-items: center;
+      padding: 24px 24px 16px 24px;
+      border-bottom: 1px solid #002c6e;
+    }
+    .pcp-sidebar .sidebar-logo img {
+      height: 36px;
+      margin-right: 12px;
+    }
+    .pcp-sidebar .sidebar-logo span {
+      font-size: 1.15em;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .pcp-sidebar nav {
+      flex: 1;
+      padding: 16px 0 0 0;
+      overflow-y: auto;
+    }
+    .pcp-sidebar .menu-group {
+      margin-bottom: 18px;
+    }
+    .pcp-sidebar .menu-group-title {
+      font-size: 0.98em;
+      font-weight: 600;
+      color: #b3c7e6;
+      margin-left: 24px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pcp-sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .pcp-sidebar li {
+      margin-bottom: 2px;
+    }
+    .pcp-sidebar a {
+      display: flex;
+      align-items: center;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 24px;
+      font-size: 1em;
+      border-radius: 4px 0 0 4px;
+      transition: background 0.2s;
+      gap: 10px;
+      position: relative;
+    }
+    .pcp-sidebar a.active, .pcp-sidebar a:hover {
+      background: #002c6e;
+      font-weight: 700;
+    }
+    .pcp-sidebar .icon {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+    .pcp-sidebar .indicator {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffe600;
+      display: none;
+    }
+    .pcp-sidebar a.active .indicator {
+      display: inline-block;
+    }
+    @media (max-width: 900px) {
+      .pcp-sidebar { width: 100vw; height: auto; position: relative; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="pcp-sidebar" aria-label="Menu lateral PCP">
+    <div class="sidebar-logo">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma PCP">
+      <span>PCP Eurofarma</span>
+    </div>
+    <nav>
+      <div class="menu-group">
+        <div class="menu-group-title">Planejamento</div>
+        <ul>
+          <li><a href="/modulo-pmp.html"><span class="icon">📅</span>Plano Mestre de Produção (E01)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-explosao.html"><span class="icon">🧩</span>Explosão de Estrutura (E02)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-integracao-sap.html"><span class="icon">🔗</span>Integração SAP MRP (E03)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-sequenciamento.html"><span class="icon">⏱️</span>Sequenciamento Ótimo (E04)<span class="indicator"></span></a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <div class="menu-group-title">Execução</div>
+        <ul>
+          <li><a href="/modulo-replanejamento.html"><span class="icon">🔄</span>Cockpit Replanejamento (E05)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-pedidos.html"><span class="icon">📦</span>Gestão de Pedidos (E06)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-workflow.html"><span class="icon">📝</span>Workflow de Aprovação (E07)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-materia-prima.html"><span class="icon">🧪</span>Monitoramento Matéria-Prima (E08)<span class="indicator"></span></a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <div class="menu-group-title">Monitoramento</div>
+        <ul>
+          <li><a href="/modulo-kpi.html"><span class="icon">📊</span>Dashboard KPIs (E09)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-simulacao.html"><span class="icon">🧮</span>Simulação 'E Se' (E10)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-granel.html"><span class="icon">🛢️</span>Gestão de Granel (E11)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-manutencao.html"><span class="icon">🔧</span>Manutenção Preditiva (E12)<span class="indicator"></span></a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <div class="menu-group-title">Análise</div>
+        <ul>
+          <li><a href="/modulo-comunicacao.html"><span class="icon">📤</span>Comunicação Automática (E13)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-acuracidade.html"><span class="icon">📈</span>Acuracidade Forecast (E14)<span class="indicator"></span></a></li>
+          <li><a href="/modulo-terceirizacao.html"><span class="icon">🏭</span>Gestão Terceirização (E15)<span class="indicator"></span></a></li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+</body>
+</html>
