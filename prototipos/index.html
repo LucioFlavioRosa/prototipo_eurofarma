@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+  <meta name="description" content="Dashboard Executivo PCP Eurofarma - KPIs, Alertas e Navegação Inteligente">
+  <title>Dashboard Executivo PCP | Eurofarma</title>
+  <!-- Fontes e Cores Eurofarma -->
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Intro.js para Tour Guiado -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
+  <style>
+    :root {
+      --azul-eurofarma: #0033A0;
+      --verde-eurofarma: #00A651;
+      --cinza-bg: #f7f9fb;
+      --cinza-card: #ffffff;
+      --cinza-texto: #333;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+      --header-height: 64px;
+      --footer-height: 48px;
+      --transition: 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="dark"] {
+      --cinza-bg: #181c23;
+      --cinza-card: #232a36;
+      --cinza-texto: #f5f6fa;
+      --shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Lato', Arial, sans-serif;
+      background: var(--cinza-bg);
+      color: var(--cinza-texto);
+      transition: background var(--transition), color var(--transition);
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      height: var(--header-height);
+      background: var(--azul-eurofarma);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo img {
+      height: 38px;
+      width: auto;
+    }
+    nav {
+      display: flex;
+      gap: 24px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color var(--transition);
+      font-size: 1rem;
+    }
+    nav a.active, nav a:hover {
+      border-bottom: 2px solid var(--verde-eurofarma);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--azul-eurofarma);
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: 2px solid var(--verde-eurofarma);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .dark-toggle {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    main {
+      flex: 1 1 auto;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 16px 16px 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .alertas-criticos {
+      margin-bottom: 28px;
+      overflow-x: auto;
+      display: flex;
+      gap: 18px;
+      scroll-behavior: smooth;
+      animation: fadeIn 1s;
+    }
+    .alerta-card {
+      min-width: 320px;
+      background: #fffbe6;
+      border-left: 6px solid #ffb300;
+      color: #664d03;
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      padding: 18px 24px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: slideIn 0.7s;
+      position: relative;
+    }
+    .alerta-card[data-tipo="risco"] {
+      border-left-color: #e53935;
+      background: #fff0f0;
+      color: #b71c1c;
+    }
+    .alerta-card[data-tipo="aprovacao"] {
+      border-left-color: #1976d2;
+      background: #e3f2fd;
+      color: #0d47a1;
+    }
+    .alerta-card .material-icons {
+      font-size: 2rem;
+      margin-right: 8px;
+    }
+    .alerta-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      margin-bottom: 36px;
+    }
+    .kpi-card {
+      background: var(--cinza-card);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 28px 24px 22px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-height: 140px;
+      animation: fadeIn 1.1s;
+      transition: background var(--transition), color var(--transition);
+    }
+    .kpi-label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--azul-eurofarma);
+      margin-bottom: 10px;
+    }
+    [data-theme="dark"] .kpi-label {
+      color: var(--verde-eurofarma);
+    }
+    .kpi-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--verde-eurofarma);
+      margin-bottom: 4px;
+    }
+    .kpi-trend {
+      font-size: 1rem;
+      color: #888;
+      margin-top: 2px;
+    }
+    .kpi-card .material-icons {
+      font-size: 2.1rem;
+      margin-bottom: 8px;
+      color: var(--azul-eurofarma);
+    }
+    [data-theme="dark"] .kpi-card .material-icons {
+      color: var(--verde-eurofarma);
+    }
+    .graficos-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 32px;
+      justify-content: space-between;
+    }
+    .grafico-box {
+      background: var(--cinza-card);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 24px 20px;
+      flex: 1 1 420px;
+      min-width: 320px;
+      max-width: 600px;
+      animation: fadeIn 1.2s;
+      transition: background var(--transition), color var(--transition);
+    }
+    .grafico-titulo {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--azul-eurofarma);
+    }
+    [data-theme="dark"] .grafico-titulo {
+      color: var(--verde-eurofarma);
+    }
+    .tour-btn {
+      background: var(--verde-eurofarma);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 18px;
+      transition: background var(--transition);
+    }
+    .tour-btn:hover {
+      background: #008d41;
+    }
+    footer {
+      height: var(--footer-height);
+      background: var(--azul-eurofarma);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.98rem;
+      gap: 18px;
+      margin-top: 32px;
+      box-shadow: 0 -1px 6px rgba(0,0,0,0.06);
+    }
+    footer a {
+      color: #fff;
+      text-decoration: underline;
+      margin: 0 8px;
+      font-weight: 500;
+    }
+    @media (max-width: 900px) {
+      .graficos-section {
+        flex-direction: column;
+        gap: 18px;
+      }
+      .grafico-box {
+        max-width: 100%;
+      }
+      header {
+        flex-direction: column;
+        height: auto;
+        padding: 12px 8px;
+        gap: 12px;
+      }
+      nav {
+        gap: 12px;
+      }
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 14px 2vw 8px 2vw;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .grafico-box {
+        padding: 14px 6px;
+      }
+      .alerta-card {
+        min-width: 220px;
+        font-size: 0.98rem;
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(32px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-32px); }
+      to { opacity: 1; transform: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+  <header>
+    <div class="logo" data-intro="Bem-vindo ao PCP Eurofarma! Este é o menu principal.">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" height="38">
+      <span style="font-weight:900;font-size:1.25rem;letter-spacing:1px;">PCP Plataforma</span>
+    </div>
+    <nav>
+      <a href="pmp.html" id="nav-pmp">PMP</a>
+      <a href="sequenciamento.html" id="nav-seq">Sequenciamento</a>
+      <a href="carteira.html" id="nav-cart">Carteira de Pedidos</a>
+      <a href="simulacao.html" id="nav-sim">Simulação</a>
+      <a href="relatorios.html" id="nav-rel">Relatórios</a>
+    </nav>
+    <div class="header-actions">
+      <button class="dark-toggle" id="darkToggle" aria-label="Alternar modo escuro" title="Dark Mode" data-intro="Alterne entre modo claro e escuro.">
+        <span class="material-icons" id="darkIcon">dark_mode</span>
+      </button>
+      <button class="tour-btn" onclick="startTour()" data-intro="Clique para iniciar um tour guiado da plataforma.">Tour Guiado</button>
+      <div class="avatar" data-intro="Aqui está o seu perfil.">AC</div>
+    </div>
+  </header>
+  <main>
+    <section class="alertas-criticos" id="alertasCriticos" data-intro="Alertas críticos aparecem aqui: riscos, rupturas e aprovações pendentes.">
+      <!-- Cards de alerta serão inseridos dinamicamente -->
+    </section>
+    <section class="kpi-grid" data-intro="KPIs principais do PCP: monitore a performance do planejamento.">
+      <div class="kpi-card" style="animation-delay:0.1s">
+        <span class="material-icons">fact_check</span>
+        <div class="kpi-label">Acuracidade do Plano</div>
+        <div class="kpi-value" id="kpiAcuracidade">97,8%</div>
+        <div class="kpi-trend">Meta: &ge; 95%</div>
+      </div>
+      <div class="kpi-card" style="animation-delay:0.2s">
+        <span class="material-icons">check_circle</span>
+        <div class="kpi-label">Taxa de Atendimento (OTIF)</div>
+        <div class="kpi-value" id="kpiOTIF">94,2%</div>
+        <div class="kpi-trend">Meta: &ge; 92%</div>
+      </div>
+      <div class="kpi-card" style="animation-delay:0.3s">
+        <span class="material-icons">precision_manufacturing</span>
+        <div class="kpi-label">Utilização de Capacidade</div>
+        <div class="kpi-value" id="kpiCapacidade">88,6%</div>
+        <div class="kpi-trend">Meta: 85-95%</div>
+      </div>
+      <div class="kpi-card" style="animation-delay:0.4s">
+        <span class="material-icons">attach_money</span>
+        <div class="kpi-label">Faturamento Realizado vs. Planejado</div>
+        <div class="kpi-value" id="kpiFaturamento">R$ 18,2M / R$ 19,0M</div>
+        <div class="kpi-trend">95,8% do planejado</div>
+      </div>
+    </section>
+    <section class="graficos-section">
+      <div class="grafico-box" data-intro="Tendência mensal dos principais KPIs.">
+        <div class="grafico-titulo">Tendência Mensal - Acuracidade do Plano (%)</div>
+        <canvas id="graficoAcuracidade" width="520" height="240" aria-label="Gráfico de linha da acuracidade do plano"></canvas>
+      </div>
+      <div class="grafico-box" data-intro="Comparativo de OTIF por planta.">
+        <div class="grafico-titulo">OTIF por Planta - Últimos 6 Meses</div>
+        <canvas id="graficoOTIFPlanta" width="520" height="240" aria-label="Gráfico de barras OTIF por planta"></canvas>
+      </div>
+    </section>
+    <section class="grafico-box" style="max-width:100%;margin-bottom:0;" data-intro="Veja o desempenho de faturamento mês a mês.">
+      <div class="grafico-titulo">Faturamento Realizado vs. Planejado (R$ Milhões)</div>
+      <canvas id="graficoFaturamento" width="1100" height="260" aria-label="Gráfico de linha Faturamento"></canvas>
+    </section>
+  </main>
+  <footer>
+    <span>&copy; 2024 Eurofarma - PCP Plataforma</span>
+    <a href="https://eurofarma.com.br/" target="_blank" rel="noopener">Site Institucional</a>
+    <a href="#" onclick="alert('Política de Privacidade disponível em breve.')">Política de Privacidade</a>
+    <a href="#" onclick="alert('Termos de Uso disponíveis em breve.')">Termos de Uso</a>
+  </footer>
+  <script>
+    // Dark Mode
+    const root = document.documentElement;
+    const darkToggle = document.getElementById('darkToggle');
+    const darkIcon = document.getElementById('darkIcon');
+    function setTheme(theme) {
+      if(theme === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        darkIcon.textContent = 'light_mode';
+      } else {
+        root.setAttribute('data-theme', 'light');
+        darkIcon.textContent = 'dark_mode';
+      }
+      localStorage.setItem('theme', theme);
+    }
+    function toggleTheme() {
+      const current = root.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    }
+    darkToggle.addEventListener('click', toggleTheme);
+    // Inicialização
+    (function(){
+      const saved = localStorage.getItem('theme');
+      setTheme(saved === 'dark' ? 'dark' : 'light');
+    })();
+    // Alertas Críticos - Exemplo Realista
+    const alertas = [
+      {
+        tipo: 'risco',
+        icone: 'warning',
+        texto: 'Pedido #102394 para Amoxicilina 500mg não será atendido no prazo. Estoque insuficiente e produção não programada.'
+      },
+      {
+        tipo: 'ruptura',
+        icone: 'error',
+        texto: 'Ruptura iminente: Matéria-prima "Ácido Clavulânico" com estoque crítico para linha Planta 2.'
+      },
+      {
+        tipo: 'aprovacao',
+        icone: 'approval',
+        texto: 'Aprovação pendente: Sequenciamento alternativo para lote #22045 aguardando validação do Gerente PCP.'
+      }
+    ];
+    function renderAlertas() {
+      const container = document.getElementById('alertasCriticos');
+      container.innerHTML = '';
+      alertas.forEach((a, idx) => {
+        const card = document.createElement('div');
+        card.className = 'alerta-card';
+        card.setAttribute('data-tipo', a.tipo);
+        card.innerHTML = `<span class="material-icons">${a.icone}</span>${a.texto}<button class="alerta-close" aria-label="Fechar alerta" onclick="this.parentNode.remove()">&times;</button>`;
+        container.appendChild(card);
+      });
+    }
+    renderAlertas();
+    // Chart.js - Dados Realistas
+    // 1. Tendência Mensal Acuracidade
+    const ctxAcur = document.getElementById('graficoAcuracidade').getContext('2d');
+    new Chart(ctxAcur, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        datasets: [{
+          label: 'Acuracidade (%)',
+          data: [96.2, 97.0, 95.4, 97.8, 98.1, 97.3, 96.9, 98.0, 97.5, 97.8, 98.2, 97.9],
+          borderColor: '#0033A0',
+          backgroundColor: 'rgba(0,51,160,0.10)',
+          tension: 0.35,
+          pointRadius: 4,
+          pointBackgroundColor: '#00A651',
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { min: 94, max: 100, ticks: { stepSize: 1 } }
+        },
+        animation: { duration: 1200, easing: 'easeOutCubic' }
+      }
+    });
+    // 2. OTIF por Planta (Barras)
+    const ctxOTIF = document.getElementById('graficoOTIFPlanta').getContext('2d');
+    new Chart(ctxOTIF, {
+      type: 'bar',
+      data: {
+        labels: ['Planta 1', 'Planta 2', 'Planta 3', 'Planta 4'],
+        datasets: [
+          {
+            label: 'Jan', data: [93.5, 94.1, 91.8, 92.7], backgroundColor: '#0033A0'
+          },
+          {
+            label: 'Fev', data: [94.2, 95.0, 92.5, 93.2], backgroundColor: '#00A651'
+          },
+          {
+            label: 'Mar', data: [94.0, 93.8, 93.0, 92.9], backgroundColor: '#FFD600'
+          },
+          {
+            label: 'Abr', data: [95.1, 94.7, 92.8, 93.5], backgroundColor: '#00B8F4'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { min: 90, max: 100, ticks: { stepSize: 2 } }
+        },
+        animation: { duration: 1200, easing: 'easeOutCubic' }
+      }
+    });
+    // 3. Faturamento Realizado vs Planejado
+    const ctxFat = document.getElementById('graficoFaturamento').getContext('2d');
+    new Chart(ctxFat, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        datasets: [
+          {
+            label: 'Planejado',
+            data: [16.8, 17.2, 17.9, 18.5, 18.9, 19.0, 19.1, 18.8, 19.2, 19.3, 19.0, 19.1],
+            borderColor: '#0033A0',
+            backgroundColor: 'rgba(0,51,160,0.08)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35
+          },
+          {
+            label: 'Realizado',
+            data: [16.3, 17.0, 17.2, 18.2, 18.5, 18.2, 18.7, 18.4, 18.9, 18.7, 18.2, 18.6],
+            borderColor: '#00A651',
+            backgroundColor: 'rgba(0,166,81,0.08)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { min: 16, max: 20, ticks: { stepSize: 0.5 } }
+        },
+        animation: { duration: 1200, easing: 'easeOutCubic' }
+      }
+    });
+    // Tour Guiado (Intro.js)
+    function startTour() {
+      introJs().setOptions({
+        nextLabel: 'Próximo',
+        prevLabel: 'Anterior',
+        doneLabel: 'Concluir',
+        skipLabel: 'Pular',
+        overlayOpacity: 0.6,
+        tooltipClass: 'customTooltip',
+        showProgress: true
+      }).start();
+    }
+    // Navegação ativa
+    function setActiveNav() {
+      const navs = document.querySelectorAll('nav a');
+      navs.forEach(a => a.classList.remove('active'));
+    }
+    setActiveNav(); // Nenhum ativo na home
+  </script>
+</body>
+</html>
