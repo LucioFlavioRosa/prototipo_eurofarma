@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Sequenciamento Ótimo - PCP Eurofarma</title>
+    <meta name="description" content="Sequenciamento ótimo de produção com Gantt Chart interativo, KPIs em tempo real e simulação de cenários.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css" />
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f6f8fa;
+            margin: 0;
+            color: #1a2440;
+        }
+        header {
+            background: #002776;
+            color: #fff;
+            padding: 24px 32px 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header img {
+            height: 40px;
+            margin-right: 24px;
+        }
+        header nav a {
+            color: #fff;
+            margin-left: 24px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            gap: 32px;
+            padding: 32px;
+            min-height: 85vh;
+        }
+        .gantt-area {
+            flex: 2 1 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,39,118,0.08);
+            padding: 24px;
+            overflow-x: auto;
+        }
+        .gantt-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .gantt-header h2 {
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+        .gantt-controls {
+            display: flex;
+            gap: 16px;
+        }
+        .gantt-controls button, .gantt-controls a {
+            background: #002776;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .gantt-controls button:hover, .gantt-controls a:hover {
+            background: #0052b1;
+        }
+        .gantt-chart {
+            width: 100%;
+            min-width: 1200px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .gantt-chart th, .gantt-chart td {
+            padding: 6px 2px;
+            text-align: center;
+        }
+        .gantt-chart th {
+            background: #e6ecf5;
+            font-weight: 600;
+            font-size: 0.95em;
+            border-bottom: 1px solid #cfd8e3;
+        }
+        .gantt-row-label {
+            background: #f1f5fa;
+            font-weight: 600;
+            text-align: left;
+            padding-left: 10px;
+            border-right: 1px solid #e6ecf5;
+        }
+        .gantt-bar {
+            border-radius: 6px;
+            height: 28px;
+            position: relative;
+            cursor: grab;
+            box-shadow: 0 1px 4px rgba(0,39,118,0.09);
+            border: 2px solid transparent;
+            transition: border 0.2s;
+        }
+        .gantt-bar[data-family="Antibióticos"] { background: #2196f3; color: #fff; }
+        .gantt-bar[data-family="Cardio"] { background: #43a047; color: #fff; }
+        .gantt-bar[data-family="Oncologia"] { background: #e53935; color: #fff; }
+        .gantt-bar[data-family="Dermatologia"] { background: #ffb300; color: #fff; }
+        .gantt-bar[data-family="Genéricos"] { background: #6d4c41; color: #fff; }
+        .gantt-bar[data-family="Vacinas"] { background: #8e24aa; color: #fff; }
+        .gantt-bar[data-family="Respiratória"] { background: #00bcd4; color: #fff; }
+        .gantt-bar[data-family="Diabetes"] { background: #f06292; color: #fff; }
+        .gantt-bar.violation {
+            border: 2px solid #e53935;
+            box-shadow: 0 0 0 4px rgba(229,57,53,0.15);
+        }
+        .gantt-bar:hover {
+            filter: brightness(0.95);
+        }
+        .tooltip {
+            position: absolute;
+            left: 50%;
+            top: -38px;
+            transform: translateX(-50%);
+            background: #fff;
+            color: #002776;
+            border: 1px solid #cfd8e3;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 0.98em;
+            box-shadow: 0 2px 8px rgba(0,39,118,0.09);
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .kpi-panel {
+            flex: 1 1 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,39,118,0.08);
+            padding: 24px 18px;
+            min-width: 320px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .kpi-panel h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .kpi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .kpi {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f6f8fa;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 1.08em;
+            font-weight: 600;
+        }
+        .kpi .value {
+            font-size: 1.12em;
+            font-weight: 700;
+            color: #002776;
+        }
+        .kpi .trend-up { color: #43a047; }
+        .kpi .trend-down { color: #e53935; }
+        .alert {
+            background: #e53935;
+            color: #fff;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: none;
+        }
+        @media (max-width: 1100px) {
+            .main-container {
+                flex-direction: column;
+                gap: 18px;
+                padding: 18px;
+            }
+            .kpi-panel {
+                max-width: 100%;
+                min-width: 0;
+            }
+            .gantt-area {
+                padding: 12px;
+            }
+        }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,39,118,0.18);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 10px;
+            padding: 32px 28px;
+            box-shadow: 0 4px 24px rgba(0,39,118,0.13);
+            text-align: center;
+            min-width: 320px;
+        }
+        .modal-content h4 {
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .modal-content button {
+            background: #002776;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .modal-content button:hover {
+            background: #0052b1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display:flex;align-items:center;">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+            <nav aria-label="Navegação principal">
+                <a href="dashboard-pcp.html">Dashboard PCP</a>
+                <a href="sequenciamento-gantt.html" style="font-weight:bold;text-decoration:underline;">Sequenciamento</a>
+                <a href="aprovacoes-workflow.html">Aprovações</a>
+                <a href="pedidos-carteira.html">Pedidos</a>
+                <a href="simulacao-cenarios.html">Simulação</a>
+            </nav>
+        </div>
+        <div>
+            <span style="font-size:1em;font-weight:600;">Usuário: PCP Expert</span>
+        </div>
+    </header>
+    <main class="main-container">
+        <section class="gantt-area">
+            <div class="gantt-header">
+                <h2>Sequenciamento Ótimo de Produção</h2>
+                <div class="gantt-controls">
+                    <button id="btn-gerar">Gerar Sequenciamento Ótimo</button>
+                    <button id="btn-salvar">Salvar Cenário</button>
+                    <a href="simulacao-cenarios.html" id="btn-comparar">Comparar Cenários</a>
+                    <a href="pedidos-carteira.html?filtro=impactados" id="btn-pedidos">Ver Pedidos Impactados</a>
+                </div>
+            </div>
+            <div class="alert" id="alert-violation" role="alert" aria-live="assertive">Sequência inválida: violação de roda de setup!</div>
+            <div style="overflow-x:auto;">
+                <table class="gantt-chart" aria-label="Gantt Chart de Sequenciamento">
+                    <thead>
+                        <tr>
+                            <th style="width:140px;">Linha/Equipamento</th>
+                            <!-- Dias do mês -->
+                            <th colspan="30" style="text-align:center;">Dias do Mês</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <!-- Dias numerados -->
+                            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+                            <th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th>
+                            <th>21</th><th>22</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th><th>29</th><th>30</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gantt-body">
+                        <!-- Linhas de equipamentos preenchidas via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top:18px;">
+                <small style="color:#6d6d6d;">* Arraste as ordens para simular o replanejamento. Cores representam famílias de produto.</small>
+            </div>
+        </section>
+        <aside class="kpi-panel" aria-label="Painel de KPIs">
+            <h3>KPIs em Tempo Real</h3>
+            <div class="kpi-list">
+                <div class="kpi"><span>Faturamento Previsto</span><span class="value trend-up" id="kpi-faturamento">R$ 8.200.000</span></div>
+                <div class="kpi"><span>Margem Líquida</span><span class="value trend-up" id="kpi-margem">R$ 2.350.000</span></div>
+                <div class="kpi"><span>Taxa de Atendimento</span><span class="value trend-up" id="kpi-atendimento">97,2%</span></div>
+            </div>
+            <div style="margin-top:20px;">
+                <h3>Legenda de Famílias</h3>
+                <table style="width:100%;font-size:0.98em;">
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#2196f3;border-radius:4px;"></span></td><td>Antibióticos</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#43a047;border-radius:4px;"></span></td><td>Cardio</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#e53935;border-radius:4px;"></span></td><td>Oncologia</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#ffb300;border-radius:4px;"></span></td><td>Dermatologia</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#6d4c41;border-radius:4px;"></span></td><td>Genéricos</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#8e24aa;border-radius:4px;"></span></td><td>Vacinas</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#00bcd4;border-radius:4px;"></span></td><td>Respiratória</td></tr>
+                    <tr><td><span style="display:inline-block;width:18px;height:18px;background:#f06292;border-radius:4px;"></span></td><td>Diabetes</td></tr>
+                </table>
+            </div>
+        </aside>
+    </main>
+    <!-- Modal de confirmação de salvar cenário -->
+    <div class="modal" id="modal-salvar">
+        <div class="modal-content">
+            <h4>Salvar Cenário</h4>
+            <p>Deseja salvar este cenário de sequenciamento?<br>Após salvar, você será direcionado para o workflow de aprovação.</p>
+            <button id="confirm-salvar">Salvar e Enviar</button>
+            <button id="cancel-salvar">Cancelar</button>
+        </div>
+    </div>
+    <script>
+    // Dados de exemplo para 8 linhas e 40 ordens
+    const linhas = [
+        'Linha 1 - Granulador 500L',
+        'Linha 2 - Reator 1200L',
+        'Linha 3 - Embalagem Blister',
+        'Linha 4 - Líquidos',
+        'Linha 5 - Ampolas',
+        'Linha 6 - Sólidos',
+        'Linha 7 - Vacinas',
+        'Linha 8 - Genéricos'
+    ];
+    const familias = [
+        'Antibióticos', 'Cardio', 'Oncologia', 'Dermatologia', 'Genéricos', 'Vacinas', 'Respiratória', 'Diabetes'
+    ];
+    // Exemplo realista de ordens
+    const produtosPorFamilia = {
+        'Antibióticos': ['Amoxicilina 500mg', 'Cefalexina 1g'],
+        'Cardio': ['Atorvastatina 40mg', 'Losartana 50mg'],
+        'Oncologia': ['Paclitaxel 100mg', 'Imatinibe 400mg'],
+        'Dermatologia': ['Clobetasol 0,05%', 'Cetoconazol 2%'],
+        'Genéricos': ['Paracetamol 750mg', 'Ibuprofeno 400mg'],
+        'Vacinas': ['Vacina Influenza', 'Vacina Covid-19'],
+        'Respiratória': ['Salbutamol 100mcg', 'Fluticasona 250mcg'],
+        'Diabetes': ['Metformina 850mg', 'Insulina NPH']
+    };
+    function gerarOrdens() {
+        const ordens = [];
+        let ordemId = 1001;
+        for(let i=0; i<40; i++) {
+            const linha = linhas[i % linhas.length];
+            const familia = familias[i % familias.length];
+            const produto = produtosPorFamilia[familia][i%2];
+            const dia = 1 + Math.floor(i * 0.75) % 30;
+            const quantidade = 5000 + (i*300)%7000;
+            const tempoSetup = (i%3===0)? 120 : 60;
+            const statusMateriaPrima = (i%7===0)? 'Aguardando Liberação' : 'Liberado';
+            ordens.push({
+                id: ordemId++,
+                linha,
+                familia,
+                produto,
+                dia,
+                quantidade,
+                tempoSetup,
+                statusMateriaPrima
+            });
+        }
+        return ordens;
+    }
+    const ordens = gerarOrdens();
+    // Preencher Gantt Chart
+    function renderGantt() {
+        const tbody = document.getElementById('gantt-body');
+        tbody.innerHTML = '';
+        linhas.forEach((linha, idx) => {
+            const tr = document.createElement('tr');
+            const tdLabel = document.createElement('td');
+            tdLabel.className = 'gantt-row-label';
+            tdLabel.textContent = linha;
+            tr.appendChild(tdLabel);
+            for(let dia=1; dia<=30; dia++) {
+                const td = document.createElement('td');
+                td.style.position = 'relative';
+                // Procurar ordens para esta linha e dia
+                const ordensDia = ordens.filter(o => o.linha===linha && o.dia===dia);
+                ordensDia.forEach(o => {
+                    const bar = document.createElement('div');
+                    bar.className = 'gantt-bar';
+                    bar.setAttribute('draggable','true');
+                    bar.setAttribute('data-id', o.id);
+                    bar.setAttribute('data-family', o.familia);
+                    bar.setAttribute('tabindex', '0');
+                    bar.setAttribute('aria-label', `Ordem ${o.id}, Produto ${o.produto}, Quantidade ${o.quantidade}, Setup ${o.tempoSetup}min, Status ${o.statusMateriaPrima}`);
+                    bar.style.marginBottom = '2px';
+                    bar.innerHTML = `O${o.id}`;
+                    // Tooltip
+                    bar.addEventListener('mouseenter', function(e){
+                        showTooltip(bar, o);
+                    });
+                    bar.addEventListener('mouseleave', function(e){
+                        hideTooltip(bar);
+                    });
+                    // Drag & Drop
+                    bar.addEventListener('dragstart', function(e){
+                        e.dataTransfer.setData('text/plain', o.id);
+                        bar.classList.add('dragging');
+                    });
+                    bar.addEventListener('dragend', function(e){
+                        bar.classList.remove('dragging');
+                    });
+                    td.appendChild(bar);
+                });
+                // Permitir drop
+                td.addEventListener('dragover', function(e){
+                    e.preventDefault();
+                });
+                td.addEventListener('drop', function(e){
+                    e.preventDefault();
+                    const ordemId = parseInt(e.dataTransfer.getData('text/plain'));
+                    const ordem = ordens.find(o => o.id===ordemId);
+                    // Simulação de restrição: se tempoSetup > 100 e mesmo dia já tem outra ordem, viola roda de setup
+                    const violacao = ordem.tempoSetup > 100 && ordens.filter(o2 => o2.linha===linha && o2.dia===dia && o2.id!==ordemId).length>0;
+                    if(violacao){
+                        barViolation(ordemId);
+                        document.getElementById('alert-violation').style.display = 'block';
+                        setTimeout(()=>{document.getElementById('alert-violation').style.display='none';}, 2600);
+                        return;
+                    }
+                    // Atualiza ordem
+                    ordem.linha = linha;
+                    ordem.dia = dia;
+                    renderGantt();
+                    atualizarKPIs();
+                });
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        });
+    }
+    function showTooltip(bar, ordem){
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.innerHTML = `<strong>Ordem #${ordem.id}</strong><br>
+            Produto: ${ordem.produto}<br>
+            Quantidade: ${ordem.quantidade}<br>
+            Setup: ${ordem.tempoSetup} min<br>
+            Matéria-Prima: ${ordem.statusMateriaPrima}`;
+        bar.appendChild(tooltip);
+    }
+    function hideTooltip(bar){
+        const tooltip = bar.querySelector('.tooltip');
+        if(tooltip) bar.removeChild(tooltip);
+    }
+    function barViolation(ordemId){
+        document.querySelectorAll('.gantt-bar').forEach(bar=>{
+            if(parseInt(bar.getAttribute('data-id'))===ordemId){
+                bar.classList.add('violation');
+                setTimeout(()=>{bar.classList.remove('violation');}, 2000);
+            }
+        });
+    }
+    // KPIs dinâmicos (simulação)
+    function atualizarKPIs(){
+        // Simulação: recalcula KPIs com base em distribuição das ordens
+        let faturamento = 8000000;
+        let margem = 2350000;
+        let atendimento = 97.2;
+        // Penaliza se houver ordens com status 'Aguardando Liberação'
+        const pendentes = ordens.filter(o=>o.statusMateriaPrima!=='Liberado').length;
+        if(pendentes>0){
+            atendimento -= pendentes*0.15;
+            margem -= pendentes*12000;
+        }
+        document.getElementById('kpi-faturamento').textContent = 'R$ ' + faturamento.toLocaleString('pt-BR');
+        document.getElementById('kpi-margem').textContent = 'R$ ' + margem.toLocaleString('pt-BR');
+        document.getElementById('kpi-atendimento').textContent = atendimento.toFixed(1)+'%';
+    }
+    // Botões
+    document.getElementById('btn-gerar').addEventListener('click', function(){
+        // Simula novo sequenciamento ótimo
+        ordens.forEach((o,i)=>{
+            o.dia = 1 + ((i*2)%30);
+            o.linha = linhas[i%linhas.length];
+        });
+        renderGantt();
+        atualizarKPIs();
+    });
+    // Modal Salvar Cenário
+    document.getElementById('btn-salvar').addEventListener('click', function(){
+        document.getElementById('modal-salvar').style.display = 'flex';
+    });
+    document.getElementById('cancel-salvar').addEventListener('click', function(){
+        document.getElementById('modal-salvar').style.display = 'none';
+    });
+    document.getElementById('confirm-salvar').addEventListener('click', function(){
+        // Simula salvar e redireciona
+        document.getElementById('modal-salvar').style.display = 'none';
+        window.location.href = 'aprovacoes-workflow.html';
+    });
+    // Inicialização
+    renderGantt();
+    atualizarKPIs();
+    </script>
+</body>
+</html>
