@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Simulação de Cenários 'E Se' - PCP Eurofarma</title>
+    <meta name="description" content="Simulação de cenários para PCP Eurofarma - Planejamento e Controle de Produção.">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f6f8fa;
+            margin: 0;
+            color: #1b2442;
+        }
+        .header {
+            background: #002776;
+            color: #fff;
+            padding: 24px 32px 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header img {
+            height: 48px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            margin: 0 0 0 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            padding: 32px 24px 24px 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .col {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px 20px;
+            flex: 1 1 0;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+        .col:not(:last-child) {
+            margin-right: 0;
+        }
+        .col-params {
+            max-width: 350px;
+        }
+        .col-gantt {
+            min-width: 480px;
+            flex: 2 1 0;
+        }
+        .col-kpis {
+            max-width: 400px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #c9d0db;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f8fafc;
+        }
+        .btn {
+            display: inline-block;
+            background: #002776;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-right: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:active, .btn:focus {
+            background: #001a4d;
+        }
+        .btn-secondary {
+            background: #f6b800;
+            color: #002776;
+        }
+        .btn-secondary:active, .btn-secondary:focus {
+            background: #e0a800;
+        }
+        .divider {
+            height: 1px;
+            background: #e0e4ea;
+            margin: 18px 0 18px 0;
+        }
+        .scenario-select {
+            width: 100%;
+            margin-bottom: 18px;
+        }
+        .history-list {
+            max-height: 180px;
+            overflow-y: auto;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .history-list li {
+            font-size: 0.95rem;
+            padding: 6px 0;
+            border-bottom: 1px solid #e0e4ea;
+            cursor: pointer;
+        }
+        .history-list li:last-child {
+            border-bottom: none;
+        }
+        .history-list li.selected {
+            background: #e6f0ff;
+            font-weight: 600;
+        }
+        .gantt-container {
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .gantt-chart {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+        }
+        .gantt-chart th, .gantt-chart td {
+            border: 1px solid #d1d7e0;
+            padding: 6px 8px;
+            text-align: center;
+            min-width: 70px;
+        }
+        .gantt-bar {
+            border-radius: 6px;
+            color: #fff;
+            font-weight: 600;
+            padding: 4px 0;
+            margin: 0 2px;
+            font-size: 0.96rem;
+            transition: background 0.2s;
+        }
+        .gantt-bar-base {
+            background: #b0b9c8;
+        }
+        .gantt-bar-sim {
+            background: #002776;
+        }
+        .gantt-bar-moved {
+            background: #1cc88a;
+        }
+        .gantt-bar-removed {
+            background: #e74a3b;
+        }
+        .gantt-bar-added {
+            background: #f6b800;
+            color: #002776;
+        }
+        .kpi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+        }
+        .kpi-table th, .kpi-table td {
+            border: 1px solid #d1d7e0;
+            padding: 7px 10px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .kpi-table th {
+            background: #f6b800;
+            color: #002776;
+        }
+        .kpi-table .highlight {
+            background: #e6f0ff;
+            font-weight: 700;
+        }
+        .radar-container {
+            width: 100%;
+            height: 260px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .col-gantt {
+                min-width: 0;
+            }
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .main-container {
+                padding: 8px;
+            }
+            .col {
+                padding: 12px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+            <h1>Simulação de Cenários 'E Se' - PCP</h1>
+        </div>
+        <div>
+            <a href="sequenciamento-aps.html" style="color: #fff; text-decoration: underline; font-size: 1rem;">&larr; Voltar ao Sequenciamento</a>
+        </div>
+    </div>
+    <div class="main-container">
+        <!-- Coluna 1: Parâmetros de Simulação -->
+        <div class="col col-params">
+            <form id="simForm" autocomplete="off">
+                <label for="scenarioSelect">Cenário Simulado</label>
+                <select id="scenarioSelect" class="scenario-select"></select>
+                <div class="divider"></div>
+                <div class="form-group">
+                    <label for="turnos">Adicionar Turnos</label>
+                    <input type="number" id="turnos" name="turnos" min="1" max="4" value="2">
+                </div>
+                <div class="form-group">
+                    <label for="capacidade">Capacidade por Linha (h/dia)</label>
+                    <input type="number" id="capacidade" name="capacidade" min="16" max="48" value="24">
+                </div>
+                <div class="form-group">
+                    <label for="politicaEstoque">Política de Estoque</label>
+                    <select id="politicaEstoque" name="politicaEstoque">
+                        <option value="padrao">Cobertura 1 mês (Padrão)</option>
+                        <option value="agressiva">Cobertura 0,5 mês (Agressiva)</option>
+                        <option value="conservadora">Cobertura 2 meses (Conservadora)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ordem">Antecipar/Atrasar Ordens</label>
+                    <select id="ordem" name="ordem">
+                        <option value="nenhum">Sem alteração</option>
+                        <option value="antecipar">Antecipar ordem crítica (Paracetamol 500mg)</option>
+                        <option value="atrasar">Atrasar ordem não crítica (Ibuprofeno 200mg)</option>
+                    </select>
+                </div>
+                <div style="margin-top: 18px;">
+                    <button type="button" class="btn" id="btnSimular">Executar Simulação</button>
+                    <button type="button" class="btn btn-secondary" id="btnSalvar">Salvar Cenário</button>
+                    <button type="button" class="btn btn-secondary" id="btnDesfazer">Desfazer</button>
+                </div>
+            </form>
+            <div class="divider"></div>
+            <h3 style="font-size:1.1rem; margin-bottom: 8px;">Histórico de Simulações</h3>
+            <ul class="history-list" id="historyList"></ul>
+        </div>
+        <!-- Coluna 2: Gantt Chart -->
+        <div class="col col-gantt">
+            <h2 style="font-size:1.25rem; margin-bottom: 16px;">Sequenciamento de Produção (Gantt Chart)</h2>
+            <div class="gantt-container" id="ganttContainer"></div>
+            <div style="margin-top:10px; font-size:0.97rem;">
+                <span style="display:inline-block; width:16px; height:16px; background:#002776; border-radius:3px; margin-right:4px;"></span> Ordem Simulada
+                <span style="display:inline-block; width:16px; height:16px; background:#b0b9c8; border-radius:3px; margin-left:14px; margin-right:4px;"></span> Ordem Base
+                <span style="display:inline-block; width:16px; height:16px; background:#1cc88a; border-radius:3px; margin-left:14px; margin-right:4px;"></span> Ordem Movida
+                <span style="display:inline-block; width:16px; height:16px; background:#e74a3b; border-radius:3px; margin-left:14px; margin-right:4px;"></span> Ordem Removida
+                <span style="display:inline-block; width:16px; height:16px; background:#f6b800; border-radius:3px; margin-left:14px; margin-right:4px; border:1px solid #002776;"></span> Ordem Adicionada
+            </div>
+        </div>
+        <!-- Coluna 3: KPIs e Radar -->
+        <div class="col col-kpis">
+            <h2 style="font-size:1.25rem; margin-bottom: 16px;">KPIs - Cenário Base vs. Simulado</h2>
+            <table class="kpi-table" id="kpiTable">
+                <thead>
+                    <tr>
+                        <th>KPI</th>
+                        <th>Cenário Base</th>
+                        <th>Cenário Simulado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Faturamento Previsto (R$)</td><td>2.350.000</td><td>2.350.000</td></tr>
+                    <tr><td>Margem Líquida (%)</td><td>28,4</td><td>28,4</td></tr>
+                    <tr><td>Taxa Atendimento (%)</td><td>97,2</td><td>97,2</td></tr>
+                    <tr><td>Tempo de Setup (h)</td><td>38</td><td>38</td></tr>
+                </tbody>
+            </table>
+            <div class="radar-container">
+                <canvas id="radarChart" width="320" height="220" aria-label="Radar de KPIs" role="img"></canvas>
+            </div>
+            <div style="font-size:0.98rem; color:#7a869a;">
+                <strong>Dica:</strong> KPIs destacados em azul indicam melhoria no cenário simulado.
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+    // --- Dados de exemplo realistas ---
+    const baseGantt = [
+      {linha: 'Linha 1', ordens: [
+        {produto: 'Paracetamol 500mg', ini: 1, fim: 5, id: 'O-1001'},
+        {produto: 'Ibuprofeno 200mg', ini: 6, fim: 10, id: 'O-1002'},
+        {produto: 'Dipirona 1g', ini: 11, fim: 15, id: 'O-1003'}
+      ]},
+      {linha: 'Linha 2', ordens: [
+        {produto: 'Amoxicilina 500mg', ini: 1, fim: 7, id: 'O-2001'},
+        {produto: 'Azitromicina 500mg', ini: 8, fim: 12, id: 'O-2002'}
+      ]},
+      {linha: 'Linha 3', ordens: [
+        {produto: 'Vitamina C 1g', ini: 1, fim: 6, id: 'O-3001'},
+        {produto: 'Losartana 50mg', ini: 7, fim: 13, id: 'O-3002'}
+      ]}
+    ];
+    const baseKPIs = {
+      faturamento: 2350000,
+      margem: 28.4,
+      atendimento: 97.2,
+      setup: 38
+    };
+    // Histórico de simulações
+    let scenarioHistory = [];
+    let currentScenario = null;
+    let lastScenario = null;
+    // --- Funções auxiliares ---
+    function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function formatMoney(v) { return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL', maximumFractionDigits:0}); }
+    function formatPct(v) { return v.toFixed(1).replace('.', ','); }
+    // --- Simulação ---
+    function simulate(params) {
+      let gantt = clone(baseGantt);
+      let kpis = clone(baseKPIs);
+      let highlights = {};
+      // Turnos e capacidade
+      if (params.turnos > 2) {
+        kpis.faturamento += 120000 * (params.turnos-2);
+        kpis.atendimento += 0.6 * (params.turnos-2);
+        kpis.setup += 2 * (params.turnos-2);
+      }
+      if (params.capacidade > 24) {
+        kpis.faturamento += 80000 * ((params.capacidade-24)/8);
+        kpis.atendimento += 0.4 * ((params.capacidade-24)/8);
+      }
+      // Política de estoque
+      if (params.politicaEstoque==='agressiva') {
+        kpis.margem += 0.8;
+        kpis.faturamento += 40000;
+      } else if (params.politicaEstoque==='conservadora') {
+        kpis.margem -= 1.0;
+        kpis.faturamento -= 40000;
+      }
+      // Antecipar/atrasar ordens
+      if (params.ordem==='antecipar') {
+        // Move Paracetamol para o início da Linha 1
+        let linha1 = gantt[0].ordens;
+        let idx = linha1.findIndex(o=>o.produto==='Paracetamol 500mg');
+        if (idx>0) {
+          let ordem = linha1.splice(idx,1)[0];
+          linha1.unshift(ordem);
+          highlights[ordem.id] = 'moved';
+          kpis.atendimento += 0.8;
+          kpis.faturamento += 20000;
+        }
+      } else if (params.ordem==='atrasar') {
+        // Move Ibuprofeno para o fim da Linha 1
+        let linha1 = gantt[0].ordens;
+        let idx = linha1.findIndex(o=>o.produto==='Ibuprofeno 200mg');
+        if (idx>=0 && idx<linha1.length-1) {
+          let ordem = linha1.splice(idx,1)[0];
+          linha1.push(ordem);
+          highlights[ordem.id] = 'moved';
+          kpis.atendimento -= 1.2;
+          kpis.faturamento -= 15000;
+        }
+      }
+      // Ajuste de setup se mudar sequência
+      if (params.ordem!=='nenhum') kpis.setup += 2;
+      // Garantir limites
+      kpis.atendimento = Math.max(92, Math.min(100, kpis.atendimento));
+      kpis.margem = Math.max(25, Math.min(32, kpis.margem));
+      // Simular highlight de ordens removidas/adicionadas
+      // (exemplo: se capacidade < 20h/dia, remove última ordem da Linha 3)
+      if (params.capacidade<20) {
+        let l3 = gantt[2].ordens;
+        if (l3.length>1) {
+          let removed = l3.pop();
+          highlights[removed.id] = 'removed';
+          kpis.atendimento -= 2.5;
+          kpis.faturamento -= 35000;
+        }
+      }
+      // Exemplo de ordem adicionada
+      if (params.turnos>3) {
+        let l2 = gantt[1].ordens;
+        let nova = {produto:'Metformina 850mg', ini:13, fim:16, id:'O-NEW1'};
+        l2.push(nova);
+        highlights[nova.id] = 'added';
+        kpis.faturamento += 25000;
+        kpis.atendimento += 0.5;
+      }
+      return {gantt, kpis, highlights};
+    }
+    // --- Renderização do Gantt Chart ---
+    function renderGantt(gantt, highlights) {
+      let dias = 16;
+      let html = '<table class="gantt-chart"><thead><tr><th>Linha</th>';
+      for(let d=1;d<=dias;d++) html+='<th>'+d+'</th>';
+      html+='</tr></thead><tbody>';
+      gantt.forEach(linha => {
+        html+='<tr><td style="font-weight:600; background:#f6f8fa;">'+linha.linha+'</td>';
+        for(let d=1;d<=dias;d++) {
+          let ordem = linha.ordens.find(o=>o.ini<=d && o.fim>=d);
+          if (ordem) {
+            let cls = 'gantt-bar gantt-bar-sim';
+            if (highlights && highlights[ordem.id]==='moved') cls+=' gantt-bar-moved';
+            if (highlights && highlights[ordem.id]==='removed') cls+=' gantt-bar-removed';
+            if (highlights && highlights[ordem.id]==='added') cls+=' gantt-bar-added';
+            html+='<td><span class="'+cls+'" title="'+ordem.produto+'">'+ordem.produto+'</span></td>';
+          } else {
+            html+='<td></td>';
+          }
+        }
+        html+='</tr>';
+      });
+      html+='</tbody></table>';
+      document.getElementById('ganttContainer').innerHTML = html;
+    }
+    // --- Renderização da tabela de KPIs ---
+    function renderKPIs(base, sim) {
+      let table = document.getElementById('kpiTable');
+      table.querySelector('tbody').innerHTML = `
+        <tr><td>Faturamento Previsto (R$)</td><td>${formatMoney(base.faturamento)}</td><td class="${sim.faturamento>base.faturamento?'highlight':''}">${formatMoney(sim.faturamento)}</td></tr>
+        <tr><td>Margem Líquida (%)</td><td>${formatPct(base.margem)}</td><td class="${sim.margem>base.margem?'highlight':''}">${formatPct(sim.margem)}</td></tr>
+        <tr><td>Taxa Atendimento (%)</td><td>${formatPct(base.atendimento)}</td><td class="${sim.atendimento>base.atendimento?'highlight':''}">${formatPct(sim.atendimento)}</td></tr>
+        <tr><td>Tempo de Setup (h)</td><td>${base.setup}</td><td class="${sim.setup<base.setup?'highlight':''}">${sim.setup}</td></tr>
+      `;
+    }
+    // --- Renderização do Radar Chart ---
+    let radarChart = null;
+    function renderRadar(base, sim) {
+      let ctx = document.getElementById('radarChart').getContext('2d');
+      let data = {
+        labels: ['Faturamento', 'Margem Líquida', 'Atendimento', 'Setup'],
+        datasets: [
+          {
+            label: 'Base',
+            data: [base.faturamento/3000000*100, base.margem, base.atendimento, 100-base.setup],
+            backgroundColor: 'rgba(0,39,118,0.15)',
+            borderColor: '#002776',
+            pointBackgroundColor: '#002776',
+          },
+          {
+            label: 'Simulado',
+            data: [sim.faturamento/3000000*100, sim.margem, sim.atendimento, 100-sim.setup],
+            backgroundColor: 'rgba(246,184,0,0.15)',
+            borderColor: '#f6b800',
+            pointBackgroundColor: '#f6b800',
+          }
+        ]
+      };
+      let options = {
+        responsive: false,
+        plugins: {
+          legend: {position:'top', labels:{font:{size:13}}}
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            ticks: {stepSize: 20, font:{size:12}},
+            pointLabels: {font:{size:13}}
+          }
+        }
+      };
+      if (radarChart) radarChart.destroy();
+      radarChart = new Chart(ctx, {type:'radar', data, options});
+    }
+    // --- Histórico de simulações ---
+    function updateHistory() {
+      let ul = document.getElementById('historyList');
+      ul.innerHTML = '';
+      scenarioHistory.slice().reverse().forEach((sc, idx) => {
+        let li = document.createElement('li');
+        li.textContent = `${sc.nome} (${sc.timestamp})`;
+        if (currentScenario && sc.id===currentScenario.id) li.classList.add('selected');
+        li.onclick = ()=>{ loadScenario(sc.id); };
+        ul.appendChild(li);
+      });
+    }
+    // --- Dropdown de cenários salvos ---
+    function updateScenarioDropdown() {
+      let sel = document.getElementById('scenarioSelect');
+      sel.innerHTML = '';
+      scenarioHistory.forEach(sc => {
+        let opt = document.createElement('option');
+        opt.value = sc.id;
+        opt.textContent = sc.nome;
+        sel.appendChild(opt);
+      });
+      if (currentScenario) sel.value = currentScenario.id;
+    }
+    // --- Salvar cenário ---
+    function saveScenario(params, simData) {
+      let id = 'SC'+(scenarioHistory.length+1);
+      let nome = 'Cenário '+(scenarioHistory.length+1);
+      let timestamp = new Date().toLocaleString('pt-BR');
+      let sc = {
+        id, nome, timestamp,
+        params: clone(params),
+        gantt: clone(simData.gantt),
+        kpis: clone(simData.kpis),
+        highlights: clone(simData.highlights)
+      };
+      scenarioHistory.push(sc);
+      currentScenario = sc;
+      updateScenarioDropdown();
+      updateHistory();
+    }
+    // --- Carregar cenário ---
+    function loadScenario(id) {
+      let sc = scenarioHistory.find(s=>s.id===id);
+      if (!sc) return;
+      currentScenario = sc;
+      // Atualizar UI
+      document.getElementById('turnos').value = sc.params.turnos;
+      document.getElementById('capacidade').value = sc.params.capacidade;
+      document.getElementById('politicaEstoque').value = sc.params.politicaEstoque;
+      document.getElementById('ordem').value = sc.params.ordem;
+      renderGantt(sc.gantt, sc.highlights);
+      renderKPIs(baseKPIs, sc.kpis);
+      renderRadar(baseKPIs, sc.kpis);
+      updateScenarioDropdown();
+      updateHistory();
+    }
+    // --- Desfazer última alteração ---
+    function undoLast() {
+      if (scenarioHistory.length<2) return;
+      scenarioHistory.pop();
+      let prev = scenarioHistory[scenarioHistory.length-1];
+      currentScenario = prev;
+      loadScenario(prev.id);
+    }
+    // --- Inicialização ---
+    function getParams() {
+      return {
+        turnos: parseInt(document.getElementById('turnos').value),
+        capacidade: parseInt(document.getElementById('capacidade').value),
+        politicaEstoque: document.getElementById('politicaEstoque').value,
+        ordem: document.getElementById('ordem').value
+      };
+    }
+    function mainInit() {
+      // Cenário base
+      let baseSim = {gantt: clone(baseGantt), kpis: clone(baseKPIs), highlights: {}};
+      let baseParams = {turnos:2, capacidade:24, politicaEstoque:'padrao', ordem:'nenhum'};
+      scenarioHistory = [{id:'SC1', nome:'Cenário Base', timestamp:'Base', params:baseParams, ...baseSim}];
+      currentScenario = scenarioHistory[0];
+      renderGantt(baseSim.gantt, baseSim.highlights);
+      renderKPIs(baseKPIs, baseKPIs);
+      renderRadar(baseKPIs, baseKPIs);
+      updateScenarioDropdown();
+      updateHistory();
+      document.getElementById('scenarioSelect').onchange = function() {
+        loadScenario(this.value);
+      };
+      document.getElementById('btnSimular').onclick = function() {
+        let params = getParams();
+        let simData = simulate(params);
+        lastScenario = currentScenario;
+        currentScenario = {
+          id: 'SC_TMP', nome: 'Simulação Atual', timestamp: new Date().toLocaleString('pt-BR'),
+          params, ...simData
+        };
+        renderGantt(simData.gantt, simData.highlights);
+        renderKPIs(baseKPIs, simData.kpis);
+        renderRadar(baseKPIs, simData.kpis);
+      };
+      document.getElementById('btnSalvar').onclick = function() {
+        if (!currentScenario || currentScenario.id==='SC1') return;
+        saveScenario(currentScenario.params, currentScenario);
+      };
+      document.getElementById('btnDesfazer').onclick = function() {
+        undoLast();
+      };
+    }
+    window.onload = mainInit;
+    </script>
+</body>
+</html>
