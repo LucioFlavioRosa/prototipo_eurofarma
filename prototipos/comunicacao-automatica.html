@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCP - Comunicação Automática</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="assets/js/notification-manager.js"></script>
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f6f7fa; }
+        .main-wrapper { max-width: 1200px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,53,142,0.07); padding: 32px; }
+        h1 { color: #00358e; font-weight: 700; margin-bottom: 24px; }
+        .dashboard-status { display: flex; gap: 32px; margin-bottom: 32px; }
+        .status-card { flex: 1; background: #eaf1fb; border-radius: 8px; padding: 24px; text-align: center; }
+        .status-card h2 { font-size: 1.2rem; color: #00358e; margin-bottom: 8px; }
+        .status-value { font-size: 2.2rem; font-weight: 900; color: #00358e; }
+        .status-ok { color: #2e8b57; }
+        .status-warn { color: #e6b800; }
+        .status-error { color: #d32f2f; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #e0e0e0; text-align: left; }
+        th { background: #f1f6fb; color: #00358e; font-weight: 700; }
+        .btn-reenviar { background: #00358e; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        .btn-reenviar:hover { background: #0050c7; }
+        .status-lido { color: #2e8b57; font-weight: 700; }
+        .status-nao-lido { color: #d32f2f; font-weight: 700; }
+        .toast { position: fixed; top: 24px; right: 24px; background: #00358e; color: #fff; padding: 16px 24px; border-radius: 8px; z-index: 9999; box-shadow: 0 2px 8px rgba(0,53,142,0.15); display: none; }
+        .modal-bg { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,53,142,0.12); z-index: 9998; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,53,142,0.18); padding: 32px; min-width: 320px; z-index: 10000; }
+        .modal h3 { color: #00358e; margin-bottom: 16px; }
+        .modal .close-btn { float: right; cursor: pointer; font-size: 1.3rem; color: #00358e; }
+        .nav-pcp { margin-bottom: 32px; }
+        .nav-pcp a { color: #00358e; font-weight: 600; margin-right: 24px; text-decoration: none; }
+        .nav-pcp a.active { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="nav-pcp" aria-label="Navegação PCP">
+            <a href="dashboard.html">Dashboard PCP</a>
+            <a href="comunicacao-automatica.html" class="active">Comunicação Automática</a>
+            <a href="analise-forecast.html">Análise de Forecast</a>
+        </nav>
+        <h1>Comunicação Automática - PCP</h1>
+        <div class="dashboard-status" aria-label="Status de Comunicação">
+            <div class="status-card">
+                <h2>Notificações Enviadas</h2>
+                <div class="status-value">128</div>
+            </div>
+            <div class="status-card">
+                <h2>Lidas</h2>
+                <div class="status-value status-ok">116</div>
+            </div>
+            <div class="status-card">
+                <h2>Pendentes</h2>
+                <div class="status-value status-warn">12</div>
+            </div>
+            <div class="status-card">
+                <h2>Falhas</h2>
+                <div class="status-value status-error">0</div>
+            </div>
+        </div>
+        <h2 style="color:#00358e; margin-bottom:16px;">Log de Notificações</h2>
+        <table aria-label="Log de Notificações Enviadas">
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th>Destinatário</th>
+                    <th>Perfil</th>
+                    <th>Mensagem</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="notification-log">
+                <tr>
+                    <td>12/06/2024 09:15</td>
+                    <td>Maria Oliveira</td>
+                    <td>Produção</td>
+                    <td>Nova sequência de ordens aprovada para linha 3.</td>
+                    <td class="status-lido">Lido</td>
+                    <td><button class="btn-reenviar" onclick="reenviarNotificacao(this, 1)">Reenviar</button></td>
+                </tr>
+                <tr>
+                    <td>12/06/2024 09:16</td>
+                    <td>João Silva</td>
+                    <td>Almoxarifado</td>
+                    <td>Nova prioridade de separação para SKU 1029.</td>
+                    <td class="status-nao-lido">Não Lido</td>
+                    <td><button class="btn-reenviar" onclick="reenviarNotificacao(this, 2)">Reenviar</button></td>
+                </tr>
+                <tr>
+                    <td>12/06/2024 09:17</td>
+                    <td>Fernanda Lima</td>
+                    <td>Qualidade</td>
+                    <td>Liberação pendente para lote 2204.</td>
+                    <td class="status-lido">Lido</td>
+                    <td><button class="btn-reenviar" onclick="reenviarNotificacao(this, 3)">Reenviar</button></td>
+                </tr>
+                <tr>
+                    <td>12/06/2024 09:18</td>
+                    <td>Roberto Costa</td>
+                    <td>Logística</td>
+                    <td>Atualização de rota para entrega urgente.</td>
+                    <td class="status-nao-lido">Não Lido</td>
+                    <td><button class="btn-reenviar" onclick="reenviarNotificacao(this, 4)">Reenviar</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 style="color:#00358e; margin-bottom:16px;">Dashboard de Status de Comunicação</h2>
+        <div style="display:flex; gap:40px;">
+            <div style="flex:1;">
+                <canvas id="comunicacaoPie" width="320" height="220" aria-label="Gráfico de status de comunicação"></canvas>
+            </div>
+            <div style="flex:1;">
+                <ul style="list-style:none; padding:0;">
+                    <li><span style="color:#2e8b57; font-weight:700;">Lidas:</span> 116</li>
+                    <li><span style="color:#e6b800; font-weight:700;">Pendentes:</span> 12</li>
+                    <li><span style="color:#d32f2f; font-weight:700;">Falhas:</span> 0</li>
+                </ul>
+                <p style="margin-top:24px;">Acompanhe o status das comunicações em tempo real.<br>Para visualizar detalhes, clique sobre cada destinatário no log acima.</p>
+            </div>
+        </div>
+        <div style="margin-top:40px;">
+            <a href="analise-forecast.html" class="btn-reenviar" style="background:#e6b800; color:#00358e;">Ir para Análise de Forecast</a>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="modal-bg" id="modal-bg"></div>
+    <div class="modal" id="modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3>Notificação Reenviada</h3>
+        <p id="modal-content"></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Pie Chart para status de comunicação
+        const ctx = document.getElementById('comunicacaoPie').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Lidas', 'Pendentes', 'Falhas'],
+                datasets: [{
+                    data: [116, 12, 0],
+                    backgroundColor: ['#2e8b57', '#e6b800', '#d32f2f'],
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#00358e', font: { size: 14 } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
