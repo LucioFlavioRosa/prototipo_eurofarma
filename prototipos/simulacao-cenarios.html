@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Simulação de Cenários 'E Se' | PCP Eurofarma</title>
+    <meta name="description" content="Simulação de cenários para tomada de decisão no PCP Eurofarma.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f7f8fa;
+            margin: 0;
+            color: #223366;
+        }
+        header {
+            background: #fff;
+            border-bottom: 1px solid #e4e7ed;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            height: 38px;
+        }
+        nav a {
+            color: #223366;
+            text-decoration: none;
+            margin-left: 24px;
+            font-weight: 600;
+            transition: color .2s;
+        }
+        nav a.active, nav a:hover {
+            color: #0072ce;
+        }
+        main {
+            max-width: 1440px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+        .simulacao-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(34,51,102,0.07);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .painel-controle {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            align-items: center;
+            background: #f1f4f8;
+            border-radius: 8px;
+            padding: 24px 16px;
+        }
+        .painel-controle label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .painel-controle .controle-item {
+            min-width: 220px;
+            flex: 1 1 220px;
+        }
+        .painel-controle input[type=range] {
+            width: 100%;
+        }
+        .painel-controle output {
+            font-weight: 700;
+            color: #0072ce;
+            margin-left: 8px;
+        }
+        .colunas-cenarios {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .cenario {
+            flex: 1 1 380px;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 24px 20px;
+            min-width: 340px;
+            box-sizing: border-box;
+        }
+        .cenario h3 {
+            font-size: 1.15rem;
+            margin: 0 0 18px 0;
+            color: #0072ce;
+        }
+        .kpi-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px 0;
+        }
+        .kpi-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+        .kpi-label {
+            color: #223366;
+        }
+        .kpi-value {
+            font-weight: 700;
+            color: #0072ce;
+        }
+        .grafico-kpi {
+            background: #fff;
+            border-radius: 10px;
+            padding: 28px 20px 16px 20px;
+            margin: 0 0 24px 0;
+            box-shadow: 0 1px 4px rgba(34,51,102,0.05);
+        }
+        .grafico-kpi canvas {
+            width: 100% !important;
+            max-width: 520px;
+            height: 220px !important;
+        }
+        .tabela-comparativa {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .tabela-comparativa th, .tabela-comparativa td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e4e7ed;
+            text-align: center;
+        }
+        .tabela-comparativa th {
+            background: #f1f4f8;
+            color: #223366;
+            font-weight: 700;
+        }
+        .tabela-comparativa td.diferenca-positiva {
+            color: #1aaf5d;
+            font-weight: 700;
+        }
+        .tabela-comparativa td.diferenca-negativa {
+            color: #e94f4f;
+            font-weight: 700;
+        }
+        .acoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 16px;
+        }
+        .btn {
+            background: #0072ce;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            padding: 12px 28px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+            box-shadow: 0 1px 4px rgba(34,51,102,0.08);
+        }
+        .btn:hover {
+            background: #005fa3;
+        }
+        .btn-outline {
+            background: #fff;
+            color: #0072ce;
+            border: 2px solid #0072ce;
+        }
+        .btn-outline:hover {
+            background: #e4e7ed;
+        }
+        .link-impacto {
+            color: #0072ce;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        @media (max-width: 1100px) {
+            .colunas-cenarios {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 700px) {
+            .simulacao-container {
+                padding: 12px;
+            }
+            .painel-controle {
+                gap: 16px;
+                padding: 14px 4px;
+            }
+            .cenario {
+                padding: 14px 6px;
+            }
+        }
+        /* Modal */
+        .modal-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(34,51,102,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(34,51,102,0.15);
+            padding: 36px 32px 28px 32px;
+            max-width: 420px;
+            width: 90vw;
+            text-align: center;
+        }
+        .modal h4 {
+            margin-top: 0;
+            color: #0072ce;
+        }
+        .modal .modal-actions {
+            margin-top: 28px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo">
+        <nav aria-label="Navegação principal">
+            <a href="../dashboard.html">Dashboard</a>
+            <a href="../planejamento-mensal.html">Plano Mensal</a>
+            <a href="../sequenciamento.html">Sequenciamento</a>
+            <a href="../capacidade.html">Capacidade</a>
+            <a href="simulacao-cenarios.html" class="active">Simulação 'E Se'</a>
+            <a href="../aprovacoes-workflow.html">Aprovações</a>
+        </nav>
+    </header>
+    <main>
+        <div class="simulacao-container">
+            <h1 style="margin-top:0; color:#223366; font-size:1.7rem;">Simulação de Cenários <span style="color:#0072ce">'E Se'</span></h1>
+            <form class="painel-controle" id="painelControle" autocomplete="off" onsubmit="return false;">
+                <div class="controle-item">
+                    <label for="turnos">Turnos</label>
+                    <input type="range" min="1" max="3" value="2" id="turnos" name="turnos" step="1" aria-label="Turnos">
+                    <output id="turnosVal">2</output>
+                </div>
+                <div class="controle-item">
+                    <label for="horasExtras">Horas Extras (%)</label>
+                    <input type="range" min="0" max="30" value="0" id="horasExtras" name="horasExtras" step="5" aria-label="Horas Extras">
+                    <output id="horasExtrasVal">0%</output>
+                </div>
+                <div class="controle-item">
+                    <label for="capacidadeLinha">Capacidade Linha X (%)</label>
+                    <input type="range" min="80" max="120" value="100" id="capacidadeLinha" name="capacidadeLinha" step="5" aria-label="Capacidade da Linha X">
+                    <output id="capacidadeLinhaVal">100%</output>
+                </div>
+                <div class="controle-item">
+                    <label for="anteciparProduto">Antecipar Produto Y (meses)</label>
+                    <input type="range" min="0" max="2" value="0" id="anteciparProduto" name="anteciparProduto" step="1" aria-label="Antecipar Produto Y">
+                    <output id="anteciparProdutoVal">0</output>
+                </div>
+            </form>
+            <div class="colunas-cenarios">
+                <section class="cenario" aria-label="Cenário Base">
+                    <h3>Cenário Base</h3>
+                    <ul class="kpi-list">
+                        <li><span class="kpi-label">Faturamento Previsto</span> <span class="kpi-value" id="baseFaturamento">R$ 12.500.000</span></li>
+                        <li><span class="kpi-label">Margem Líquida</span> <span class="kpi-value" id="baseMargem">R$ 4.200.000</span></li>
+                        <li><span class="kpi-label">Taxa de Atendimento</span> <span class="kpi-value" id="baseAtendimento">100%</span></li>
+                        <li><span class="kpi-label">Utilização de Capacidade</span> <span class="kpi-value" id="baseCapacidade">85%</span></li>
+                    </ul>
+                </section>
+                <section class="cenario" aria-label="Cenário Simulado">
+                    <h3>Cenário Simulado</h3>
+                    <ul class="kpi-list">
+                        <li><span class="kpi-label">Faturamento Previsto</span> <span class="kpi-value" id="simFaturamento">R$ 14.000.000</span></li>
+                        <li><span class="kpi-label">Margem Líquida</span> <span class="kpi-value" id="simMargem">R$ 4.700.000</span></li>
+                        <li><span class="kpi-label">Taxa de Atendimento</span> <span class="kpi-value" id="simAtendimento">100%</span></li>
+                        <li><span class="kpi-label">Utilização de Capacidade</span> <span class="kpi-value" id="simCapacidade">92%</span></li>
+                    </ul>
+                </section>
+            </div>
+            <div class="grafico-kpi">
+                <canvas id="graficoComparativo" aria-label="Gráfico comparativo de KPIs" role="img"></canvas>
+            </div>
+            <div style="overflow-x:auto">
+                <table class="tabela-comparativa" aria-label="Tabela comparativa de produtos">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Qtd. Planejada (Base)</th>
+                            <th>Qtd. Planejada (Simulado)</th>
+                            <th>Diferença</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaProdutos">
+                        <tr>
+                            <td>Amoxilina 500mg 21cp</td>
+                            <td>120.000</td>
+                            <td>135.000</td>
+                            <td class="diferenca-positiva">+15.000</td>
+                        </tr>
+                        <tr>
+                            <td>Dipirona 1g 10cp</td>
+                            <td>85.000</td>
+                            <td>92.000</td>
+                            <td class="diferenca-positiva">+7.000</td>
+                        </tr>
+                        <tr>
+                            <td>Losartana 50mg 30cp</td>
+                            <td>60.000</td>
+                            <td>60.000</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Vitamina D 2.000UI 60cp</td>
+                            <td>40.000</td>
+                            <td>48.000</td>
+                            <td class="diferenca-positiva">+8.000</td>
+                        </tr>
+                        <tr>
+                            <td>Ibuprofeno 400mg 20cp</td>
+                            <td>55.000</td>
+                            <td>55.000</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="acoes">
+                <button class="btn" id="btnSalvar">Salvar Cenário</button>
+                <button class="btn" id="btnAplicar">Aplicar Cenário</button>
+                <button class="btn btn-outline" id="btnResetar">Resetar</button>
+                <a class="link-impacto" id="linkImpacto">Ver Impacto em Pedidos</a>
+            </div>
+        </div>
+    </main>
+    <div id="modalConfirmacao" style="display:none;"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Estado inicial dos KPIs e produtos (exemplo realista)
+        const baseKPIs = {
+            faturamento: 12500000,
+            margem: 4200000,
+            atendimento: 100,
+            capacidade: 85
+        };
+        let simKPIs = {
+            faturamento: 14000000,
+            margem: 4700000,
+            atendimento: 100,
+            capacidade: 92
+        };
+        const produtos = [
+            { nome: 'Amoxilina 500mg 21cp', base: 120000, sim: 135000 },
+            { nome: 'Dipirona 1g 10cp', base: 85000, sim: 92000 },
+            { nome: 'Losartana 50mg 30cp', base: 60000, sim: 60000 },
+            { nome: 'Vitamina D 2.000UI 60cp', base: 40000, sim: 48000 },
+            { nome: 'Ibuprofeno 400mg 20cp', base: 55000, sim: 55000 }
+        ];
+        // Função para atualizar KPIs simulados conforme sliders
+        function recalcularKPIs() {
+            const turnos = parseInt(document.getElementById('turnos').value);
+            const horasExtras = parseInt(document.getElementById('horasExtras').value);
+            const capacidadeLinha = parseInt(document.getElementById('capacidadeLinha').value);
+            const anteciparProduto = parseInt(document.getElementById('anteciparProduto').value);
+            // Lógica de exemplo para simulação
+            let fatorTurnos = 1 + (turnos - 2) * 0.08; // cada turno extra +8%
+            let fatorHoras = 1 + (horasExtras / 100) * 0.3; // 30% do extra vira produção
+            let fatorCapacidade = capacidadeLinha / 100;
+            let fatorAntecipar = 1 + anteciparProduto * 0.03; // cada mês antecipado +3% no produto Y
+            // Faturamento e Margem
+            simKPIs.faturamento = Math.round(baseKPIs.faturamento * fatorTurnos * fatorHoras * fatorCapacidade * 1.12); // 12% de aumento base
+            simKPIs.margem = Math.round(baseKPIs.margem * (simKPIs.faturamento / baseKPIs.faturamento) * 0.98);
+            simKPIs.atendimento = 100;
+            simKPIs.capacidade = Math.min(100, Math.round(baseKPIs.capacidade * fatorTurnos * fatorHoras * fatorCapacidade));
+            // Atualizar DOM
+            document.getElementById('simFaturamento').textContent = 'R$ ' + simKPIs.faturamento.toLocaleString('pt-BR');
+            document.getElementById('simMargem').textContent = 'R$ ' + simKPIs.margem.toLocaleString('pt-BR');
+            document.getElementById('simAtendimento').textContent = simKPIs.atendimento + '%';
+            document.getElementById('simCapacidade').textContent = simKPIs.capacidade + '%';
+            // Atualizar tabela produtos
+            let html = '';
+            produtos.forEach((p, idx) => {
+                let sim = p.sim;
+                if (idx === 0) sim = Math.round(p.base * fatorTurnos * fatorHoras * fatorCapacidade * 1.12); // Amoxilina
+                else if (idx === 1) sim = Math.round(p.base * fatorTurnos * fatorHoras * fatorCapacidade * 1.08); // Dipirona
+                else if (idx === 3) sim = Math.round(p.base * fatorAntecipar * fatorTurnos * fatorHoras * fatorCapacidade); // Vitamina D
+                else sim = Math.round(p.base * fatorTurnos * fatorHoras * fatorCapacidade);
+                let diff = sim - p.base;
+                html += `<tr><td>${p.nome}</td><td>${p.base.toLocaleString('pt-BR')}</td><td>${sim.toLocaleString('pt-BR')}</td><td class="${diff>0?'diferenca-positiva':(diff<0?'diferenca-negativa':'')}">${diff>0?'+':''}${diff.toLocaleString('pt-BR')}</td></tr>`;
+            });
+            document.getElementById('tabelaProdutos').innerHTML = html;
+            // Atualizar gráfico
+            atualizarGrafico();
+        }
+        // Sliders
+        ['turnos','horasExtras','capacidadeLinha','anteciparProduto'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                document.getElementById(id+'Val').textContent = id==='horasExtras'?this.value+'%':this.value;
+                recalcularKPIs();
+            });
+        });
+        // Gráfico
+        let chart;
+        function atualizarGrafico() {
+            const ctx = document.getElementById('graficoComparativo').getContext('2d');
+            const data = {
+                labels: ['Faturamento', 'Margem Líquida', 'Atendimento', 'Capacidade'],
+                datasets: [
+                    {
+                        label: 'Base',
+                        backgroundColor: '#0072cecc',
+                        data: [baseKPIs.faturamento, baseKPIs.margem, baseKPIs.atendimento, baseKPIs.capacidade],
+                        borderRadius: 7
+                    },
+                    {
+                        label: 'Simulado',
+                        backgroundColor: '#1aaf5dcc',
+                        data: [simKPIs.faturamento, simKPIs.margem, simKPIs.atendimento, simKPIs.capacidade],
+                        borderRadius: 7
+                    }
+                ]
+            };
+            const options = {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { family: 'Lato', size: 14 } } },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value, idx) {
+                                if(idx<2) return 'R$ ' + value.toLocaleString('pt-BR');
+                                return value + '%';
+                            },
+                            font: { family: 'Lato', size: 13 }
+                        }
+                    },
+                    x: {
+                        ticks: { font: { family: 'Lato', size: 13 } }
+                    }
+                }
+            };
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, { type: 'bar', data, options });
+        }
+        // Botões
+        document.getElementById('btnResetar').onclick = function() {
+            document.getElementById('turnos').value = 2;
+            document.getElementById('horasExtras').value = 0;
+            document.getElementById('capacidadeLinha').value = 100;
+            document.getElementById('anteciparProduto').value = 0;
+            document.getElementById('turnosVal').textContent = '2';
+            document.getElementById('horasExtrasVal').textContent = '0%';
+            document.getElementById('capacidadeLinhaVal').textContent = '100%';
+            document.getElementById('anteciparProdutoVal').textContent = '0';
+            recalcularKPIs();
+        };
+        document.getElementById('btnSalvar').onclick = function() {
+            alert('Cenário simulado salvo com sucesso!');
+        };
+        document.getElementById('btnAplicar').onclick = function() {
+            abrirModalConfirmacao();
+        };
+        function abrirModalConfirmacao() {
+            const modal = document.getElementById('modalConfirmacao');
+            modal.innerHTML = `<div class='modal-bg'><div class='modal'><h4>Enviar Cenário para Aprovação?</h4><p>O cenário simulado será enviado para o workflow de aprovação.<br>Deseja continuar?</p><div class='modal-actions'><button class='btn' id='confirmarAplicar'>Sim, Enviar</button><button class='btn btn-outline' id='cancelarAplicar'>Cancelar</button></div></div></div>`;
+            modal.style.display = 'block';
+            document.getElementById('confirmarAplicar').onclick = function() {
+                window.location.href = 'aprovacoes-workflow.html?cenariosimulado=1';
+            };
+            document.getElementById('cancelarAplicar').onclick = function() {
+                modal.style.display = 'none';
+            };
+        }
+        document.getElementById('linkImpacto').onclick = function() {
+            window.location.href = 'pedidos-carteira.html?cenariosimulado=1';
+        };
+        // Inicialização
+        recalcularKPIs();
+        setTimeout(atualizarGrafico, 200); // Chart.js pode precisar do canvas renderizado
+    </script>
+</body>
+</html>

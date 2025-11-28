@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>PMP Mensal | Plataforma PCP Eurofarma</title>
+    <meta name="description" content="Planejamento Mestre de Produção mensal, integrado ao SAP, com filtros, alertas e exportação de dados.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f7f9fa;
+            margin: 0;
+            color: #222;
+        }
+        header {
+            background: #003366;
+            color: #fff;
+            padding: 24px 0 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+        .header-content img {
+            height: 48px;
+        }
+        .header-content h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            margin-left: 24px;
+        }
+        .main-container {
+            max-width: 1280px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            padding: 32px;
+        }
+        .filters {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .filters label {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .filters select, .filters input[type="month"] {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #cfd8dc;
+            font-size: 1rem;
+        }
+        .actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .btn-primary {
+            background: #0057b7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #003366;
+        }
+        .btn-secondary {
+            background: #fff;
+            color: #0057b7;
+            border: 1px solid #0057b7;
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #e3eafc;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        table.pmp-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        table.pmp-table th, table.pmp-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.97rem;
+        }
+        table.pmp-table th {
+            background: #f1f6fb;
+            font-weight: 700;
+        }
+        table.pmp-table tr:hover {
+            background: #f9fbfd;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .badge-verde {
+            background: #43a047;
+        }
+        .badge-amarelo {
+            background: #fbc02d;
+            color: #222;
+        }
+        .badge-vermelho {
+            background: #e53935;
+        }
+        .alert {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 6px solid #e65100;
+            padding: 12px 20px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .alert a {
+            color: #0057b7;
+            font-weight: 600;
+            text-decoration: underline;
+            margin-left: 18px;
+        }
+        .explosao-btn {
+            background: #fff;
+            color: #0057b7;
+            border: 1px solid #0057b7;
+            border-radius: 4px;
+            padding: 6px 18px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 2px;
+            transition: background 0.2s;
+        }
+        .explosao-btn:hover {
+            background: #e3eafc;
+        }
+        @media (max-width: 900px) {
+            .main-container {
+                padding: 12px;
+            }
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0 12px;
+            }
+            .header-content h1 {
+                margin-left: 0;
+                margin-top: 8px;
+                font-size: 1.3rem;
+            }
+            .filters {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+            <h1>Plano Mestre de Produção (PMP) - Visão Mensal</h1>
+        </div>
+    </header>
+    <main class="main-container">
+        <section class="filters" aria-label="Filtros de PMP">
+            <div>
+                <label for="filtro-familia">Família:</label>
+                <select id="filtro-familia">
+                    <option value="todos">Todas</option>
+                    <option value="analgesicos">Analgésicos</option>
+                    <option value="antibioticos">Antibióticos</option>
+                    <option value="antialergicos">Antialérgicos</option>
+                    <option value="vitaminas">Vitaminas</option>
+                </select>
+            </div>
+            <div>
+                <label for="filtro-planta">Planta:</label>
+                <select id="filtro-planta">
+                    <option value="todas">Todas</option>
+                    <option value="itaboraí">Itaboraí</option>
+                    <option value="ribeirão">Ribeirão Preto</option>
+                    <option value="suzano">Suzano</option>
+                </select>
+            </div>
+            <div>
+                <label for="filtro-periodo">Período:</label>
+                <input type="month" id="filtro-periodo" value="2024-07">
+            </div>
+        </section>
+        <section class="actions">
+            <button class="btn-primary" id="btn-recalcular">Recalcular</button>
+            <button class="btn-secondary" id="btn-exportar">Exportar Excel</button>
+        </section>
+        <div id="alerta-capacidade" style="display:none;"></div>
+        <div class="table-responsive">
+            <table class="pmp-table" aria-label="Tabela PMP Mensal">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Descrição</th>
+                        <th>Estoque Atual</th>
+                        <th>Política de Estoque</th>
+                        <th>Necessidade de Produção</th>
+                        <th>Status</th>
+                        <th>Ver Explosão de Capacidade</th>
+                        <th>Previsão de Vendas<br><span style="font-size:0.85em;color:#888;">(próx. 12 meses)</span></th>
+                    </tr>
+                </thead>
+                <tbody id="pmp-tbody">
+                    <!-- Linhas geradas via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script>
+        // Dados de exemplo realistas
+        const pmpData = [
+            {
+                sku: 'EUF-001',
+                descricao: 'Paracetamol 500mg 20cp',
+                familia: 'analgesicos',
+                planta: 'itaboraí',
+                estoque: 12000,
+                politica: 8000,
+                previsao: [5000, 5200, 5300, 5400, 5500, 5600, 5700, 5800, 5900, 6000, 6100, 6200],
+                capacidade: 15000
+            },
+            {
+                sku: 'EUF-002',
+                descricao: 'Ibuprofeno 600mg 30cp',
+                familia: 'analgesicos',
+                planta: 'ribeirão',
+                estoque: 8000,
+                politica: 6000,
+                previsao: [7000, 6800, 6900, 7100, 7200, 7300, 7400, 7500, 7600, 7700, 7800, 7900],
+                capacidade: 12000
+            },
+            {
+                sku: 'EUF-003',
+                descricao: 'Amoxicilina 500mg 24cp',
+                familia: 'antibioticos',
+                planta: 'suzano',
+                estoque: 9500,
+                politica: 7000,
+                previsao: [8000, 8200, 8300, 8400, 8500, 8600, 8700, 8800, 8900, 9000, 9100, 9200],
+                capacidade: 14000
+            },
+            {
+                sku: 'EUF-004',
+                descricao: 'Cetirizina 10mg 10cp',
+                familia: 'antialergicos',
+                planta: 'itaboraí',
+                estoque: 5000,
+                politica: 4000,
+                previsao: [4500, 4600, 4700, 4800, 4900, 5000, 5100, 5200, 5300, 5400, 5500, 5600],
+                capacidade: 8000
+            },
+            {
+                sku: 'EUF-005',
+                descricao: 'Vitamina C 1g 30cp',
+                familia: 'vitaminas',
+                planta: 'ribeirão',
+                estoque: 20000,
+                politica: 12000,
+                previsao: [10000, 10500, 11000, 11500, 12000, 12500, 13000, 13500, 14000, 14500, 15000, 15500],
+                capacidade: 25000
+            },
+            {
+                sku: 'EUF-006',
+                descricao: 'Dipirona 500mg 20cp',
+                familia: 'analgesicos',
+                planta: 'suzano',
+                estoque: 13000,
+                politica: 9000,
+                previsao: [9000, 9200, 9400, 9600, 9800, 10000, 10200, 10400, 10600, 10800, 11000, 11200],
+                capacidade: 18000
+            },
+            {
+                sku: 'EUF-007',
+                descricao: 'Azitromicina 500mg 6cp',
+                familia: 'antibioticos',
+                planta: 'itaboraí',
+                estoque: 7000,
+                politica: 5000,
+                previsao: [6000, 6100, 6200, 6300, 6400, 6500, 6600, 6700, 6800, 6900, 7000, 7100],
+                capacidade: 10000
+            },
+            {
+                sku: 'EUF-008',
+                descricao: 'Loratadina 10mg 12cp',
+                familia: 'antialergicos',
+                planta: 'ribeirão',
+                estoque: 6000,
+                politica: 4000,
+                previsao: [5000, 5100, 5200, 5300, 5400, 5500, 5600, 5700, 5800, 5900, 6000, 6100],
+                capacidade: 9000
+            },
+            {
+                sku: 'EUF-009',
+                descricao: 'Vitamina D 2000UI 60cp',
+                familia: 'vitaminas',
+                planta: 'suzano',
+                estoque: 15000,
+                politica: 10000,
+                previsao: [8000, 8200, 8400, 8600, 8800, 9000, 9200, 9400, 9600, 9800, 10000, 10200],
+                capacidade: 20000
+            },
+            {
+                sku: 'EUF-010',
+                descricao: 'Amoxicilina 875mg 14cp',
+                familia: 'antibioticos',
+                planta: 'ribeirão',
+                estoque: 11000,
+                politica: 8000,
+                previsao: [9000, 9200, 9400, 9600, 9800, 10000, 10200, 10400, 10600, 10800, 11000, 11200],
+                capacidade: 16000
+            },
+            {
+                sku: 'EUF-011',
+                descricao: 'Paracetamol 750mg 20cp',
+                familia: 'analgesicos',
+                planta: 'suzano',
+                estoque: 9000,
+                politica: 7000,
+                previsao: [8000, 8200, 8400, 8600, 8800, 9000, 9200, 9400, 9600, 9800, 10000, 10200],
+                capacidade: 13000
+            },
+            {
+                sku: 'EUF-012',
+                descricao: 'Ibuprofeno 400mg 20cp',
+                familia: 'analgesicos',
+                planta: 'itaboraí',
+                estoque: 10000,
+                politica: 7000,
+                previsao: [8500, 8700, 8900, 9100, 9300, 9500, 9700, 9900, 10100, 10300, 10500, 10700],
+                capacidade: 14000
+            },
+            {
+                sku: 'EUF-013',
+                descricao: 'Vitamina B12 500mcg 30cp',
+                familia: 'vitaminas',
+                planta: 'ribeirão',
+                estoque: 17000,
+                politica: 12000,
+                previsao: [11000, 11200, 11400, 11600, 11800, 12000, 12200, 12400, 12600, 12800, 13000, 13200],
+                capacidade: 22000
+            },
+            {
+                sku: 'EUF-014',
+                descricao: 'Cefalexina 500mg 20cp',
+                familia: 'antibioticos',
+                planta: 'suzano',
+                estoque: 8000,
+                politica: 6000,
+                previsao: [7000, 7200, 7400, 7600, 7800, 8000, 8200, 8400, 8600, 8800, 9000, 9200],
+                capacidade: 12000
+            },
+            {
+                sku: 'EUF-015',
+                descricao: 'Dipirona 1g 10cp',
+                familia: 'analgesicos',
+                planta: 'ribeirão',
+                estoque: 11000,
+                politica: 8000,
+                previsao: [9000, 9200, 9400, 9600, 9800, 10000, 10200, 10400, 10600, 10800, 11000, 11200],
+                capacidade: 15000
+            }
+        ];
+
+        // Função para calcular necessidade de produção (Estoque Atual - Previsão do mês + Política)
+        function calcNecessidade(estoque, previsao, politica) {
+            // Considera o mês selecionado no filtro
+            return Math.max(0, previsao - estoque + politica);
+        }
+
+        function getStatus(necessidade, capacidade) {
+            if (necessidade <= capacidade * 0.8) return { label: 'OK', badge: 'badge-verde', texto: 'Dentro da capacidade' };
+            if (necessidade <= capacidade) return { label: 'Atenção', badge: 'badge-amarelo', texto: 'Próximo do limite' };
+            return { label: 'Excedido', badge: 'badge-vermelho', texto: 'Excede capacidade' };
+        }
+
+        function renderTable() {
+            const familia = document.getElementById('filtro-familia').value;
+            const planta = document.getElementById('filtro-planta').value;
+            const periodo = document.getElementById('filtro-periodo').value;
+            const mesIdx = periodo ? (new Date(periodo + '-01')).getMonth() : 0;
+            let html = '';
+            let alerta = '';
+            let algumExcedido = false;
+            pmpData.forEach(prod => {
+                if ((familia !== 'todos' && prod.familia !== familia) || (planta !== 'todas' && prod.planta !== planta)) return;
+                const necessidade = calcNecessidade(prod.estoque, prod.previsao[mesIdx], prod.politica);
+                const status = getStatus(necessidade, prod.capacidade);
+                if (status.badge === 'badge-vermelho') {
+                    algumExcedido = true;
+                }
+                html += `<tr>
+                    <td>${prod.sku}</td>
+                    <td>${prod.descricao}</td>
+                    <td>${prod.estoque.toLocaleString('pt-BR')}</td>
+                    <td>${prod.politica.toLocaleString('pt-BR')}</td>
+                    <td>${necessidade.toLocaleString('pt-BR')}</td>
+                    <td><span class="badge ${status.badge}" title="${status.texto}">${status.label}</span></td>
+                    <td><button class="explosao-btn" onclick="verExplosao('${prod.sku}')">Ver Explosão de Capacidade</button></td>
+                    <td style="min-width:220px;">
+                        <div style="display:flex; flex-direction:row; gap:4px; justify-content:center;">
+                        ${prod.previsao.map((v, i) => `<span style="background:#e3eafc;padding:2px 6px;border-radius:6px;font-size:0.93em;">${v.toLocaleString('pt-BR')}</span>`).join('')}
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('pmp-tbody').innerHTML = html;
+            // Alertas
+            if (algumExcedido) {
+                alerta = `<div class="alert" role="alert">
+                    <span><strong>Capacidade Excedida:</strong> Um ou mais SKUs possuem necessidade de produção acima da capacidade disponível. <a href="sequenciamento.html">Ir para Sequenciamento</a></span>
+                </div>`;
+            }
+            document.getElementById('alerta-capacidade').innerHTML = alerta;
+            document.getElementById('alerta-capacidade').style.display = alerta ? 'block' : 'none';
+        }
+
+        function verExplosao(sku) {
+            window.location.href = `explosao-capacidade.html?sku=${encodeURIComponent(sku)}`;
+        }
+
+        document.getElementById('filtro-familia').addEventListener('change', renderTable);
+        document.getElementById('filtro-planta').addEventListener('change', renderTable);
+        document.getElementById('filtro-periodo').addEventListener('change', renderTable);
+
+        document.getElementById('btn-recalcular').addEventListener('click', function() {
+            // Simulação de recálculo (poderia chamar API)
+            renderTable();
+        });
+        document.getElementById('btn-exportar').addEventListener('click', function() {
+            exportTableToExcel('pmp-table', 'PMP-Eurofarma');
+        });
+
+        // Exportação simples para Excel
+        function exportTableToExcel(tableID, filename = '') {
+            var downloadLink;
+            var dataType = 'application/vnd.ms-excel';
+            var tableSelect = document.querySelector('table.' + tableID);
+            var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+            downloadLink = document.createElement('a');
+            document.body.appendChild(downloadLink);
+            if (navigator.msSaveOrOpenBlob) {
+                var blob = new Blob(['\ufeff', tableHTML], { type: dataType });
+                navigator.msSaveOrOpenBlob(blob, filename);
+            } else {
+                downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+                downloadLink.download = filename;
+                downloadLink.click();
+            }
+            document.body.removeChild(downloadLink);
+        }
+
+        // Inicialização
+        renderTable();
+    </script>
+</body>
+</html>

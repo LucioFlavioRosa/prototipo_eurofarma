@@ -1,0 +1,136 @@
+<div class="ef-modal" id="modalBase" role="dialog" aria-modal="true" aria-labelledby="modalBaseTitle" style="display:none;">
+  <style>
+    .ef-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 39, 118, 0.18);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .ef-modal .modal-dialog {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 32px rgba(0,39,118,0.18);
+      width: 98vw;
+      max-width: 440px;
+      min-width: 270px;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: modalIn 0.23s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes modalIn {
+      from { transform: translateY(40px) scale(0.97); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+    .ef-modal .modal-header {
+      background: #002776;
+      color: #fff;
+      padding: 18px 24px 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ef-modal .modal-title {
+      font-size: 1.18rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .ef-modal .modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .ef-modal .modal-close:hover {
+      color: #ffd600;
+    }
+    .ef-modal .modal-body {
+      padding: 24px 24px 12px 24px;
+      color: #222;
+      font-size: 1rem;
+      font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+      min-height: 60px;
+    }
+    .ef-modal .modal-footer {
+      padding: 12px 24px 20px 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: #f7fafd;
+    }
+    .ef-modal .modal-btn {
+      background: #002776;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 22px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .ef-modal .modal-btn.secondary {
+      background: #e0e7ef;
+      color: #002776;
+    }
+    .ef-modal .modal-btn:hover {
+      background: #0033a0;
+    }
+    .ef-modal .modal-btn.secondary:hover {
+      background: #c7d1e0;
+    }
+    @media (max-width: 500px) {
+      .ef-modal .modal-dialog {
+        max-width: 98vw;
+        min-width: 0;
+        padding: 0;
+      }
+      .ef-modal .modal-header, .ef-modal .modal-body, .ef-modal .modal-footer {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+    }
+  </style>
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="modal-title" id="modalBaseTitle">Título do Modal</div>
+      <button class="modal-close" aria-label="Fechar modal" onclick="closeModalBase()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Conteúdo dinâmico aqui -->
+      <p>Este é um exemplo de modal base reutilizável.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeModalBase()">Cancelar</button>
+      <button class="modal-btn">Confirmar</button>
+    </div>
+  </div>
+  <script>
+    function openModalBase() {
+      document.getElementById('modalBase').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      setTimeout(function() {
+        document.querySelector('#modalBase .modal-close').focus();
+      }, 200);
+    }
+    function closeModalBase() {
+      document.getElementById('modalBase').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    // Fechar modal com ESC
+    document.addEventListener('keydown', function(e) {
+      if (document.getElementById('modalBase').style.display === 'flex' && e.key === 'Escape') {
+        closeModalBase();
+      }
+    });
+  </script>
+</div>

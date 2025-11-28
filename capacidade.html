@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Validação de Capacidade Fabril - PCP Eurofarma">
+    <title>PCP Eurofarma - Capacidade Fabril</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      html, body { height: 100%; margin: 0; font-family: 'Lato', Arial, sans-serif; background: #f7f9fb; color: #1a2341; }
+      .fade-in { animation: fadeIn .7s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      header { background: #002776; color: #fff; padding: 0.5rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+      .logo { height: 40px; margin-right: 16px; vertical-align: middle; }
+      nav { display: flex; gap: 1rem; align-items: center; }
+      nav a { color: #fff; text-decoration: none; font-weight: 600; padding: 8px 16px; border-radius: 4px; transition: background .2s; }
+      nav a:focus, nav a:hover, nav a.active { background: #00a859; outline: none; }
+      main { max-width: 1200px; margin: 2rem auto; padding: 2rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 24px rgba(0,39,118,0.07); min-height: 70vh; }
+      h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+      .section-title { font-size: 1.3rem; margin: 2rem 0 1rem 0; color: #002776; }
+      .table-responsive { overflow-x: auto; }
+      table { border-collapse: collapse; width: 100%; background: #fff; }
+      th, td { padding: 0.75rem 1rem; text-align: left; }
+      th { background: #e6eef6; color: #002776; font-weight: 700; }
+      tr:nth-child(even) { background: #f7f9fb; }
+      tr:focus-within { outline: 2px solid #00a859; }
+      td, th { border-bottom: 1px solid #e6eef6; }
+      .btn-primary { background: #00a859; color: #fff; border: none; border-radius: 4px; padding: 0.6rem 1.2rem; font-weight: 600; cursor: pointer; transition: background .2s, box-shadow .2s; box-shadow: 0 1px 4px rgba(0,168,89,0.07); }
+      .btn-primary:focus, .btn-primary:hover { background: #008f4c; outline: none; }
+      .btn-icon { background: none; border: none; color: #002776; font-size: 1.3rem; cursor: pointer; margin-left: 0.5rem; vertical-align: middle; }
+      .btn-icon:focus, .btn-icon:hover { color: #00a859; outline: none; }
+      .tooltip { position: relative; display: inline-block; }
+      .tooltip .tooltiptext { visibility: hidden; width: 180px; background: #002776; color: #fff; text-align: center; border-radius: 6px; padding: 0.5rem; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -90px; opacity: 0; transition: opacity 0.3s; font-size: 0.95rem; }
+      .tooltip:focus .tooltiptext, .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+      .legend { display: flex; gap: 1.5rem; margin-bottom: 1rem; }
+      .legend span { display: flex; align-items: center; gap: 0.5rem; }
+      .legend-dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+      .dot-green { background: #00a859; }
+      .dot-yellow { background: #f1c40f; }
+      .dot-red { background: #e74c3c; }
+      @media (max-width: 768px) {
+        main { padding: 1rem; }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const focusableElements = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const firstFocusableElement = document.querySelector(focusableElements);
+        if(firstFocusableElement) firstFocusableElement.focus();
+      });
+      function fadeTo(url) {
+        document.body.classList.remove('fade-in');
+        setTimeout(() => { window.location.href = url; }, 200);
+      }
+      window.onload = function() {
+        const ctx = document.getElementById('capacidadeChart').getContext('2d');
+        window.capacidadeChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Linha 1', 'Linha 2', 'Linha 3', 'Linha 4'],
+            datasets: [
+              {
+                label: 'Capacidade Utilizada (%)',
+                data: [78, 92, 95, 68],
+                backgroundColor: [
+                  '#00a859', '#f1c40f', '#e74c3c', '#00a859'
+                ],
+                borderRadius: 6,
+                maxBarThickness: 36
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              y: { beginAtZero: true, max: 100, ticks: { color: '#002776', font: { weight: 'bold' } } },
+              x: { ticks: { color: '#002776' } }
+            }
+          }
+        });
+      };
+    </script>
+</head>
+<body class="fade-in" style="min-height:100vh;">
+  <header role="banner">
+    <div style="display:flex;align-items:center;max-width:1200px;margin:0 auto;padding:0 2rem;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo" tabindex="0">
+      <nav aria-label="Navegação principal">
+        <a href="index.html" tabindex="0">Dashboard</a>
+        <a href="pmp.html" tabindex="0">Plano Mestre</a>
+        <a href="capacidade.html" class="active" aria-current="page" tabindex="0">Capacidade Fabril</a>
+        <a href="sequenciamento.html" tabindex="0">Sequenciamento</a>
+        <a href="pedidos.html" tabindex="0">Pedidos</a>
+        <a href="kpis.html" tabindex="0">KPIs</a>
+        <a href="simulacao.html" tabindex="0">Simulação</a>
+      </nav>
+      <button class="btn-icon" aria-label="Sair" onclick="fadeTo('login.html')" tabindex="0"><span aria-hidden="true">&#x1F511;</span></button>
+    </div>
+  </header>
+  <main class="page-transition" id="app" tabindex="0">
+    <h1>Validação de Capacidade Fabril</h1>
+    <div class="legend" aria-label="Legenda de cores">
+      <span><span class="legend-dot dot-green" aria-label="Capacidade OK"></span> OK</span>
+      <span><span class="legend-dot dot-yellow" aria-label="Capacidade Alerta"></span> Alerta</span>
+      <span><span class="legend-dot dot-red" aria-label="Capacidade Crítica"></span> Crítico</span>
+    </div>
+    <div class="chart-container" role="region" aria-label="Gráfico de capacidade por linha">
+      <canvas id="capacidadeChart" aria-label="Capacidade utilizada por linha" role="img" tabindex="0"></canvas>
+    </div>
+    <h2 class="section-title">Detalhamento por Equipamento</h2>
+    <div class="table-responsive" role="region" aria-label="Tabela de capacidade por equipamento">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Linha</th>
+            <th scope="col">Equipamento</th>
+            <th scope="col">Capacidade Disponível</th>
+            <th scope="col">Carga Planejada</th>
+            <th scope="col">Utilização (%)</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tabindex="0">
+            <td>Linha 1</td>
+            <td>Envasadora A</td>
+            <td>160h</td>
+            <td>125h</td>
+            <td>78%</td>
+            <td><span style="color:#00a859;font-weight:bold;">OK</span></td>
+          </tr>
+          <tr tabindex="0">
+            <td>Linha 2</td>
+            <td>Blister B</td>
+            <td>150h</td>
+            <td>138h</td>
+            <td>92%</td>
+            <td><span style="color:#f1c40f;font-weight:bold;">Alerta</span></td>
+          </tr>
+          <tr tabindex="0">
+            <td>Linha 3</td>
+            <td>Rotuladora C</td>
+            <td>140h</td>
+            <td>133h</td>
+            <td>95%</td>
+            <td><span style="color:#e74c3c;font-weight:bold;">Crítico</span></td>
+          </tr>
+          <tr tabindex="0">
+            <td>Linha 4</td>
+            <td>Encaixotadora D</td>
+            <td>170h</td>
+            <td>116h</td>
+            <td>68%</td>
+            <td><span style="color:#00a859;font-weight:bold;">OK</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:1.5rem;">
+      <button class="btn-primary" onclick="fadeTo('sequenciamento.html')" aria-label="Ir para Sequenciamento" tabindex="0">Ir para Sequenciamento</button>
+    </div>
+  </main>
+  <footer class="footer" role="contentinfo">
+    &copy; 2024 Eurofarma. Plataforma PCP - Todos os direitos reservados.
+  </footer>
+  <script>
+    document.body.classList.add('fade-in');
+  </script>
+</body>
+</html>

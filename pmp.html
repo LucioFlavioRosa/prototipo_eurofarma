@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Plano Mestre de Produção - PCP Eurofarma">
+    <title>PCP Eurofarma - Plano Mestre</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      html, body { height: 100%; margin: 0; font-family: 'Lato', Arial, sans-serif; background: #f7f9fb; color: #1a2341; }
+      .fade-in { animation: fadeIn .7s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      header { background: #002776; color: #fff; padding: 0.5rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+      .logo { height: 40px; margin-right: 16px; vertical-align: middle; }
+      nav { display: flex; gap: 1rem; align-items: center; }
+      nav a { color: #fff; text-decoration: none; font-weight: 600; padding: 8px 16px; border-radius: 4px; transition: background .2s; }
+      nav a:focus, nav a:hover, nav a.active { background: #00a859; outline: none; }
+      main { max-width: 1200px; margin: 2rem auto; padding: 2rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 24px rgba(0,39,118,0.07); min-height: 70vh; }
+      h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+      .section-title { font-size: 1.3rem; margin: 2rem 0 1rem 0; color: #002776; }
+      .table-responsive { overflow-x: auto; }
+      table { border-collapse: collapse; width: 100%; background: #fff; }
+      th, td { padding: 0.75rem 1rem; text-align: left; }
+      th { background: #e6eef6; color: #002776; font-weight: 700; }
+      tr:nth-child(even) { background: #f7f9fb; }
+      tr:focus-within { outline: 2px solid #00a859; }
+      td, th { border-bottom: 1px solid #e6eef6; }
+      .btn-primary { background: #00a859; color: #fff; border: none; border-radius: 4px; padding: 0.6rem 1.2rem; font-weight: 600; cursor: pointer; transition: background .2s, box-shadow .2s; box-shadow: 0 1px 4px rgba(0,168,89,0.07); }
+      .btn-primary:focus, .btn-primary:hover { background: #008f4c; outline: none; }
+      .btn-icon { background: none; border: none; color: #002776; font-size: 1.3rem; cursor: pointer; margin-left: 0.5rem; vertical-align: middle; }
+      .btn-icon:focus, .btn-icon:hover { color: #00a859; outline: none; }
+      .tooltip { position: relative; display: inline-block; }
+      .tooltip .tooltiptext { visibility: hidden; width: 180px; background: #002776; color: #fff; text-align: center; border-radius: 6px; padding: 0.5rem; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -90px; opacity: 0; transition: opacity 0.3s; font-size: 0.95rem; }
+      .tooltip:focus .tooltiptext, .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+      .filter-bar { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+      .filter-bar label { font-weight: 600; color: #002776; }
+      .filter-bar input, .filter-bar select { padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #e6eef6; font-size: 1rem; }
+      .fade-in-table { animation: fadeIn .5s; }
+      @media (max-width: 768px) {
+        main { padding: 1rem; }
+        .filter-bar { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+      }
+    </style>
+    <script>
+      // Acessibilidade: navegação por teclado
+      document.addEventListener('DOMContentLoaded', function() {
+        const focusableElements = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const firstFocusableElement = document.querySelector(focusableElements);
+        if(firstFocusableElement) firstFocusableElement.focus();
+      });
+      function fadeTo(url) {
+        document.body.classList.remove('fade-in');
+        setTimeout(() => { window.location.href = url; }, 200);
+      }
+    </script>
+</head>
+<body class="fade-in" style="min-height:100vh;">
+  <header role="banner">
+    <div style="display:flex;align-items:center;max-width:1200px;margin:0 auto;padding:0 2rem;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo" tabindex="0">
+      <nav aria-label="Navegação principal">
+        <a href="index.html" tabindex="0">Dashboard</a>
+        <a href="pmp.html" class="active" aria-current="page" tabindex="0">Plano Mestre</a>
+        <a href="capacidade.html" tabindex="0">Capacidade Fabril</a>
+        <a href="sequenciamento.html" tabindex="0">Sequenciamento</a>
+        <a href="pedidos.html" tabindex="0">Pedidos</a>
+        <a href="kpis.html" tabindex="0">KPIs</a>
+        <a href="simulacao.html" tabindex="0">Simulação</a>
+      </nav>
+      <button class="btn-icon" aria-label="Sair" onclick="fadeTo('login.html')" tabindex="0"><span aria-hidden="true">&#x1F511;</span></button>
+    </div>
+  </header>
+  <main class="page-transition" id="app" tabindex="0">
+    <h1>Plano Mestre de Produção (PMP) - Visão Mensal</h1>
+    <form class="filter-bar" aria-label="Filtros do PMP" role="search">
+      <label for="mes">Mês:</label>
+      <select id="mes" name="mes" tabindex="0" aria-label="Selecionar mês">
+        <option>Julho 2024</option>
+        <option>Agosto 2024</option>
+        <option>Setembro 2024</option>
+      </select>
+      <label for="sku">SKU:</label>
+      <input type="text" id="sku" name="sku" placeholder="Ex: 12345" tabindex="0" aria-label="Filtrar por SKU">
+      <button type="submit" class="btn-primary" aria-label="Filtrar resultados" tabindex="0">Filtrar</button>
+    </form>
+    <div class="table-responsive fade-in-table" role="region" aria-label="Tabela de necessidade de produção">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">SKU</th>
+            <th scope="col">Produto</th>
+            <th scope="col">Estoque Atual</th>
+            <th scope="col">Previsão de Vendas</th>
+            <th scope="col">Política de Estoque</th>
+            <th scope="col">Necessidade de Produção</th>
+            <th scope="col">Lote Mínimo</th>
+            <th scope="col">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tabindex="0">
+            <td>12345</td>
+            <td>Paracetamol 500mg</td>
+            <td>12.000</td>
+            <td>18.000</td>
+            <td>5.000</td>
+            <td><span style="color:#e74c3c;font-weight:bold;">11.000</span></td>
+            <td>5.000</td>
+            <td><button class="btn-primary" aria-label="Ajustar parâmetros para Paracetamol 500mg" tabindex="0" onclick="fadeTo('ajuste-pmp.html')">Ajustar</button></td>
+          </tr>
+          <tr tabindex="0">
+            <td>23456</td>
+            <td>Amoxicilina 875mg</td>
+            <td>8.000</td>
+            <td>7.500</td>
+            <td>3.000</td>
+            <td><span style="color:#00a859;font-weight:bold;">2.500</span></td>
+            <td>2.000</td>
+            <td><button class="btn-primary" aria-label="Ajustar parâmetros para Amoxicilina 875mg" tabindex="0" onclick="fadeTo('ajuste-pmp.html')">Ajustar</button></td>
+          </tr>
+          <tr tabindex="0">
+            <td>34567</td>
+            <td>Dipirona 1g</td>
+            <td>20.000</td>
+            <td>19.000</td>
+            <td>4.000</td>
+            <td><span style="color:#f1c40f;font-weight:bold;">3.000</span></td>
+            <td>3.000</td>
+            <td><button class="btn-primary" aria-label="Ajustar parâmetros para Dipirona 1g" tabindex="0" onclick="fadeTo('ajuste-pmp.html')">Ajustar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:1.5rem;">
+      <button class="btn-primary" onclick="fadeTo('capacidade.html')" aria-label="Validar Capacidade Fabril" tabindex="0">Validar Capacidade Fabril</button>
+    </div>
+  </main>
+  <footer class="footer" role="contentinfo">
+    &copy; 2024 Eurofarma. Plataforma PCP - Todos os direitos reservados.
+  </footer>
+  <script>
+    document.body.classList.add('fade-in');
+  </script>
+</body>
+</html>

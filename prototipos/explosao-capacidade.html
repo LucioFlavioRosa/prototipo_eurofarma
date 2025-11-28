@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Explosão de Estrutura e Validação de Capacidade - PCP Eurofarma">
+    <title>Explosão de Estrutura e Capacidade | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      body {
+        font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+        background: #f6f8fa;
+        margin: 0;
+        color: #1a2a3a;
+      }
+      header {
+        background: #fff;
+        border-bottom: 1px solid #e3e7ea;
+        padding: 16px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        height: 40px;
+      }
+      .main-container {
+        max-width: 1200px;
+        margin: 32px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        padding: 32px;
+      }
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: #00529b;
+      }
+      .flex-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+      }
+      .bom-tree {
+        min-width: 320px;
+        flex: 1;
+        background: #f9fbfd;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      }
+      .bom-tree ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .bom-item {
+        margin-bottom: 12px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+      }
+      .bom-qty {
+        background: #e3e7ea;
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin-left: 8px;
+        font-size: 0.95rem;
+        color: #00529b;
+      }
+      .bom-link {
+        margin-left: 16px;
+        color: #008a3b;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+      .dashboard-cards {
+        display: flex;
+        gap: 24px;
+        margin-top: 32px;
+        flex-wrap: wrap;
+      }
+      .card-line {
+        background: #f9fbfd;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        padding: 24px;
+        min-width: 320px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+      }
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #00529b;
+      }
+      .card-metrics {
+        font-size: 0.98rem;
+        margin-bottom: 12px;
+      }
+      .progress-bar {
+        width: 100%;
+        height: 18px;
+        background: #e3e7ea;
+        border-radius: 9px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+      .progress-inner {
+        height: 100%;
+        border-radius: 9px;
+        transition: width 0.6s;
+      }
+      .progress-green {
+        background: #008a3b;
+      }
+      .progress-yellow {
+        background: #ffb700;
+      }
+      .progress-red {
+        background: #e53935;
+      }
+      .card-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+      }
+      .btn-sugerir {
+        background: #00529b;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+      }
+      .btn-sugerir:hover {
+        background: #008a3b;
+      }
+      .btn-sequenciamento {
+        background: #f6f8fa;
+        color: #00529b;
+        border: 1px solid #00529b;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+      }
+      .btn-sequenciamento:hover {
+        background: #e3e7ea;
+      }
+      .grafico-container {
+        margin-top: 48px;
+        background: #f9fbfd;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      }
+      .grafico-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #00529b;
+      }
+      @media (max-width: 900px) {
+        .main-container {
+          padding: 16px;
+        }
+        .dashboard-cards {
+          flex-direction: column;
+        }
+        .card-line {
+          min-width: 220px;
+        }
+      }
+      /* Modal */
+      .modal-bg {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.25);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal-bg.active {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 10px;
+        padding: 32px;
+        min-width: 320px;
+        max-width: 400px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+        text-align: left;
+      }
+      .modal-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        color: #00529b;
+      }
+      .modal-list {
+        margin-bottom: 18px;
+      }
+      .modal-list li {
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+      .modal-close {
+        background: #e3e7ea;
+        color: #00529b;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        float: right;
+      }
+      .modal-close:hover {
+        background: #ffb700;
+        color: #fff;
+      }
+    </style>
+</head>
+<body>
+  <header>
+    <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo">
+    <nav>
+      <a href="../dashboard.html" style="color:#00529b;font-weight:600;">Dashboard</a>
+      <a href="explosao-capacidade.html" style="color:#008a3b;font-weight:600;">Explosão & Capacidade</a>
+      <a href="sequenciamento-gantt.html" style="color:#00529b;font-weight:600;">Sequenciamento</a>
+      <a href="materia-prima.html" style="color:#00529b;font-weight:600;">Matéria-Prima</a>
+    </nav>
+  </header>
+  <main class="main-container">
+    <h1 class="section-title">Explosão de Estrutura e Validação de Capacidade</h1>
+    <section>
+      <label for="produto-select" style="font-weight:600;color:#00529b;">Selecione o Produto Acabado:</label>
+      <select id="produto-select" style="margin-left:12px;padding:6px 12px;border-radius:6px;border:1px solid #e3e7ea;font-size:1rem;">
+        <option value="sku123">Comprimido Eurofarma 500mg (SKU: 123)</option>
+        <option value="sku456">Xarope Eurofarma 200ml (SKU: 456)</option>
+        <option value="sku789">Creme Eurofarma 30g (SKU: 789)</option>
+      </select>
+    </section>
+    <div class="flex-row" style="margin-top:32px;">
+      <div class="bom-tree">
+        <h2 style="font-size:1.1rem;color:#00529b;font-weight:600;margin-bottom:14px;">Estrutura de Produto (BOM)</h2>
+        <ul id="bom-tree-list">
+          <!-- Exemplo inicial para SKU 123 -->
+          <li class="bom-item">
+            <span>Granel: Paracetamol 500mg</span>
+            <span class="bom-qty">120 kg</span>
+            <a class="bom-link" href="materia-prima.html?insumo=Paracetamol" aria-label="Ver Matéria-Prima Paracetamol">Ver Matéria-Prima</a>
+            <ul style="margin-left:24px;">
+              <li class="bom-item">
+                <span>Embalagem Primária: Blister Alu-PVC</span>
+                <span class="bom-qty">60.000 unidades</span>
+                <a class="bom-link" href="materia-prima.html?insumo=Blister+Alu-PVC" aria-label="Ver Matéria-Prima Blister">Ver Matéria-Prima</a>
+                <ul style="margin-left:24px;">
+                  <li class="bom-item">
+                    <span>Embalagem Secundária: Cartucho Papelão</span>
+                    <span class="bom-qty">60.000 unidades</span>
+                    <a class="bom-link" href="materia-prima.html?insumo=Cartucho+Papelão" aria-label="Ver Matéria-Prima Cartucho">Ver Matéria-Prima</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div style="flex:2;">
+        <h2 style="font-size:1.1rem;color:#00529b;font-weight:600;margin-bottom:14px;">Dashboard Capacidade vs. Demanda</h2>
+        <div class="dashboard-cards">
+          <div class="card-line" data-linha="Comprimidos 1">
+            <div class="card-title">Linha de Comprimidos 1</div>
+            <div class="card-metrics">Capacidade Disponível: <strong>160 h</strong></div>
+            <div class="card-metrics">Carga Planejada: <strong>140 h</strong></div>
+            <div class="card-metrics">Utilização: <strong>87.5%</strong></div>
+            <div class="progress-bar" aria-label="Utilização da Linha Comprimidos 1">
+              <div class="progress-inner progress-yellow" style="width:87.5%"></div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-sugerir" onclick="abrirModal('Comprimidos 1')">Sugerir Ações Corretivas</button>
+              <button class="btn-sequenciamento" onclick="irSequenciamento('Comprimidos 1')">Ir para Sequenciamento</button>
+            </div>
+          </div>
+          <div class="card-line" data-linha="Líquidos 2">
+            <div class="card-title">Linha de Líquidos 2</div>
+            <div class="card-metrics">Capacidade Disponível: <strong>120 h</strong></div>
+            <div class="card-metrics">Carga Planejada: <strong>110 h</strong></div>
+            <div class="card-metrics">Utilização: <strong>91.7%</strong></div>
+            <div class="progress-bar" aria-label="Utilização da Linha Líquidos 2">
+              <div class="progress-inner progress-yellow" style="width:91.7%"></div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-sugerir" onclick="abrirModal('Líquidos 2')">Sugerir Ações Corretivas</button>
+              <button class="btn-sequenciamento" onclick="irSequenciamento('Líquidos 2')">Ir para Sequenciamento</button>
+            </div>
+          </div>
+          <div class="card-line" data-linha="Embalagem A">
+            <div class="card-title">Linha de Embalagem A</div>
+            <div class="card-metrics">Capacidade Disponível: <strong>100 h</strong></div>
+            <div class="card-metrics">Carga Planejada: <strong>95 h</strong></div>
+            <div class="card-metrics">Utilização: <strong>95%</strong></div>
+            <div class="progress-bar" aria-label="Utilização da Linha Embalagem A">
+              <div class="progress-inner progress-red" style="width:95%"></div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-sugerir" onclick="abrirModal('Embalagem A')">Sugerir Ações Corretivas</button>
+              <button class="btn-sequenciamento" onclick="irSequenciamento('Embalagem A')">Ir para Sequenciamento</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grafico-container">
+      <div class="grafico-title">Capacidade vs. Demanda por Equipamento</div>
+      <canvas id="graficoBarra" height="220" aria-label="Gráfico Capacidade vs. Demanda"></canvas>
+    </div>
+  </main>
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <div class="modal-title">Ações Corretivas Sugeridas</div>
+      <ul class="modal-list" id="modalSugestoes">
+        <!-- Sugestões dinâmicas -->
+      </ul>
+      <button class="modal-close" onclick="fecharModal()">Fechar</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Exemplo de dados para gráfico
+    const dadosGrafico = {
+      labels: ['Comprimidos 1', 'Líquidos 2', 'Embalagem A'],
+      datasets: [
+        {
+          label: 'Capacidade (h)',
+          data: [160, 120, 100],
+          backgroundColor: '#00529b',
+          borderRadius: 8,
+        },
+        {
+          label: 'Demanda (h)',
+          data: [140, 110, 95],
+          backgroundColor: '#008a3b',
+          borderRadius: 8,
+        }
+      ]
+    };
+    const ctx = document.getElementById('graficoBarra').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: dadosGrafico,
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: {family: 'Lato', size: 14}
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 180,
+            grid: {color: '#e3e7ea'},
+            ticks: {font: {family: 'Lato', size: 13}}
+          },
+          y: {
+            grid: {color: '#f6f8fa'},
+            ticks: {font: {family: 'Lato', size: 13}}
+          }
+        }
+      }
+    });
+
+    // Modal de sugestões
+    function abrirModal(linha) {
+      const modalBg = document.getElementById('modalBg');
+      const modalSugestoes = document.getElementById('modalSugestoes');
+      modalBg.classList.add('active');
+      let sugestoes = [];
+      if(linha === 'Comprimidos 1') {
+        sugestoes = [
+          'Adicionar turno extra para aumentar capacidade.',
+          'Realocar parte da produção para Linha de Comprimidos 2.',
+          'Antecipar manutenção preventiva para evitar paradas.'
+        ];
+      } else if(linha === 'Líquidos 2') {
+        sugestoes = [
+          'Avaliar possibilidade de horas extras.',
+          'Realocar produção de embalagens para Linha de Embalagem B.',
+          'Verificar disponibilidade de operadores.'
+        ];
+      } else if(linha === 'Embalagem A') {
+        sugestoes = [
+          'Adicionar turno extra para evitar sobrecarga.',
+          'Realocar pedidos para Linha de Embalagem B.',
+          'Priorizar pedidos críticos na programação.'
+        ];
+      }
+      modalSugestoes.innerHTML = sugestoes.map(s => `<li>${s}</li>`).join('');
+    }
+    function fecharModal() {
+      document.getElementById('modalBg').classList.remove('active');
+    }
+    // Navegação para sequenciamento
+    function irSequenciamento(linha) {
+      const filtro = encodeURIComponent(linha);
+      window.location.href = `sequenciamento-gantt.html?linha=${filtro}`;
+    }
+    // Troca de BOM conforme produto selecionado
+    document.getElementById('produto-select').addEventListener('change', function(e){
+      const sku = e.target.value;
+      const bomTreeList = document.getElementById('bom-tree-list');
+      let html = '';
+      if(sku === 'sku123') {
+        html = `<li class="bom-item">
+            <span>Granel: Paracetamol 500mg</span>
+            <span class="bom-qty">120 kg</span>
+            <a class="bom-link" href="materia-prima.html?insumo=Paracetamol" aria-label="Ver Matéria-Prima Paracetamol">Ver Matéria-Prima</a>
+            <ul style="margin-left:24px;">
+              <li class="bom-item">
+                <span>Embalagem Primária: Blister Alu-PVC</span>
+                <span class="bom-qty">60.000 unidades</span>
+                <a class="bom-link" href="materia-prima.html?insumo=Blister+Alu-PVC" aria-label="Ver Matéria-Prima Blister">Ver Matéria-Prima</a>
+                <ul style="margin-left:24px;">
+                  <li class="bom-item">
+                    <span>Embalagem Secundária: Cartucho Papelão</span>
+                    <span class="bom-qty">60.000 unidades</span>
+                    <a class="bom-link" href="materia-prima.html?insumo=Cartucho+Papelão" aria-label="Ver Matéria-Prima Cartucho">Ver Matéria-Prima</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>`;
+      } else if(sku === 'sku456') {
+        html = `<li class="bom-item">
+          <span>Granel: Solução Xarope 200ml</span>
+          <span class="bom-qty">80 kg</span>
+          <a class="bom-link" href="materia-prima.html?insumo=Solução+Xarope" aria-label="Ver Matéria-Prima Solução Xarope">Ver Matéria-Prima</a>
+          <ul style="margin-left:24px;">
+            <li class="bom-item">
+              <span>Embalagem Primária: Frasco PET 200ml</span>
+              <span class="bom-qty">40.000 unidades</span>
+              <a class="bom-link" href="materia-prima.html?insumo=Frasco+PET" aria-label="Ver Matéria-Prima Frasco PET">Ver Matéria-Prima</a>
+              <ul style="margin-left:24px;">
+                <li class="bom-item">
+                  <span>Embalagem Secundária: Caixa Papelão</span>
+                  <span class="bom-qty">40.000 unidades</span>
+                  <a class="bom-link" href="materia-prima.html?insumo=Caixa+Papelão" aria-label="Ver Matéria-Prima Caixa">Ver Matéria-Prima</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>`;
+      } else if(sku === 'sku789') {
+        html = `<li class="bom-item">
+          <span>Granel: Creme Base 30g</span>
+          <span class="bom-qty">50 kg</span>
+          <a class="bom-link" href="materia-prima.html?insumo=Creme+Base" aria-label="Ver Matéria-Prima Creme Base">Ver Matéria-Prima</a>
+          <ul style="margin-left:24px;">
+            <li class="bom-item">
+              <span>Embalagem Primária: Bisnaga Alumínio</span>
+              <span class="bom-qty">20.000 unidades</span>
+              <a class="bom-link" href="materia-prima.html?insumo=Bisnaga+Alumínio" aria-label="Ver Matéria-Prima Bisnaga">Ver Matéria-Prima</a>
+              <ul style="margin-left:24px;">
+                <li class="bom-item">
+                  <span>Embalagem Secundária: Caixa Papelão</span>
+                  <span class="bom-qty">20.000 unidades</span>
+                  <a class="bom-link" href="materia-prima.html?insumo=Caixa+Papelão" aria-label="Ver Matéria-Prima Caixa">Ver Matéria-Prima</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>`;
+      }
+      bomTreeList.innerHTML = html;
+    });
+  </script>
+</body>
+</html>

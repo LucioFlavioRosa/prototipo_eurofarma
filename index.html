@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="pt" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Plataforma PCP Eurofarma - Planejamento e Controle da Produção">
+    <title>PCP Eurofarma - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      html, body { height: 100%; margin: 0; font-family: 'Lato', Arial, sans-serif; background: #f7f9fb; color: #1a2341; }
+      .fade-in { animation: fadeIn .7s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      header { background: #002776; color: #fff; padding: 0.5rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+      .logo { height: 40px; margin-right: 16px; vertical-align: middle; }
+      nav { display: flex; gap: 1rem; align-items: center; }
+      nav a { color: #fff; text-decoration: none; font-weight: 600; padding: 8px 16px; border-radius: 4px; transition: background .2s; }
+      nav a:focus, nav a:hover, nav a.active { background: #00a859; outline: none; }
+      main { max-width: 1200px; margin: 2rem auto; padding: 2rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 24px rgba(0,39,118,0.07); min-height: 70vh; }
+      h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+      .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+      .kpi-card { background: #f1f7fa; border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,39,118,0.03); display: flex; flex-direction: column; align-items: flex-start; }
+      .kpi-title { font-size: 1.1rem; color: #002776; margin-bottom: 0.5rem; }
+      .kpi-value { font-size: 2rem; font-weight: bold; color: #00a859; }
+      .kpi-trend { font-size: 0.95rem; margin-top: 0.25rem; color: #1a2341; }
+      .section-title { font-size: 1.3rem; margin: 2rem 0 1rem 0; color: #002776; }
+      .table-responsive { overflow-x: auto; }
+      table { border-collapse: collapse; width: 100%; background: #fff; }
+      th, td { padding: 0.75rem 1rem; text-align: left; }
+      th { background: #e6eef6; color: #002776; font-weight: 700; }
+      tr:nth-child(even) { background: #f7f9fb; }
+      tr:focus-within { outline: 2px solid #00a859; }
+      td, th { border-bottom: 1px solid #e6eef6; }
+      .btn-primary { background: #00a859; color: #fff; border: none; border-radius: 4px; padding: 0.6rem 1.2rem; font-weight: 600; cursor: pointer; transition: background .2s, box-shadow .2s; box-shadow: 0 1px 4px rgba(0,168,89,0.07); }
+      .btn-primary:focus, .btn-primary:hover { background: #008f4c; outline: none; }
+      .btn-icon { background: none; border: none; color: #002776; font-size: 1.3rem; cursor: pointer; margin-left: 0.5rem; vertical-align: middle; }
+      .btn-icon:focus, .btn-icon:hover { color: #00a859; outline: none; }
+      .tooltip { position: relative; display: inline-block; }
+      .tooltip .tooltiptext { visibility: hidden; width: 180px; background: #002776; color: #fff; text-align: center; border-radius: 6px; padding: 0.5rem; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -90px; opacity: 0; transition: opacity 0.3s; font-size: 0.95rem; }
+      .tooltip:focus .tooltiptext, .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+      .chart-container { width: 100%; max-width: 680px; margin: 2rem auto; background: #f1f7fa; border-radius: 10px; box-shadow: 0 1px 8px rgba(0,39,118,0.06); padding: 1.5rem; }
+      .footer { background: #002776; color: #fff; text-align: center; padding: 1rem; margin-top: 2rem; border-radius: 0 0 12px 12px; }
+      @media (max-width: 768px) {
+        main { padding: 1rem; }
+        .kpi-grid { grid-template-columns: 1fr; }
+        .chart-container { padding: 0.7rem; }
+      }
+      /* Animação de transição suave */
+      .page-transition { animation: fadeIn .5s; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+      // Acessibilidade: navegação por teclado
+      document.addEventListener('DOMContentLoaded', function() {
+        const focusableElements = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const firstFocusableElement = document.querySelector(focusableElements);
+        if(firstFocusableElement) firstFocusableElement.focus();
+      });
+      // Transição suave entre páginas
+      function fadeTo(url) {
+        document.body.classList.remove('fade-in');
+        setTimeout(() => { window.location.href = url; }, 200);
+      }
+      // Exemplo de gráfico de KPIs
+      window.onload = function() {
+        const ctx = document.getElementById('kpiChart').getContext('2d');
+        window.kpiChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            datasets: [{
+              label: 'Necessidade de Produção (milhares)',
+              data: [120, 135, 128, 142, 150, 145, 160, 170, 155, 148, 140, 130],
+              backgroundColor: '#00a859',
+              borderRadius: 6,
+              maxBarThickness: 36
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              y: { beginAtZero: true, ticks: { color: '#002776', font: { weight: 'bold' } } },
+              x: { ticks: { color: '#002776' } }
+            }
+          }
+        });
+      };
+    </script>
+</head>
+<body class="fade-in" style="min-height:100vh;">
+  <header role="banner">
+    <div style="display:flex;align-items:center;max-width:1200px;margin:0 auto;padding:0 2rem;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo" tabindex="0">
+      <nav aria-label="Navegação principal">
+        <a href="index.html" class="active" aria-current="page" tabindex="0">Dashboard</a>
+        <a href="pmp.html" tabindex="0">Plano Mestre</a>
+        <a href="capacidade.html" tabindex="0">Capacidade Fabril</a>
+        <a href="sequenciamento.html" tabindex="0">Sequenciamento</a>
+        <a href="pedidos.html" tabindex="0">Pedidos</a>
+        <a href="kpis.html" tabindex="0">KPIs</a>
+        <a href="simulacao.html" tabindex="0">Simulação</a>
+      </nav>
+      <button class="btn-icon" aria-label="Sair" onclick="fadeTo('login.html')" tabindex="0"><span aria-hidden="true">&#x1F511;</span></button>
+    </div>
+  </header>
+  <main class="page-transition" id="app" tabindex="0">
+    <h1>Dashboard Executivo de PCP</h1>
+    <div class="kpi-grid" role="region" aria-label="Indicadores de desempenho">
+      <div class="kpi-card" tabindex="0" aria-describedby="kpi1desc">
+        <span class="kpi-title">Acuracidade do Plano</span>
+        <span class="kpi-value">97,2%</span>
+        <span class="kpi-trend">vs. 94,6% mês anterior</span>
+        <span id="kpi1desc" class="sr-only">Acuracidade do plano de produção no mês corrente.</span>
+      </div>
+      <div class="kpi-card" tabindex="0" aria-describedby="kpi2desc">
+        <span class="kpi-title">Taxa de Atendimento</span>
+        <span class="kpi-value">99,1%</span>
+        <span class="kpi-trend">Pedidos entregues no prazo</span>
+        <span id="kpi2desc" class="sr-only">Percentual de pedidos atendidos dentro do prazo planejado.</span>
+      </div>
+      <div class="kpi-card" tabindex="0" aria-describedby="kpi3desc">
+        <span class="kpi-title">Ociosidade de Máquinas</span>
+        <span class="kpi-value">3,8%</span>
+        <span class="kpi-trend">Meta: &lt; 5%</span>
+        <span id="kpi3desc" class="sr-only">Percentual de tempo ocioso das linhas de produção.</span>
+      </div>
+      <div class="kpi-card" tabindex="0" aria-describedby="kpi4desc">
+        <span class="kpi-title">Faturamento Realizado</span>
+        <span class="kpi-value">R$ 48,3M</span>
+        <span class="kpi-trend">+4,2% vs. planejado</span>
+        <span id="kpi4desc" class="sr-only">Valor faturado no mês corrente comparado ao planejado.</span>
+      </div>
+    </div>
+    <div class="chart-container" role="region" aria-label="Gráfico de necessidade de produção mensal">
+      <canvas id="kpiChart" aria-label="Necessidade de produção por mês" role="img" tabindex="0"></canvas>
+    </div>
+    <h2 class="section-title">Alertas Recentes</h2>
+    <div class="table-responsive" role="region" aria-label="Tabela de alertas de produção">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Tipo</th>
+            <th scope="col">Descrição</th>
+            <th scope="col">Ação Recomendada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tabindex="0">
+            <td><span style="color:#e74c3c;font-weight:bold;">Capacidade</span></td>
+            <td>Linha Embalagem 3 atingiu 95% da capacidade prevista para Julho.</td>
+            <td>Considerar turno extra ou redistribuição.</td>
+          </tr>
+          <tr tabindex="0">
+            <td><span style="color:#f1c40f;font-weight:bold;">Estoque</span></td>
+            <td>Produto X (SKU 12345) com estoque abaixo da política mínima.</td>
+            <td>Antecipar produção ou revisar política de estoque.</td>
+          </tr>
+          <tr tabindex="0">
+            <td><span style="color:#e67e22;font-weight:bold;">Pedido</span></td>
+            <td>Pedido urgente do cliente Y para entrega em 3 dias.</td>
+            <td>Priorizar no sequenciamento.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:1.5rem;">
+      <button class="btn-primary" onclick="fadeTo('pmp.html')" aria-label="Acessar Plano Mestre" tabindex="0">Acessar Plano Mestre</button>
+    </div>
+  </main>
+  <footer class="footer" role="contentinfo">
+    &copy; 2024 Eurofarma. Plataforma PCP - Todos os direitos reservados.
+  </footer>
+  <script>
+    // Acessibilidade: tooltips por teclado
+    document.querySelectorAll('.tooltip').forEach(function(el){
+      el.addEventListener('focus', function(){
+        var tip = el.querySelector('.tooltiptext');
+        if(tip) tip.style.visibility = 'visible';
+      });
+      el.addEventListener('blur', function(){
+        var tip = el.querySelector('.tooltiptext');
+        if(tip) tip.style.visibility = 'hidden';
+      });
+    });
+    // Animação fade-in na troca de página
+    document.body.classList.add('fade-in');
+  </script>
+</body>
+</html>

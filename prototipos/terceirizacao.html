@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+  <title>Gestão de Terceirização de Produção | Plataforma PCP</title>
+  <meta name="description" content="Gestão de terceirização de produção industrial, acompanhamento de ordens, performance de fornecedores e análise de custos.">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <style>
+    body {
+      font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+      background: #f7f9fb;
+      margin: 0;
+      color: #222;
+    }
+    header {
+      background: #003366;
+      color: #fff;
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    header img {
+      height: 40px;
+      margin-right: 1.5rem;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 2rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a.active, nav a:hover {
+      color: #ffd600;
+    }
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .page-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #003366;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+    .filters {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .filters label {
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    .filters select {
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      border: 1px solid #b0b0b0;
+      background: #fff;
+      font-size: 1rem;
+    }
+    .actions-bar {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #ffd600;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      padding: 0.7rem 1.6rem;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .btn-primary:hover {
+      background: #ffe066;
+    }
+    .btn-link {
+      background: none;
+      border: none;
+      color: #0072ce;
+      font-size: 1rem;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+    }
+    .table-responsive {
+      overflow-x: auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+      background: #fff;
+    }
+    th, td {
+      padding: 0.9rem 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    th {
+      background: #f7f9fb;
+      font-weight: 700;
+      color: #003366;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.3em 0.9em;
+      border-radius: 1em;
+      font-size: 0.97em;
+      font-weight: 600;
+      color: #fff;
+      min-width: 80px;
+      text-align: center;
+    }
+    .badge.no-prazo { background: #4caf50; }
+    .badge.atrasado { background: #e53935; }
+    .badge.entregue { background: #1976d2; }
+    .alert-section {
+      background: #fff3e0;
+      border-left: 5px solid #ff9800;
+      padding: 1.2rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      color: #7a4f01;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .dashboard-cards {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 1.3rem 2rem;
+      min-width: 260px;
+      flex: 1 1 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #003366;
+      margin-bottom: 0.5rem;
+    }
+    .stars {
+      color: #ffd600;
+      font-size: 1.1em;
+      margin-top: 0.2em;
+    }
+    .bar-chart {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 1.5rem 2rem 2rem 2rem;
+      margin-bottom: 2rem;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .bar-chart-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #003366;
+      margin-bottom: 1.2rem;
+    }
+    .bar-chart-legend {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.97em;
+    }
+    .legend-color {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      margin-right: 0.5em;
+      vertical-align: middle;
+    }
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.36);
+      z-index: 1000;
+      display: none;
+    }
+    .modal {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      z-index: 1010;
+      min-width: 340px;
+      max-width: 96vw;
+      width: 420px;
+      padding: 2rem 2rem 1.5rem 2rem;
+      display: none;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    .modal-header {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #003366;
+      margin-bottom: 0.7rem;
+    }
+    .modal input, .modal select {
+      width: 100%;
+      padding: 0.5rem 0.8rem;
+      border: 1px solid #b0b0b0;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 0.7rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .modal .btn-primary {
+      min-width: 110px;
+    }
+    @media (max-width: 900px) {
+      .dashboard-cards { flex-direction: column; }
+      .bar-chart { padding: 1.2rem 0.7rem 1.5rem 0.7rem; }
+    }
+    @media (max-width: 600px) {
+      .container { padding: 0 0.5rem; }
+      .dashboard-cards { gap: 1rem; }
+      .card { padding: 1rem 1rem; }
+      .bar-chart { padding: 1rem 0.2rem 1rem 0.2rem; }
+      .modal { width: 98vw; min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+      <span style="font-size:1.4rem;font-weight:700;letter-spacing:0.5px;">Plataforma PCP</span>
+    </div>
+    <nav aria-label="Navegação principal">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="pmp.html">Plano Mestre</a>
+      <a href="sequenciamento-gantt.html">Sequenciamento</a>
+      <a href="terceirizacao.html" class="active">Terceirização</a>
+      <a href="kpis.html">KPIs</a>
+    </nav>
+  </header>
+  <main class="container">
+    <h1 class="page-title">Gestão de Terceirização de Produção</h1>
+    <div class="subtitle">Acompanhe ordens terceirizadas, performance de fornecedores e análise de custos para decisões estratégicas.</div>
+    <section class="actions-bar">
+      <button class="btn-primary" id="btnNovaOrdem">Solicitar Nova Ordem</button>
+      <a href="sequenciamento-gantt.html" class="btn-link" id="linkSequenciamento">Ver Impacto no Sequenciamento</a>
+    </section>
+    <section class="filters" aria-label="Filtros de Ordens">
+      <div>
+        <label for="filtroStatus">Status:</label>
+        <select id="filtroStatus">
+          <option value="">Todos</option>
+          <option value="No Prazo">No Prazo</option>
+          <option value="Atrasado">Atrasado</option>
+          <option value="Entregue">Entregue</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtroFornecedor">Fornecedor:</label>
+        <select id="filtroFornecedor">
+          <option value="">Todos</option>
+          <option value="Fornecedor A">Fornecedor A</option>
+          <option value="Fornecedor B">Fornecedor B</option>
+          <option value="Fornecedor C">Fornecedor C</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtroProduto">Produto:</label>
+        <select id="filtroProduto">
+          <option value="">Todos</option>
+          <option value="Paracetamol 500mg 20cp">Paracetamol 500mg 20cp</option>
+          <option value="Amoxicilina 500mg 12cp">Amoxicilina 500mg 12cp</option>
+          <option value="Ibuprofeno 400mg 30cp">Ibuprofeno 400mg 30cp</option>
+          <option value="Dipirona 1g 10cp">Dipirona 1g 10cp</option>
+        </select>
+      </div>
+    </section>
+    <section class="alert-section" aria-label="Ordens Atrasadas">
+      <strong>Ordens Atrasadas:</strong>
+      <ul id="listaAtrasados">
+        <li>Fornecedor B: Ordem #1003 (Ibuprofeno 400mg 30cp) - 2 dias de atraso</li>
+        <li>Fornecedor C: Ordem #1009 (Dipirona 1g 10cp) - 1 dia de atraso</li>
+      </ul>
+    </section>
+    <section class="dashboard-cards">
+      <div class="card">
+        <div class="card-title">Fornecedor A</div>
+        <div>Taxa de Entrega no Prazo: <strong>97%</strong></div>
+        <div>Lead Time Médio: <strong>8 dias</strong></div>
+        <div class="stars" aria-label="Avaliação: 5 estrelas">★★★★★</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Fornecedor B</div>
+        <div>Taxa de Entrega no Prazo: <strong>83%</strong></div>
+        <div>Lead Time Médio: <strong>11 dias</strong></div>
+        <div class="stars" aria-label="Avaliação: 4 estrelas">★★★★☆</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Fornecedor C</div>
+        <div>Taxa de Entrega no Prazo: <strong>90%</strong></div>
+        <div>Lead Time Médio: <strong>9 dias</strong></div>
+        <div class="stars" aria-label="Avaliação: 4 estrelas">★★★★☆</div>
+      </div>
+    </section>
+    <section class="bar-chart">
+      <div class="bar-chart-title">Comparação de Custo: Produção Interna vs. Terceirizada (por Produto)</div>
+      <div class="bar-chart-legend">
+        <span><span class="legend-color" style="background:#003366;"></span>Interna</span>
+        <span><span class="legend-color" style="background:#ffd600;"></span>Terceirizada</span>
+      </div>
+      <canvas id="custosChart" width="650" height="300" aria-label="Gráfico de barras de custos"></canvas>
+    </section>
+    <section class="table-responsive">
+      <table id="tabelaOrdens" aria-label="Tabela de Ordens de Terceirização">
+        <thead>
+          <tr>
+            <th>Ordem #</th>
+            <th>Fornecedor</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Data de Pedido</th>
+            <th>Data Prevista de Entrega</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1001</td>
+            <td>Fornecedor A</td>
+            <td>Paracetamol 500mg 20cp</td>
+            <td>10.000</td>
+            <td>01/06/2024</td>
+            <td>15/06/2024</td>
+            <td><span class="badge no-prazo">No Prazo</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1002</td>
+            <td>Fornecedor A</td>
+            <td>Amoxicilina 500mg 12cp</td>
+            <td>8.000</td>
+            <td>03/06/2024</td>
+            <td>18/06/2024</td>
+            <td><span class="badge entregue">Entregue</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1003</td>
+            <td>Fornecedor B</td>
+            <td>Ibuprofeno 400mg 30cp</td>
+            <td>12.000</td>
+            <td>05/06/2024</td>
+            <td>17/06/2024</td>
+            <td><span class="badge atrasado">Atrasado</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1004</td>
+            <td>Fornecedor C</td>
+            <td>Dipirona 1g 10cp</td>
+            <td>7.000</td>
+            <td>06/06/2024</td>
+            <td>20/06/2024</td>
+            <td><span class="badge no-prazo">No Prazo</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1005</td>
+            <td>Fornecedor B</td>
+            <td>Paracetamol 500mg 20cp</td>
+            <td>9.000</td>
+            <td>08/06/2024</td>
+            <td>22/06/2024</td>
+            <td><span class="badge no-prazo">No Prazo</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1006</td>
+            <td>Fornecedor A</td>
+            <td>Ibuprofeno 400mg 30cp</td>
+            <td>6.000</td>
+            <td>10/06/2024</td>
+            <td>24/06/2024</td>
+            <td><span class="badge no-prazo">No Prazo</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1007</td>
+            <td>Fornecedor C</td>
+            <td>Amoxicilina 500mg 12cp</td>
+            <td>5.000</td>
+            <td>12/06/2024</td>
+            <td>26/06/2024</td>
+            <td><span class="badge entregue">Entregue</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1008</td>
+            <td>Fornecedor B</td>
+            <td>Dipirona 1g 10cp</td>
+            <td>8.500</td>
+            <td>13/06/2024</td>
+            <td>27/06/2024</td>
+            <td><span class="badge no-prazo">No Prazo</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1009</td>
+            <td>Fornecedor C</td>
+            <td>Dipirona 1g 10cp</td>
+            <td>7.500</td>
+            <td>14/06/2024</td>
+            <td>28/06/2024</td>
+            <td><span class="badge atrasado">Atrasado</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+          <tr>
+            <td>1010</td>
+            <td>Fornecedor A</td>
+            <td>Paracetamol 500mg 20cp</td>
+            <td>11.000</td>
+            <td>15/06/2024</td>
+            <td>29/06/2024</td>
+            <td><span class="badge no-prazo">No Prazo</span></td>
+            <td><button class="btn-link">Detalhes</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <form class="modal" id="modalNovaOrdem" aria-label="Solicitar Nova Ordem">
+    <div class="modal-header">Solicitar Nova Ordem de Terceirização</div>
+    <label for="novoFornecedor">Fornecedor</label>
+    <select id="novoFornecedor" required>
+      <option value="">Selecione</option>
+      <option value="Fornecedor A">Fornecedor A</option>
+      <option value="Fornecedor B">Fornecedor B</option>
+      <option value="Fornecedor C">Fornecedor C</option>
+    </select>
+    <label for="novoProduto">Produto</label>
+    <select id="novoProduto" required>
+      <option value="">Selecione</option>
+      <option value="Paracetamol 500mg 20cp">Paracetamol 500mg 20cp</option>
+      <option value="Amoxicilina 500mg 12cp">Amoxicilina 500mg 12cp</option>
+      <option value="Ibuprofeno 400mg 30cp">Ibuprofeno 400mg 30cp</option>
+      <option value="Dipirona 1g 10cp">Dipirona 1g 10cp</option>
+    </select>
+    <label for="novaQuantidade">Quantidade</label>
+    <input type="number" id="novaQuantidade" min="1" required placeholder="Ex: 10000">
+    <label for="novaDataPedido">Data de Pedido</label>
+    <input type="date" id="novaDataPedido" required>
+    <label for="novaDataEntrega">Data Prevista de Entrega</label>
+    <input type="date" id="novaDataEntrega" required>
+    <div class="modal-actions">
+      <button type="button" class="btn-link" id="btnCancelarModal">Cancelar</button>
+      <button type="submit" class="btn-primary">Salvar</button>
+    </div>
+  </form>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Dados do gráfico de custos
+    const custosData = {
+      labels: ['Paracetamol 500mg 20cp', 'Amoxicilina 500mg 12cp', 'Ibuprofeno 400mg 30cp', 'Dipirona 1g 10cp'],
+      datasets: [
+        {
+          label: 'Interna',
+          backgroundColor: '#003366',
+          data: [1.20, 1.35, 1.50, 1.10],
+          borderRadius: 5
+        },
+        {
+          label: 'Terceirizada',
+          backgroundColor: '#ffd600',
+          data: [1.35, 1.50, 1.65, 1.22],
+          borderRadius: 5
+        }
+      ]
+    };
+    const custosConfig = {
+      type: 'bar',
+      data: custosData,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': R$ ' + context.parsed.y.toFixed(2) + ' /unidade';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Custo (R$/unidade)' },
+            ticks: { stepSize: 0.2 }
+          }
+        }
+      }
+    };
+    new Chart(document.getElementById('custosChart'), custosConfig);
+
+    // Filtros dinâmicos da tabela
+    const tabela = document.getElementById('tabelaOrdens').getElementsByTagName('tbody')[0];
+    const filtroStatus = document.getElementById('filtroStatus');
+    const filtroFornecedor = document.getElementById('filtroFornecedor');
+    const filtroProduto = document.getElementById('filtroProduto');
+    function filtrarTabela() {
+      const status = filtroStatus.value;
+      const fornecedor = filtroFornecedor.value;
+      const produto = filtroProduto.value;
+      for (const row of tabela.rows) {
+        let exibe = true;
+        if (status && !row.cells[6].textContent.includes(status)) exibe = false;
+        if (fornecedor && row.cells[1].textContent !== fornecedor) exibe = false;
+        if (produto && row.cells[2].textContent !== produto) exibe = false;
+        row.style.display = exibe ? '' : 'none';
+      }
+    }
+    filtroStatus.addEventListener('change', filtrarTabela);
+    filtroFornecedor.addEventListener('change', filtrarTabela);
+    filtroProduto.addEventListener('change', filtrarTabela);
+
+    // Modal de Nova Ordem
+    const btnNovaOrdem = document.getElementById('btnNovaOrdem');
+    const modal = document.getElementById('modalNovaOrdem');
+    const backdrop = document.getElementById('modalBackdrop');
+    const btnCancelarModal = document.getElementById('btnCancelarModal');
+    btnNovaOrdem.onclick = () => { modal.style.display = 'flex'; backdrop.style.display = 'block'; };
+    btnCancelarModal.onclick = () => { modal.style.display = 'none'; backdrop.style.display = 'none'; };
+    backdrop.onclick = () => { modal.style.display = 'none'; backdrop.style.display = 'none'; };
+    modal.onsubmit = function(e) {
+      e.preventDefault();
+      // Simular inclusão na tabela
+      const novoId = (parseInt(tabela.rows[tabela.rows.length-1].cells[0].textContent,10) + 1).toString();
+      const fornecedor = document.getElementById('novoFornecedor').value;
+      const produto = document.getElementById('novoProduto').value;
+      const quantidade = document.getElementById('novaQuantidade').value;
+      const dataPedido = document.getElementById('novaDataPedido').value.split('-').reverse().join('/');
+      const dataEntrega = document.getElementById('novaDataEntrega').value.split('-').reverse().join('/');
+      const row = tabela.insertRow();
+      row.insertCell(0).textContent = novoId;
+      row.insertCell(1).textContent = fornecedor;
+      row.insertCell(2).textContent = produto;
+      row.insertCell(3).textContent = quantidade;
+      row.insertCell(4).textContent = dataPedido;
+      row.insertCell(5).textContent = dataEntrega;
+      const statusCell = row.insertCell(6);
+      statusCell.innerHTML = '<span class="badge no-prazo">No Prazo</span>';
+      row.insertCell(7).innerHTML = '<button class="btn-link">Detalhes</button>';
+      modal.reset();
+      modal.style.display = 'none';
+      backdrop.style.display = 'none';
+    };
+    // Acessibilidade: fechar modal com ESC
+    document.addEventListener('keydown', function(e){
+      if(e.key==='Escape'){
+        modal.style.display = 'none';
+        backdrop.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Análise de Acuracidade de Previsão de Vendas - Plataforma PCP Eurofarma">
+    <meta name="author" content="Eurofarma">
+    <title>PCP | Acuracidade de Previsão de Vendas</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      body {
+        font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+        background: #f6f8fa;
+        margin: 0;
+        color: #222;
+      }
+      header {
+        background: #002776;
+        color: #fff;
+        padding: 0 0 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .logo {
+        height: 40px;
+        margin: 12px 32px 12px 24px;
+      }
+      nav {
+        display: flex;
+        gap: 32px;
+        margin-right: 32px;
+      }
+      nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+        font-size: 1.05rem;
+      }
+      nav a.active, nav a:hover {
+        color: #ffcc00;
+      }
+      main {
+        max-width: 1320px;
+        margin: 32px auto 0 auto;
+        padding: 0 24px 40px 24px;
+      }
+      .page-title {
+        font-size: 2.1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #002776;
+      }
+      .subtitle {
+        color: #555;
+        margin-bottom: 32px;
+        font-size: 1.1rem;
+      }
+      .filters {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+      .filters label {
+        font-weight: 600;
+        margin-right: 8px;
+      }
+      .filters select, .filters input[type="month"] {
+        padding: 6px 12px;
+        border: 1px solid #ccd6e0;
+        border-radius: 4px;
+        background: #fff;
+        font-size: 1rem;
+      }
+      .charts-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        margin-bottom: 32px;
+      }
+      .chart-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 24px 28px 16px 28px;
+        flex: 2 1 580px;
+        min-width: 350px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .chart-card h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.15rem;
+        color: #002776;
+        font-weight: 700;
+      }
+      .chart-canvas {
+        width: 100%;
+        height: 320px;
+      }
+      .metrics-table-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 24px 28px 16px 28px;
+        flex: 1 1 420px;
+        min-width: 320px;
+        overflow-x: auto;
+      }
+      .metrics-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 8px;
+      }
+      .metrics-table th, .metrics-table td {
+        padding: 8px 10px;
+        text-align: center;
+        border-bottom: 1px solid #eaeaea;
+      }
+      .metrics-table th {
+        background: #f2f6fa;
+        color: #002776;
+        font-weight: 700;
+      }
+      .metrics-table td.class-high {
+        color: #2e7d32;
+        font-weight: 700;
+      }
+      .metrics-table td.class-medium {
+        color: #f9a825;
+        font-weight: 700;
+      }
+      .metrics-table td.class-low {
+        color: #c62828;
+        font-weight: 700;
+      }
+      .insights-section {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+      }
+      .insight-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px 24px;
+        min-width: 260px;
+        flex: 1 1 320px;
+      }
+      .insight-card h4 {
+        margin: 0 0 8px 0;
+        color: #002776;
+        font-size: 1.08rem;
+        font-weight: 700;
+      }
+      .insight-list {
+        margin: 0;
+        padding-left: 18px;
+        color: #444;
+        font-size: 0.98rem;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .btn-primary {
+        background: #002776;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 24px;
+        font-size: 1.08rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-primary:hover {
+        background: #0050b3;
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 32px rgba(0,0,0,0.13);
+        padding: 32px 36px 24px 36px;
+        min-width: 340px;
+        max-width: 98vw;
+        max-height: 92vh;
+        overflow-y: auto;
+        position: relative;
+      }
+      .modal h2 {
+        color: #002776;
+        font-size: 1.25rem;
+        margin-bottom: 16px;
+      }
+      .modal ul {
+        margin: 0 0 16px 18px;
+        color: #444;
+        font-size: 1.02rem;
+      }
+      .modal .btn-primary {
+        margin-right: 12px;
+      }
+      .modal .btn-secondary {
+        background: #eaeaea;
+        color: #002776;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 22px;
+        font-size: 1.02rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .modal .btn-secondary:hover {
+        background: #d0d7e2;
+      }
+      @media (max-width: 900px) {
+        .charts-section {
+          flex-direction: column;
+        }
+        .insights-section {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo">
+    <nav aria-label="Navegação principal">
+      <a href="../dashboard.html">Dashboard</a>
+      <a href="../pmp-mensal.html">PMP Mensal</a>
+      <a href="acuracia-forecast.html" class="active" aria-current="page">Acuracidade de Forecast</a>
+      <a href="../kpis.html">KPIs PCP</a>
+    </nav>
+  </header>
+  <main>
+    <h1 class="page-title">Análise de Acuracidade de Previsão de Vendas</h1>
+    <div class="subtitle">Compare previsões vs. vendas realizadas, identifique padrões de erro e ajuste políticas de estoque de forma inteligente.</div>
+    <form class="filters" aria-label="Filtros de análise">
+      <div>
+        <label for="filtro-produto">Produto:</label>
+        <select id="filtro-produto">
+          <option value="todos">Todos</option>
+          <option value="Paracetamol 500mg">Paracetamol 500mg</option>
+          <option value="Ibuprofeno 400mg">Ibuprofeno 400mg</option>
+          <option value="Vitamina C 1g">Vitamina C 1g</option>
+          <option value="Antigripal Plus">Antigripal Plus</option>
+          <option value="Xarope Infantil">Xarope Infantil</option>
+          <option value="Antialérgico Sazonal">Antialérgico Sazonal</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtro-familia">Família:</label>
+        <select id="filtro-familia">
+          <option value="todas">Todas</option>
+          <option value="Analgésicos">Analgésicos</option>
+          <option value="Vitaminas">Vitaminas</option>
+          <option value="Respiratórios">Respiratórios</option>
+          <option value="Infantil">Infantil</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtro-regiao">Região:</label>
+        <select id="filtro-regiao">
+          <option value="todas">Todas</option>
+          <option value="Sudeste">Sudeste</option>
+          <option value="Sul">Sul</option>
+          <option value="Nordeste">Nordeste</option>
+          <option value="Centro-Oeste">Centro-Oeste</option>
+          <option value="Norte">Norte</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtro-periodo">Período:</label>
+        <input type="month" id="filtro-periodo" value="2024-06">
+      </div>
+    </form>
+    <div class="actions">
+      <button type="button" class="btn-primary" id="btn-ajuste-estoque" aria-label="Sugerir Ajustes de Política de Estoque">Sugerir Ajustes de Política de Estoque</button>
+    </div>
+    <div class="charts-section">
+      <div class="chart-card">
+        <h3>Previsão vs. Vendas Realizadas (Últimos 12 meses)</h3>
+        <canvas id="chart-linhas" class="chart-canvas" aria-label="Gráfico de linha Previsão vs. Realizado" role="img"></canvas>
+      </div>
+      <div class="metrics-table-card">
+        <h3>Métricas por Produto</h3>
+        <table class="metrics-table" aria-label="Tabela de métricas de acuracidade">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>MAPE (%)</th>
+              <th>Bias (%)</th>
+              <th>Acuracidade (%)</th>
+              <th>Classificação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Paracetamol 500mg</td><td>8.2</td><td>-1.5</td><td>91.8</td><td class="class-high">Alta</td></tr>
+            <tr><td>Ibuprofeno 400mg</td><td>10.5</td><td>2.1</td><td>89.5</td><td class="class-high">Alta</td></tr>
+            <tr><td>Vitamina C 1g</td><td>13.7</td><td>-3.2</td><td>86.3</td><td class="class-high">Alta</td></tr>
+            <tr><td>Antigripal Plus</td><td>19.8</td><td>5.0</td><td>80.2</td><td class="class-medium">Média</td></tr>
+            <tr><td>Xarope Infantil</td><td>16.1</td><td>-2.8</td><td>83.9</td><td class="class-medium">Média</td></tr>
+            <tr><td>Antialérgico Sazonal</td><td>34.9</td><td>11.7</td><td>65.1</td><td class="class-low">Baixa</td></tr>
+            <tr><td>Vitamina D 2000UI</td><td>12.4</td><td>-1.0</td><td>87.6</td><td class="class-high">Alta</td></tr>
+            <tr><td>Antibiótico Infantil</td><td>21.2</td><td>4.9</td><td>78.8</td><td class="class-medium">Média</td></tr>
+            <tr><td>Expectorante Adulto</td><td>18.5</td><td>-2.3</td><td>81.5</td><td class="class-medium">Média</td></tr>
+            <tr><td>Multivitamínico Sênior</td><td>9.9</td><td>0.8</td><td>90.1</td><td class="class-high">Alta</td></tr>
+            <tr><td>Antitussígeno Sazonal</td><td>29.7</td><td>9.2</td><td>70.3</td><td class="class-low">Baixa</td></tr>
+            <tr><td>Antifebril Pediátrico</td><td>15.3</td><td>-4.1</td><td>84.7</td><td class="class-medium">Média</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="charts-section">
+      <div class="chart-card" style="max-width: 600px;">
+        <h3>MAPE por Família de Produtos</h3>
+        <canvas id="chart-barras" class="chart-canvas" aria-label="Gráfico de barras MAPE por família" role="img"></canvas>
+      </div>
+      <div class="insights-section">
+        <div class="insight-card">
+          <h4>Produtos com Maior Erro de Previsão</h4>
+          <ul class="insight-list">
+            <li>Antialérgico Sazonal (MAPE 34,9%)</li>
+            <li>Antitussígeno Sazonal (MAPE 29,7%)</li>
+            <li>Antibiótico Infantil (MAPE 21,2%)</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>Produtos com Alta Variabilidade</h4>
+          <ul class="insight-list">
+            <li>Antialérgico Sazonal (sazonalidade alta)</li>
+            <li>Antitussígeno Sazonal (picos no inverno)</li>
+            <li>Xarope Infantil (oscilações por campanha escolar)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Modal de Ajuste de Política de Estoque -->
+    <div id="modal-ajuste" class="modal-overlay" style="display:none;" aria-modal="true" aria-labelledby="modal-title-ajuste">
+      <div class="modal">
+        <h2 id="modal-title-ajuste">Recomendações de Ajuste de Política de Estoque</h2>
+        <ul>
+          <li>Rever política de estoque para <strong>Antialérgico Sazonal</strong> e <strong>Antitussígeno Sazonal</strong>: considerar estoques de segurança maiores nos meses de pico.</li>
+          <li>Implementar revisão trimestral para produtos com MAPE &gt; 20%.</li>
+          <li>Para <strong>Xarope Infantil</strong>, alinhar previsão com calendário escolar e campanhas de vacinação.</li>
+          <li>Utilizar métodos estatísticos avançados (ex: média móvel ponderada) para produtos sazonais.</li>
+        </ul>
+        <div style="margin-bottom: 18px; color: #555; font-size: 0.98rem;">
+          Deseja aplicar as recomendações diretamente no Plano Mestre de Produção?
+        </div>
+        <button class="btn-primary" id="btn-aplicar-pmp">Aplicar no PMP</button>
+        <button class="btn-secondary" id="btn-fechar-modal">Fechar</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Dados de exemplo para gráficos
+    const meses = [
+      'Jul/23', 'Ago/23', 'Set/23', 'Out/23', 'Nov/23', 'Dez/23',
+      'Jan/24', 'Fev/24', 'Mar/24', 'Abr/24', 'Mai/24', 'Jun/24'
+    ];
+    const previsao = [
+      12000, 12500, 13000, 12800, 14000, 15500,
+      16000, 15800, 16200, 17000, 17500, 18000
+    ];
+    const realizado = [
+      11800, 12700, 12800, 12400, 13500, 16200,
+      15900, 15000, 16500, 16800, 17800, 18500
+    ];
+    // Gráfico de linha
+    new Chart(document.getElementById('chart-linhas'), {
+      type: 'line',
+      data: {
+        labels: meses,
+        datasets: [
+          {
+            label: 'Previsão',
+            data: previsao,
+            borderColor: '#002776',
+            backgroundColor: 'rgba(0,39,118,0.08)',
+            fill: false,
+            tension: 0.22,
+            pointRadius: 4,
+            pointBackgroundColor: '#002776',
+            pointBorderColor: '#fff',
+            pointHoverRadius: 6
+          },
+          {
+            label: 'Vendas Realizadas',
+            data: realizado,
+            borderColor: '#ffcc00',
+            backgroundColor: 'rgba(255,204,0,0.09)',
+            fill: false,
+            tension: 0.22,
+            pointRadius: 4,
+            pointBackgroundColor: '#ffcc00',
+            pointBorderColor: '#fff',
+            pointHoverRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { font: { size: 14, family: 'Lato' } } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        interaction: { mode: 'nearest', axis: 'x', intersect: false },
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: { display: true, text: 'Unidades', font: { size: 13 } },
+            grid: { color: '#eaeaea' }
+          },
+          x: {
+            grid: { color: '#f5f5f5' }
+          }
+        }
+      }
+    });
+    // Gráfico de barras
+    new Chart(document.getElementById('chart-barras'), {
+      type: 'bar',
+      data: {
+        labels: ['Analgésicos', 'Vitaminas', 'Respiratórios', 'Infantil'],
+        datasets: [{
+          label: 'MAPE (%)',
+          data: [10.1, 12.0, 24.8, 18.3],
+          backgroundColor: [
+            '#002776', '#0050b3', '#f9a825', '#1976d2'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'MAPE (%)', font: { size: 13 } },
+            grid: { color: '#eaeaea' }
+          },
+          x: {
+            grid: { color: '#f5f5f5' }
+          }
+        }
+      }
+    });
+    // Modal de Ajuste de Estoque
+    const btnAjuste = document.getElementById('btn-ajuste-estoque');
+    const modal = document.getElementById('modal-ajuste');
+    const btnFechar = document.getElementById('btn-fechar-modal');
+    const btnAplicar = document.getElementById('btn-aplicar-pmp');
+    btnAjuste.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+    btnFechar.addEventListener('click', () => {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    });
+    btnAplicar.addEventListener('click', () => {
+      window.location.href = 'pmp-mensal.html?ajuste=estoque';
+    });
+  </script>
+</body>
+</html>

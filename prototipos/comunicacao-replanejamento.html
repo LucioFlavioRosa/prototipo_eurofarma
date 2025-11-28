@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Comunicação Automática pós-Replanejamento - Plataforma PCP Eurofarma">
+    <meta name="author" content="Eurofarma">
+    <title>Comunicação Automática pós-Replanejamento | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f6f8fa;
+            margin: 0;
+            color: #23305a;
+        }
+        header {
+            background: #fff;
+            border-bottom: 1px solid #e5e8ee;
+            padding: 0.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            height: 42px;
+        }
+        .main-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #23305a;
+        }
+        .dashboard-cards {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .card-status {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(35,48,90,0.07);
+            padding: 1.5rem 2rem;
+            min-width: 220px;
+            flex: 1 1 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .card-status .label {
+            font-size: 1rem;
+            color: #7a859a;
+        }
+        .card-status .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+        .card-status.sent { border-left: 5px solid #1a73e8; }
+        .card-status.read { border-left: 5px solid #2ecc71; }
+        .card-status.pending { border-left: 5px solid #f1c40f; }
+        .dashboard-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(35,48,90,0.07);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #23305a;
+        }
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .filters label {
+            font-size: 0.95rem;
+            color: #7a859a;
+            margin-right: 0.5rem;
+        }
+        .filters select, .filters input[type="date"] {
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            background: #f9fafb;
+        }
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .log-table th, .log-table td {
+            padding: 0.7rem 0.5rem;
+            text-align: left;
+        }
+        .log-table th {
+            background: #f2f4fa;
+            color: #23305a;
+            font-weight: 700;
+            border-bottom: 2px solid #e5e8ee;
+        }
+        .log-table tr {
+            border-bottom: 1px solid #e5e8ee;
+        }
+        .log-table td.status-enviado { color: #1a73e8; font-weight: 600; }
+        .log-table td.status-lido { color: #2ecc71; font-weight: 600; }
+        .log-table td.status-naolido { color: #f1c40f; font-weight: 600; }
+        .log-table td a {
+            color: #1a73e8;
+            text-decoration: underline;
+            font-size: 0.97rem;
+        }
+        .btn {
+            background: #1a73e8;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #1558b0; }
+        .btn.secondary {
+            background: #f1c40f;
+            color: #23305a;
+        }
+        .btn.secondary:hover {
+            background: #e1b70d;
+        }
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .templates-list {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .template-card {
+            background: #f6f8fa;
+            border-radius: 8px;
+            border: 1px solid #e5e8ee;
+            padding: 1rem 1.2rem;
+            min-width: 220px;
+            max-width: 320px;
+            flex: 1 1 220px;
+        }
+        .template-card .perfil {
+            font-weight: 700;
+            color: #23305a;
+            margin-bottom: 0.5rem;
+        }
+        .template-card .template-body {
+            font-size: 0.98rem;
+            color: #3a466e;
+        }
+        .chart-container {
+            width: 320px;
+            height: 220px;
+            margin: 0 auto 1.5rem auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(35,48,90,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: #2ecc71;
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(35,48,90,0.12);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* Modal */
+        .modal-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(35,48,90,0.18);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(35,48,90,0.18);
+            padding: 2rem 2.5rem;
+            min-width: 340px;
+            max-width: 98vw;
+        }
+        .modal h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .modal label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+            color: #23305a;
+        }
+        .modal input, .modal select, .modal textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            margin-bottom: 0.7rem;
+            background: #f9fafb;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        @media (max-width: 900px) {
+            .dashboard-cards {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .templates-list {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .chart-container {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" aria-label="Ir para o início">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo">
+        </a>
+        <nav>
+            <a href="../dashboard.html" style="margin-right: 2rem; color:#1a73e8; font-weight:600;">Dashboard PCP</a>
+            <a href="sequenciamento-gantt.html" style="margin-right: 2rem;">Sequenciamento</a>
+            <a href="comunicacao-replanejamento.html" style="color:#23305a; font-weight:700;">Comunicação</a>
+        </nav>
+    </header>
+    <main style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 3rem 1rem;">
+        <h1 class="main-title">Comunicação Automática pós-Replanejamento</h1>
+        <div class="dashboard-cards">
+            <div class="card-status sent">
+                <span class="label">Notificações Enviadas</span>
+                <span class="value" id="sentCount">30</span>
+            </div>
+            <div class="card-status read">
+                <span class="label">Notificações Lidas</span>
+                <span class="value" id="readCount">22</span>
+            </div>
+            <div class="card-status pending">
+                <span class="label">Notificações Pendentes</span>
+                <span class="value" id="pendingCount">8</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="pieChart" width="220" height="180" aria-label="Distribuição de Notificações por Perfil" role="img"></canvas>
+            </div>
+        </div>
+        <section class="dashboard-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                <span class="section-title">Log de Notificações</span>
+                <button class="btn" id="btnEnviarManual">Enviar Notificação Manual</button>
+            </div>
+            <form class="filters" id="filterForm" onsubmit="return false;">
+                <div>
+                    <label for="filterStatus">Status</label>
+                    <select id="filterStatus" name="status">
+                        <option value="">Todos</option>
+                        <option value="Enviado">Enviado</option>
+                        <option value="Lido">Lido</option>
+                        <option value="Não Lido">Não Lido</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filterPerfil">Perfil</label>
+                    <select id="filterPerfil" name="perfil">
+                        <option value="">Todos</option>
+                        <option value="Produção">Produção</option>
+                        <option value="Almoxarifado">Almoxarifado</option>
+                        <option value="Qualidade">Qualidade</option>
+                        <option value="Logística">Logística</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filterData">Data</label>
+                    <input type="date" id="filterData" name="data">
+                </div>
+                <div>
+                    <button type="button" class="btn secondary" onclick="aplicarFiltros()">Filtrar</button>
+                </div>
+            </form>
+            <div style="overflow-x:auto;">
+                <table class="log-table" aria-label="Tabela de Log de Notificações">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Destinatário</th>
+                            <th>Perfil</th>
+                            <th>Tipo de Mudança</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody">
+                        <!-- Linhas preenchidas via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="dashboard-section">
+            <span class="section-title">Templates de Notificação</span>
+            <div class="templates-list">
+                <div class="template-card">
+                    <div class="perfil">Produção</div>
+                    <div class="template-body">
+                        Prezado(a),<br>
+                        Houve uma atualização no sequenciamento de ordens para sua linha.<br>
+                        <b>Consulte o novo sequenciamento</b> e siga as orientações.<br>
+                        <a href="sequenciamento-gantt.html">Ver Sequenciamento Comunicado</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="perfil">Almoxarifado</div>
+                    <div class="template-body">
+                        Prezado(a),<br>
+                        Nova prioridade de separação de materiais foi definida.<br>
+                        <b>Confira os itens prioritários</b> para atendimento.<br>
+                        <a href="sequenciamento-gantt.html">Ver Sequenciamento Comunicado</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="perfil">Qualidade</div>
+                    <div class="template-body">
+                        Prezado(a),<br>
+                        Alteração no plano de produção impacta lotes em análise.<br>
+                        <b>Verifique a necessidade de liberação antecipada</b>.
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="perfil">Logística</div>
+                    <div class="template-body">
+                        Prezado(a),<br>
+                        Mudança nas datas de expedição previstas.<br>
+                        <b>Reprograme as entregas conforme novo plano</b>.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+    <div id="modalBg" class="modal-bg" style="display:none;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <h2 id="modalTitle">Enviar Notificação Manual</h2>
+            <form id="manualForm" onsubmit="return false;">
+                <label for="destinatario">Destinatário</label>
+                <input type="text" id="destinatario" name="destinatario" required placeholder="Nome ou e-mail">
+                <label for="perfil">Perfil</label>
+                <select id="perfil" name="perfil" required>
+                    <option value="Produção">Produção</option>
+                    <option value="Almoxarifado">Almoxarifado</option>
+                    <option value="Qualidade">Qualidade</option>
+                    <option value="Logística">Logística</option>
+                </select>
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" rows="4" required placeholder="Digite a mensagem..."></textarea>
+                <div class="modal-actions">
+                    <button type="button" class="btn secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Dados de exemplo para 30 notificações
+        const notificacoes = [
+            {data: '2024-06-12 08:10', destinatario: 'Ana Souza', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 08:12', destinatario: 'Carlos Lima', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 08:13', destinatario: 'Fernanda Reis', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 08:14', destinatario: 'Lucas Pereira', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 08:15', destinatario: 'Marcos Silva', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 08:18', destinatario: 'Juliana Costa', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 08:20', destinatario: 'Patrícia Almeida', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 08:25', destinatario: 'Ricardo Gomes', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 08:30', destinatario: 'Beatriz Ramos', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 08:32', destinatario: 'João Martins', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 08:33', destinatario: 'Sônia Dias', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 08:35', destinatario: 'Eduardo Melo', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 09:00', destinatario: 'Ana Souza', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 09:05', destinatario: 'Carlos Lima', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 09:10', destinatario: 'Fernanda Reis', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 09:12', destinatario: 'Lucas Pereira', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 09:15', destinatario: 'Marcos Silva', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 09:18', destinatario: 'Juliana Costa', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 09:20', destinatario: 'Patrícia Almeida', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 09:25', destinatario: 'Ricardo Gomes', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 09:30', destinatario: 'Beatriz Ramos', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 09:32', destinatario: 'João Martins', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 09:33', destinatario: 'Sônia Dias', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 09:35', destinatario: 'Eduardo Melo', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 10:00', destinatario: 'Ana Souza', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 10:05', destinatario: 'Carlos Lima', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'},
+            {data: '2024-06-12 10:10', destinatario: 'Fernanda Reis', perfil: 'Qualidade', tipo: 'Liberação de Lote', status: 'Enviado'},
+            {data: '2024-06-12 10:12', destinatario: 'Lucas Pereira', perfil: 'Logística', tipo: 'Expedição', status: 'Não Lido'},
+            {data: '2024-06-12 10:15', destinatario: 'Marcos Silva', perfil: 'Produção', tipo: 'Sequenciamento', status: 'Lido'},
+            {data: '2024-06-12 10:18', destinatario: 'Juliana Costa', perfil: 'Almoxarifado', tipo: 'Prioridade de Separação', status: 'Lido'}
+        ];
+
+        function renderTable() {
+            const tbody = document.getElementById('logTableBody');
+            tbody.innerHTML = '';
+            let filtered = notificacoes.filter(filtrarNotificacao);
+            filtered.forEach((n, idx) => {
+                let statusClass = n.status === 'Lido' ? 'status-lido' : (n.status === 'Enviado' ? 'status-enviado' : 'status-naolido');
+                let row = `<tr>
+                    <td>${n.data}</td>
+                    <td>${n.destinatario}</td>
+                    <td>${n.perfil}</td>
+                    <td>${n.tipo} <a href="sequenciamento-gantt.html" style="margin-left:8px;" aria-label="Ver Sequenciamento Comunicado">Ver Sequenciamento Comunicado</a></td>
+                    <td class="${statusClass}">${n.status}</td>
+                    <td><button class="btn secondary" onclick="reenviarNotificacao(${idx})">Reenviar</button></td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+        function filtrarNotificacao(n) {
+            const status = document.getElementById('filterStatus').value;
+            const perfil = document.getElementById('filterPerfil').value;
+            const data = document.getElementById('filterData').value;
+            let ok = true;
+            if (status && n.status !== status) ok = false;
+            if (perfil && n.perfil !== perfil) ok = false;
+            if (data && !n.data.startsWith(data)) ok = false;
+            return ok;
+        }
+        function aplicarFiltros() {
+            renderTable();
+        }
+        // Atualizar contadores
+        function atualizarContadores() {
+            document.getElementById('sentCount').textContent = notificacoes.length;
+            document.getElementById('readCount').textContent = notificacoes.filter(n=>n.status==='Lido').length;
+            document.getElementById('pendingCount').textContent = notificacoes.filter(n=>n.status!=='Lido').length;
+        }
+        // Gráfico de pizza
+        function renderPieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const perfis = ['Produção','Almoxarifado','Qualidade','Logística'];
+            const cores = ['#1a73e8','#f1c40f','#2ecc71','#e67e22'];
+            const dados = perfis.map(p=>notificacoes.filter(n=>n.perfil===p).length);
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: perfis,
+                    datasets: [{
+                        data: dados,
+                        backgroundColor: cores,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { color: '#23305a', font: {size: 14} }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    let value = context.raw || 0;
+                                    return `${label}: ${value} notificações`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        // Toast
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(()=>toast.classList.remove('show'), 2300);
+        }
+        // Modal
+        function abrirModal() {
+            document.getElementById('modalBg').style.display = 'flex';
+        }
+        function fecharModal() {
+            document.getElementById('modalBg').style.display = 'none';
+            document.getElementById('manualForm').reset();
+        }
+        document.getElementById('btnEnviarManual').onclick = abrirModal;
+        document.getElementById('manualForm').onsubmit = function() {
+            fecharModal();
+            showToast('Notificação enviada com sucesso!');
+        };
+        // Reenviar ação
+        function reenviarNotificacao(idx) {
+            showToast('Notificação reenviada com sucesso!');
+        }
+        // Inicialização
+        window.onload = function() {
+            renderTable();
+            atualizarContadores();
+            renderPieChart();
+        };
+        // Filtros dinâmicos
+        document.getElementById('filterStatus').onchange = aplicarFiltros;
+        document.getElementById('filterPerfil').onchange = aplicarFiltros;
+        document.getElementById('filterData').onchange = aplicarFiltros;
+    </script>
+</body>
+</html>

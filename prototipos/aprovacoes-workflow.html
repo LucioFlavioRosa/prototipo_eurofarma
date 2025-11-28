@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Workflow de Aprovação - PCP Eurofarma</title>
+    <meta name="description" content="Workflow de Aprovação de Mudanças no PCP">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f7f9fa;
+            margin: 0;
+            color: #1a2340;
+        }
+        header {
+            background: #002776;
+            color: #fff;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 36px;
+            margin-right: 18px;
+        }
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 24px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a.active, nav a:hover {
+            color: #ffc700;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        .notification-icon {
+            position: relative;
+            margin-right: 24px;
+            cursor: pointer;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #e53935;
+            color: #fff;
+            font-size: 0.75rem;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid #fff;
+        }
+        .main-container {
+            max-width: 1280px;
+            margin: 32px auto 0 auto;
+            padding: 0 24px 32px 24px;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #002776;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #4d5d7a;
+            margin-bottom: 28px;
+        }
+        .filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .filters select, .filters input {
+            padding: 8px 12px;
+            border: 1px solid #cfd8dc;
+            border-radius: 5px;
+            font-size: 1rem;
+            background: #fff;
+        }
+        .approvals-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,39,118,0.06);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .approvals-table th, .approvals-table td {
+            padding: 14px 12px;
+            text-align: left;
+        }
+        .approvals-table th {
+            background: #f2f6fa;
+            font-weight: 700;
+            color: #002776;
+            border-bottom: 1px solid #e3e7ed;
+        }
+        .approvals-table tr:not(:last-child) td {
+            border-bottom: 1px solid #e3e7ed;
+        }
+        .approvals-table tr:hover {
+            background: #f8fafc;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-aprovado { background: #d4edda; color: #155724; }
+        .status-rejeitado { background: #f8d7da; color: #721c24; }
+        .action-btn {
+            border: none;
+            border-radius: 6px;
+            padding: 7px 14px;
+            font-weight: 700;
+            margin-right: 6px;
+            cursor: pointer;
+            font-size: 0.98rem;
+            transition: background 0.15s;
+        }
+        .btn-aprovar { background: #3bb54a; color: #fff; }
+        .btn-aprovar:hover { background: #2e8b3d; }
+        .btn-rejeitar { background: #e53935; color: #fff; }
+        .btn-rejeitar:hover { background: #b71c1c; }
+        .btn-revisao { background: #ffc700; color: #1a2340; }
+        .btn-revisao:hover { background: #e6b800; }
+        .btn-detalhes { background: #f2f6fa; color: #002776; border: 1px solid #cfd8dc; }
+        .btn-detalhes:hover { background: #e3e7ed; }
+        .btn-link {
+            background: none;
+            color: #1976d2;
+            border: none;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+        }
+        .timeline {
+            margin-top: 32px;
+            margin-bottom: 24px;
+        }
+        .timeline-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #002776;
+            margin-bottom: 12px;
+        }
+        .timeline-list {
+            border-left: 3px solid #ffc700;
+            padding-left: 28px;
+        }
+        .timeline-item {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -36px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            background: #ffc700;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #ffc70033;
+        }
+        .timeline-date {
+            font-size: 0.95rem;
+            color: #4d5d7a;
+            margin-bottom: 2px;
+        }
+        .timeline-status {
+            font-weight: 700;
+            margin-right: 10px;
+        }
+        .timeline-comment {
+            color: #2d3a5a;
+        }
+        /* Modal */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; right: 0; bottom: 0;
+            background: rgba(0,39,118,0.14);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-bg.active { display: flex; }
+        .modal {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0,39,118,0.18);
+            max-width: 780px;
+            width: 98%;
+            padding: 0;
+            animation: fadeIn 0.2s;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(40px);} to { opacity: 1; transform: none; } }
+        .modal-header {
+            padding: 22px 28px 12px 28px;
+            border-bottom: 1px solid #e3e7ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #002776;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            color: #4d5d7a;
+            cursor: pointer;
+        }
+        .modal-content {
+            padding: 18px 28px 24px 28px;
+        }
+        .modal-section {
+            margin-bottom: 18px;
+        }
+        .kpi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .kpi-table th, .kpi-table td {
+            padding: 7px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e3e7ed;
+        }
+        .kpi-table th {
+            background: #f2f6fa;
+            color: #002776;
+            font-weight: 700;
+        }
+        .kpi-table td {
+            background: #fff;
+        }
+        .before-after {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .before-after > div {
+            flex: 1 1 220px;
+            background: #f8fafc;
+            border-radius: 7px;
+            padding: 10px 14px;
+            min-width: 180px;
+        }
+        .before-after-title {
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 6px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .modal-footer {
+            padding: 12px 28px 18px 28px;
+            border-top: 1px solid #e3e7ed;
+            text-align: right;
+        }
+        @media (max-width: 900px) {
+            .main-container { padding: 0 8px; }
+            .modal { max-width: 98vw; }
+        }
+        @media (max-width: 600px) {
+            .filters { flex-direction: column; gap: 8px; }
+            .before-after { flex-direction: column; gap: 10px; }
+            .modal-header, .modal-content, .modal-footer { padding-left: 10px; padding-right: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="header-logo">
+            <span class="header-title">PCP Eurofarma - Workflow de Aprovação</span>
+        </div>
+        <nav>
+            <a href="../dashboard.html">Dashboard</a>
+            <a href="../sequenciamento-gantt.html">Sequenciamento</a>
+            <a href="aprovacoes-workflow.html" class="active">Aprovações</a>
+            <a href="../comunicacao-replanejamento.html">Comunicação</a>
+        </nav>
+        <div class="header-actions">
+            <div class="notification-icon" aria-label="Notificações">
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11a6 6 0 1 0-12 0v5l-2 2v1h16v-1l-2-2z" fill="#ffc700"/></svg>
+                <span class="notification-badge" id="notif-badge">3</span>
+            </div>
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Usuário" style="width:32px; height:32px; border-radius:50%; border:2px solid #ffc700;">
+        </div>
+    </header>
+    <main class="main-container">
+        <div class="page-title">Workflow de Aprovação</div>
+        <div class="subtitle">Acompanhe e gerencie solicitações de mudança no plano de produção. Aprove, rejeite ou solicite revisão de forma ágil e transparente.</div>
+        <form class="filters" id="filters-form" onsubmit="return false;">
+            <select id="filter-status">
+                <option value="">Status: Todos</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Aprovado">Aprovado</option>
+                <option value="Rejeitado">Rejeitado</option>
+            </select>
+            <select id="filter-tipo">
+                <option value="">Tipo de Mudança: Todos</option>
+                <option value="Resequenciamento">Resequenciamento</option>
+                <option value="Antecipação">Antecipação</option>
+                <option value="Aumento de Capacidade">Aumento de Capacidade</option>
+            </select>
+            <input type="text" id="filter-solicitante" placeholder="Solicitante (nome)">
+            <button type="button" class="action-btn btn-detalhes" onclick="aplicarFiltros()">Filtrar</button>
+            <button type="button" class="action-btn btn-revisao" onclick="limparFiltros()">Limpar</button>
+        </form>
+        <table class="approvals-table" aria-label="Solicitações de Aprovação">
+            <thead>
+                <tr>
+                    <th>Solicitação #</th>
+                    <th>Solicitante</th>
+                    <th>Tipo de Mudança</th>
+                    <th>Plantas Impactadas</th>
+                    <th>Data de Solicitação</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="approvals-tbody">
+                <!-- Linhas geradas por JS -->
+            </tbody>
+        </table>
+        <section class="timeline">
+            <div class="timeline-title">Histórico de Aprovações</div>
+            <div class="timeline-list" id="timeline-list">
+                <!-- Timeline gerada por JS -->
+            </div>
+        </section>
+    </main>
+    <!-- Modal Detalhes -->
+    <div class="modal-bg" id="modal-bg" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal" tabindex="-1">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">Detalhes da Solicitação</div>
+                <button class="modal-close" aria-label="Fechar" onclick="fecharModal()">&times;</button>
+            </div>
+            <div class="modal-content" id="modal-content">
+                <!-- Conteúdo dinâmico -->
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <!-- Botões dinâmicos -->
+            </div>
+        </div>
+    </div>
+    <script>
+    // Dados de exemplo realistas para solicitações
+    const approvals = [
+        {
+            id: '202406-001',
+            solicitante: 'Ana Souza',
+            tipo: 'Resequenciamento',
+            plantas: 'Itapevi, Ribeirão Preto',
+            data: '2024-06-10',
+            status: 'Pendente',
+            impacto: 'Alto',
+            detalhes: {
+                comentario: 'Priorizar lote de antibióticos para atender pedido hospitalar urgente.',
+                kpisAntes: { faturamento: 'R$ 12,4M', margem: '18,2%', atendimento: '93%' },
+                kpisDepois: { faturamento: 'R$ 13,1M', margem: '18,0%', atendimento: '97%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Turno padrão, lote antibiótico na semana 3.' },
+                    { etapa: 'Depois', sequenciamento: 'Turno extra, lote antibiótico antecipado para semana 1.' }
+                ]
+            }
+        },
+        {
+            id: '202406-002',
+            solicitante: 'Carlos Lima',
+            tipo: 'Aumento de Capacidade',
+            plantas: 'Itapevi',
+            data: '2024-06-09',
+            status: 'Pendente',
+            impacto: 'Médio',
+            detalhes: {
+                comentario: 'Solicito ativação de 2h extras/dia para linha de sólidos devido pico de demanda.',
+                kpisAntes: { faturamento: 'R$ 10,2M', margem: '17,9%', atendimento: '89%' },
+                kpisDepois: { faturamento: 'R$ 10,9M', margem: '17,7%', atendimento: '95%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Capacidade padrão, 2 turnos.' },
+                    { etapa: 'Depois', sequenciamento: 'Capacidade aumentada, 2h extras/dia.' }
+                ]
+            }
+        },
+        {
+            id: '202406-003',
+            solicitante: 'Juliana Prado',
+            tipo: 'Antecipação',
+            plantas: 'Ribeirão Preto',
+            data: '2024-06-08',
+            status: 'Pendente',
+            impacto: 'Baixo',
+            detalhes: {
+                comentario: 'Antecipar produção de xaropes pediátricos para evitar ruptura em julho.',
+                kpisAntes: { faturamento: 'R$ 8,5M', margem: '19,1%', atendimento: '91%' },
+                kpisDepois: { faturamento: 'R$ 8,7M', margem: '19,0%', atendimento: '94%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Xaropes na última semana do mês.' },
+                    { etapa: 'Depois', sequenciamento: 'Xaropes antecipados para semana 2.' }
+                ]
+            }
+        },
+        {
+            id: '202406-004',
+            solicitante: 'Marcos Silva',
+            tipo: 'Resequenciamento',
+            plantas: 'Itapevi',
+            data: '2024-06-07',
+            status: 'Pendente',
+            impacto: 'Alto',
+            detalhes: {
+                comentario: 'Reordenar produção de comprimidos para atender pedido exportação.',
+                kpisAntes: { faturamento: 'R$ 14,3M', margem: '18,5%', atendimento: '88%' },
+                kpisDepois: { faturamento: 'R$ 15,0M', margem: '18,2%', atendimento: '93%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Exportação na semana 4.' },
+                    { etapa: 'Depois', sequenciamento: 'Exportação antecipada para semana 2.' }
+                ]
+            }
+        },
+        {
+            id: '202406-005',
+            solicitante: 'Fernanda Costa',
+            tipo: 'Aumento de Capacidade',
+            plantas: 'Ribeirão Preto',
+            data: '2024-06-06',
+            status: 'Pendente',
+            impacto: 'Médio',
+            detalhes: {
+                comentario: 'Solicito turno extra para linha de líquidos devido manutenção programada na linha 2.',
+                kpisAntes: { faturamento: 'R$ 9,7M', margem: '17,4%', atendimento: '90%' },
+                kpisDepois: { faturamento: 'R$ 10,3M', margem: '17,2%', atendimento: '96%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Sem turno extra.' },
+                    { etapa: 'Depois', sequenciamento: 'Turno extra ativado.' }
+                ]
+            }
+        },
+        {
+            id: '202406-006',
+            solicitante: 'Ricardo Alves',
+            tipo: 'Resequenciamento',
+            plantas: 'Itapevi',
+            data: '2024-06-05',
+            status: 'Pendente',
+            impacto: 'Baixo',
+            detalhes: {
+                comentario: 'Ajustar ordem de produção para liberar espaço no almoxarifado.',
+                kpisAntes: { faturamento: 'R$ 7,6M', margem: '16,8%', atendimento: '87%' },
+                kpisDepois: { faturamento: 'R$ 7,7M', margem: '16,7%', atendimento: '89%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Estoque alto, produção padrão.' },
+                    { etapa: 'Depois', sequenciamento: 'Produção antecipada para liberar espaço.' }
+                ]
+            }
+        },
+        {
+            id: '202406-007',
+            solicitante: 'Patrícia Nogueira',
+            tipo: 'Antecipação',
+            plantas: 'Itapevi, Ribeirão Preto',
+            data: '2024-06-04',
+            status: 'Pendente',
+            impacto: 'Médio',
+            detalhes: {
+                comentario: 'Antecipar produção de analgésicos devido campanha promocional.',
+                kpisAntes: { faturamento: 'R$ 11,2M', margem: '18,9%', atendimento: '92%' },
+                kpisDepois: { faturamento: 'R$ 11,8M', margem: '18,7%', atendimento: '96%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Analgésicos na semana 4.' },
+                    { etapa: 'Depois', sequenciamento: 'Analgésicos antecipados para semana 2.' }
+                ]
+            }
+        },
+        {
+            id: '202406-008',
+            solicitante: 'Eduardo Ramos',
+            tipo: 'Aumento de Capacidade',
+            plantas: 'Ribeirão Preto',
+            data: '2024-06-03',
+            status: 'Pendente',
+            impacto: 'Alto',
+            detalhes: {
+                comentario: 'Ativar capacidade extra para atender pedido de exportação urgente.',
+                kpisAntes: { faturamento: 'R$ 13,8M', margem: '18,3%', atendimento: '90%' },
+                kpisDepois: { faturamento: 'R$ 14,6M', margem: '18,1%', atendimento: '97%' },
+                cenarios: [
+                    { etapa: 'Antes', sequenciamento: 'Capacidade padrão.' },
+                    { etapa: 'Depois', sequenciamento: 'Capacidade extra ativada.' }
+                ]
+            }
+        }
+    ];
+    // Histórico de aprovações (timeline)
+    const timeline = [
+        { data: '2024-06-02', status: 'Aprovado', usuario: 'Ana Souza', comentario: 'Aprovado aumento de capacidade para linha de líquidos.' },
+        { data: '2024-06-01', status: 'Rejeitado', usuario: 'Carlos Lima', comentario: 'Rejeitado por conflito com manutenção programada.' },
+        { data: '2024-05-28', status: 'Aprovado', usuario: 'Juliana Prado', comentario: 'Resequenciamento aprovado para atender pedido hospitalar.' },
+        { data: '2024-05-26', status: 'Aprovado', usuario: 'Marcos Silva', comentario: 'Turno extra aprovado para linha de sólidos.' }
+    ];
+    // Renderização da tabela de aprovações
+    function renderApprovalsTable() {
+        const tbody = document.getElementById('approvals-tbody');
+        tbody.innerHTML = '';
+        let filtered = approvals.filter(filtrarAprovacoes);
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#b0b0b0;">Nenhuma solicitação encontrada.</td></tr>';
+            return;
+        }
+        filtered.forEach(ap => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${ap.id}</td>
+                    <td>${ap.solicitante}</td>
+                    <td>${ap.tipo}</td>
+                    <td>${ap.plantas}</td>
+                    <td>${ap.data}</td>
+                    <td><span class="status-badge status-${ap.status.toLowerCase()}">${ap.status}</span></td>
+                    <td>
+                        <button class="action-btn btn-aprovar" onclick="aprovarSolicitacao('${ap.id}')">Aprovar</button>
+                        <button class="action-btn btn-rejeitar" onclick="rejeitarSolicitacao('${ap.id}')">Rejeitar</button>
+                        <button class="action-btn btn-revisao" onclick="revisarSolicitacao('${ap.id}')">Solicitar Revisão</button>
+                        <button class="action-btn btn-detalhes" onclick="abrirModal('${ap.id}')">Ver Detalhes</button>
+                        <button class="btn-link" onclick="verSequenciamento('${ap.id}')">Ver Sequenciamento</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+    // Filtros
+    function filtrarAprovacoes(ap) {
+        const status = document.getElementById('filter-status').value;
+        const tipo = document.getElementById('filter-tipo').value;
+        const solicitante = document.getElementById('filter-solicitante').value.trim().toLowerCase();
+        return (!status || ap.status === status)
+            && (!tipo || ap.tipo === tipo)
+            && (!solicitante || ap.solicitante.toLowerCase().includes(solicitante));
+    }
+    function aplicarFiltros() { renderApprovalsTable(); }
+    function limparFiltros() {
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-tipo').value = '';
+        document.getElementById('filter-solicitante').value = '';
+        renderApprovalsTable();
+    }
+    // Timeline
+    function renderTimeline() {
+        const el = document.getElementById('timeline-list');
+        el.innerHTML = '';
+        timeline.forEach(item => {
+            el.innerHTML += `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">${item.data}</div>
+                    <span class="timeline-status status-badge status-${item.status.toLowerCase()}">${item.status}</span>
+                    <span class="timeline-comment">${item.comentario} <span style="color:#1976d2;font-weight:600;">(${item.usuario})</span></span>
+                </div>
+            `;
+        });
+    }
+    // Modal de detalhes
+    function abrirModal(id) {
+        const ap = approvals.find(a => a.id === id);
+        if (!ap) return;
+        document.getElementById('modal-content').innerHTML = `
+            <div class="modal-section">
+                <strong>Solicitação #:</strong> ${ap.id}<br>
+                <strong>Solicitante:</strong> ${ap.solicitante}<br>
+                <strong>Tipo de Mudança:</strong> ${ap.tipo}<br>
+                <strong>Plantas Impactadas:</strong> ${ap.plantas}<br>
+                <strong>Data:</strong> ${ap.data}<br>
+                <strong>Impacto:</strong> ${ap.impacto}
+            </div>
+            <div class="modal-section">
+                <strong>Comentário do Solicitante:</strong><br>
+                <em>${ap.detalhes.comentario}</em>
+            </div>
+            <div class="modal-section">
+                <div class="before-after">
+                    <div>
+                        <div class="before-after-title">Cenário Antes</div>
+                        <div>${ap.detalhes.cenarios[0].sequenciamento}</div>
+                        <table class="kpi-table" aria-label="KPIs Antes">
+                            <tr><th>Faturamento</th><th>Margem</th><th>Atendimento</th></tr>
+                            <tr><td>${ap.detalhes.kpisAntes.faturamento}</td><td>${ap.detalhes.kpisAntes.margem}</td><td>${ap.detalhes.kpisAntes.atendimento}</td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="before-after-title">Cenário Proposto</div>
+                        <div>${ap.detalhes.cenarios[1].sequenciamento}</div>
+                        <table class="kpi-table" aria-label="KPIs Depois">
+                            <tr><th>Faturamento</th><th>Margem</th><th>Atendimento</th></tr>
+                            <tr><td>${ap.detalhes.kpisDepois.faturamento}</td><td>${ap.detalhes.kpisDepois.margem}</td><td>${ap.detalhes.kpisDepois.atendimento}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('modal-footer').innerHTML = `
+            <button class="action-btn btn-aprovar" onclick="aprovarSolicitacao('${ap.id}', true)">Aprovar</button>
+            <button class="action-btn btn-rejeitar" onclick="rejeitarSolicitacao('${ap.id}', true)">Rejeitar</button>
+            <button class="action-btn btn-revisao" onclick="revisarSolicitacao('${ap.id}', true)">Solicitar Revisão</button>
+            <button class="action-btn btn-detalhes" onclick="verSequenciamento('${ap.id}')">Ver Sequenciamento</button>
+        `;
+        document.getElementById('modal-bg').classList.add('active');
+    }
+    function fecharModal() {
+        document.getElementById('modal-bg').classList.remove('active');
+    }
+    // Ações de aprovação
+    function aprovarSolicitacao(id, fromModal) {
+        // Simula aprovação e redireciona para comunicacao-replanejamento.html
+        if (fromModal) fecharModal();
+        setTimeout(() => {
+            window.location.href = '../comunicacao-replanejamento.html?aprovado=' + encodeURIComponent(id);
+        }, 400);
+    }
+    function rejeitarSolicitacao(id, fromModal) {
+        // Simula rejeição
+        if (fromModal) fecharModal();
+        alert('Solicitação ' + id + ' rejeitada. O solicitante será notificado.');
+        // Atualiza status localmente
+        const ap = approvals.find(a => a.id === id);
+        if (ap) ap.status = 'Rejeitado';
+        renderApprovalsTable();
+    }
+    function revisarSolicitacao(id, fromModal) {
+        // Simula solicitação de revisão
+        if (fromModal) fecharModal();
+        alert('Solicitação ' + id + ' enviada para revisão.');
+        // Atualiza status localmente
+        const ap = approvals.find(a => a.id === id);
+        if (ap) ap.status = 'Pendente';
+        renderApprovalsTable();
+    }
+    function verSequenciamento(id) {
+        // Redireciona para sequenciamento-gantt.html com parâmetro da solicitação
+        window.location.href = '../sequenciamento-gantt.html?solicitacao=' + encodeURIComponent(id);
+    }
+    // Inicialização
+    renderApprovalsTable();
+    renderTimeline();
+    // Fecha modal ao clicar fora
+    document.getElementById('modal-bg').addEventListener('click', function(e) {
+        if (e.target === this) fecharModal();
+    });
+    // Simula badge de notificações
+    document.querySelector('.notification-icon').addEventListener('click', function() {
+        alert('Notificações:\n- 2 solicitações aguardam sua aprovação.\n- 1 comunicação enviada ao time de produção.');
+    });
+    </script>
+</body>
+</html>

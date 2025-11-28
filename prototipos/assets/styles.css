@@ -1,0 +1,606 @@
+/* =========================
+   Eurofarma PCP Platform - CSS Unificado
+   ========================= */
+
+:root {
+  --primary-blue: #0066CC;
+  --success-green: #28A745;
+  --warning-yellow: #FFC107;
+  --danger-red: #DC3545;
+  --neutral-gray: #6C757D;
+  --light-gray: #F8F9FA;
+  --dark-blue: #003366;
+  --white: #fff;
+  --black: #222;
+  --font-main: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.07);
+  --radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--light-gray);
+  color: var(--black);
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* Header & Footer */
+.header, header {
+  background: var(--primary-blue);
+  color: var(--white);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+.header-logo {
+  height: 40px;
+  margin-right: 1.5rem;
+}
+.header-nav {
+  display: flex;
+  gap: 1.2rem;
+}
+.header-nav a {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+.header-nav a.active, .header-nav a:hover {
+  background: var(--dark-blue);
+}
+footer, .footer {
+  background: var(--primary-blue);
+  color: var(--white);
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+  margin-top: 2rem;
+}
+
+/* Grid System (Bootstrap-like) */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+.col {
+  flex: 1 1 0;
+  padding: 1rem;
+}
+.col-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+.col-4 {
+  flex: 0 0 33.3333%;
+  max-width: 33.3333%;
+}
+.col-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: var(--transition);
+  position: relative;
+}
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0,102,204,0.08);
+}
+.card-header {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+.card-actions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-family: var(--font-main);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--primary-blue);
+  color: var(--white);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.btn:hover, .btn:focus {
+  background: var(--dark-blue);
+}
+.btn-success {
+  background: var(--success-green);
+}
+.btn-success:hover {
+  background: #218838;
+}
+.btn-warning {
+  background: var(--warning-yellow);
+  color: var(--black);
+}
+.btn-warning:hover {
+  background: #e0a800;
+}
+.btn-danger {
+  background: var(--danger-red);
+}
+.btn-danger:hover {
+  background: #b21f2d;
+}
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-blue);
+  color: var(--primary-blue);
+}
+.btn-outline:hover {
+  background: var(--primary-blue);
+  color: var(--white);
+}
+.btn[disabled], .btn.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.3em 0.8em;
+  font-size: 0.85em;
+  border-radius: 1em;
+  font-weight: 600;
+  background: var(--neutral-gray);
+  color: var(--white);
+  margin-right: 0.5em;
+}
+.badge-success {
+  background: var(--success-green);
+}
+.badge-warning {
+  background: var(--warning-yellow);
+  color: var(--black);
+}
+.badge-danger {
+  background: var(--danger-red);
+}
+
+/* Tabelas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+th, td {
+  padding: 0.9rem 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 1rem;
+}
+th {
+  background: var(--primary-blue);
+  color: var(--white);
+  font-weight: 700;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+tr:hover {
+  background: #f4f8fb;
+}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Formulários */
+form {
+  margin-bottom: 1.5rem;
+}
+input, select, textarea {
+  font-family: var(--font-main);
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid #d1d5db;
+  background: var(--white);
+  margin-bottom: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+/* Modais */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-content {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  min-width: 320px;
+  max-width: 95vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  position: relative;
+  animation: modalIn 0.3s;
+}
+@keyframes modalIn {
+  from { transform: translateY(60px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--neutral-gray);
+  cursor: pointer;
+}
+
+/* Alertas */
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  background: var(--warning-yellow);
+  color: var(--black);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.alert-success {
+  background: var(--success-green);
+  color: var(--white);
+}
+.alert-danger {
+  background: var(--danger-red);
+  color: var(--white);
+}
+.alert-info {
+  background: var(--primary-blue);
+  color: var(--white);
+}
+
+/* Tooltips */
+.tooltip {
+  position: relative;
+  cursor: pointer;
+}
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 180px;
+  background: var(--neutral-gray);
+  color: #fff;
+  text-align: center;
+  border-radius: var(--radius);
+  padding: 0.6em 1em;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Gráficos (Chart.js) */
+.chart-container {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  max-width: 100%;
+  margin: 0 auto 2rem auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+
+/* Gantt Chart */
+.gantt-chart {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.gantt-bar {
+  height: 32px;
+  border-radius: 16px;
+  background: var(--primary-blue);
+  margin-bottom: 0.7rem;
+  position: relative;
+  transition: var(--transition);
+}
+.gantt-bar .label {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--white);
+  font-weight: 600;
+}
+.gantt-bar-warning {
+  background: var(--warning-yellow);
+  color: var(--black);
+}
+.gantt-bar-danger {
+  background: var(--danger-red);
+}
+.gantt-bar-success {
+  background: var(--success-green);
+}
+
+/* Drag-and-Drop */
+.draggable {
+  cursor: grab;
+  transition: box-shadow 0.2s;
+}
+.draggable:active {
+  cursor: grabbing;
+  box-shadow: 0 2px 12px rgba(0,102,204,0.16);
+}
+.drag-over {
+  outline: 2px dashed var(--primary-blue);
+  background: #e6f0fa;
+}
+
+/* Sidebar (se aplicável) */
+.sidebar {
+  background: var(--dark-blue);
+  color: var(--white);
+  min-width: 220px;
+  max-width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 2rem 1rem;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.07);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.sidebar a {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  margin-bottom: 0.3rem;
+}
+.sidebar a.active, .sidebar a:hover {
+  background: var(--primary-blue);
+}
+
+/* Animações Gerais */
+.fade-in {
+  animation: fadeIn 0.5s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* =========================
+   Responsividade
+   ========================= */
+
+/* Mobile: <576px */
+@media (max-width: 575.98px) {
+  .header, header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+  .header-logo {
+    margin-bottom: 0.7rem;
+  }
+  .header-nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .container {
+    padding: 1rem 0.5rem;
+  }
+  .row {
+    flex-direction: column;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .col, .col-6, .col-4, .col-12 {
+    max-width: 100%;
+    flex: 0 0 100%;
+    padding: 0.5rem 0;
+  }
+  .sidebar {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    flex-direction: row;
+    gap: 0.7rem;
+    padding: 1rem 0.5rem;
+    box-shadow: none;
+  }
+  .gantt-chart, .chart-container {
+    padding: 0.5rem;
+    min-height: 220px;
+  }
+  table, .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    font-size: 0.95em;
+  }
+  th, td {
+    padding: 0.6rem 0.8rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+}
+
+/* Tablet: 576px - 991.98px */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .container {
+    padding: 1.2rem 1rem;
+  }
+  .row {
+    flex-wrap: wrap;
+  }
+  .col-6 {
+    max-width: 50%;
+    flex: 0 0 50%;
+  }
+  .col-4 {
+    max-width: 50%;
+    flex: 0 0 50%;
+  }
+  .sidebar {
+    min-width: 160px;
+    max-width: 180px;
+    padding: 1.2rem 0.7rem;
+  }
+  .gantt-chart, .chart-container {
+    min-height: 260px;
+    padding: 1rem;
+  }
+  table, .table-responsive {
+    font-size: 1em;
+  }
+}
+
+/* Desktop: >=992px */
+@media (min-width: 992px) {
+  .container {
+    padding: 2rem 1.5rem;
+  }
+  .row {
+    flex-wrap: wrap;
+  }
+  .col-6 {
+    max-width: 50%;
+    flex: 0 0 50%;
+  }
+  .col-4 {
+    max-width: 33.3333%;
+    flex: 0 0 33.3333%;
+  }
+  .sidebar {
+    min-width: 220px;
+    max-width: 260px;
+    padding: 2rem 1rem;
+  }
+  .gantt-chart, .chart-container {
+    min-height: 320px;
+    padding: 1.5rem;
+  }
+  table, .table-responsive {
+    font-size: 1.05em;
+  }
+}
+
+/* Utilitários */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-success { color: var(--success-green); }
+.text-danger { color: var(--danger-red); }
+.text-warning { color: var(--warning-yellow); }
+.text-muted { color: var(--neutral-gray); }
+.mt-2 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 2rem; }
+.mt-1 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 1rem; }
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 1rem !important; }
+.p-2 { padding: 2rem !important; }
+.gap-1 { gap: 1rem; }
+.gap-2 { gap: 2rem; }
+
+/* Scrollbar custom */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-blue);
+  border-radius: 4px;
+}
+
+/* Fim do CSS Unificado Eurofarma PCP Platform */
