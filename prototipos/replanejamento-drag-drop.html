@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Cockpit de Replanejamento - PCP Eurofarma</title>
+    <meta name="description" content="Cockpit de replanejamento dinâmico de produção com drag-and-drop e KPIs em tempo real.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body {
+            font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            color: #1d2d44;
+        }
+        header {
+            background: #fff;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+        }
+        .logo {
+            height: 48px;
+        }
+        nav a {
+            color: #1d2d44;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color .2s;
+        }
+        nav a.active, nav a:hover {
+            color: #0072ce;
+        }
+        .container-main {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 100vw;
+        }
+        .gantt-area {
+            flex: 2;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 2rem 1rem 2rem 2rem;
+            overflow-x: auto;
+            min-width: 0;
+        }
+        .kpi-panel {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 2rem 1.5rem;
+            min-width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .kpi-panel h3 {
+            margin-top: 0;
+            color: #0072ce;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .kpi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .kpi {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.1rem;
+        }
+        .kpi .value {
+            font-weight: 700;
+            color: #0072ce;
+        }
+        .kpi .trend-up { color: #27ae60; }
+        .kpi .trend-down { color: #e74c3c; }
+        .btn {
+            background: #0072ce;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 1rem;
+            transition: background .2s;
+        }
+        .btn:hover { background: #005fa3; }
+        .btn-outline {
+            background: #fff;
+            color: #0072ce;
+            border: 2px solid #0072ce;
+        }
+        .btn-outline:hover {
+            background: #e6f0fa;
+        }
+        .gantt-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.98rem;
+        }
+        .gantt-table th, .gantt-table td {
+            text-align: center;
+            padding: 0.5rem 0.2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .gantt-table th {
+            background: #f0f4fa;
+            font-weight: 700;
+        }
+        .gantt-row-label {
+            font-weight: 600;
+            color: #0072ce;
+            background: #f8fafc;
+        }
+        .gantt-order {
+            background: #e6f0fa;
+            border-radius: 6px;
+            padding: 0.3rem 0.7rem;
+            margin: 0.1rem 0;
+            cursor: grab;
+            font-weight: 600;
+            color: #1d2d44;
+            border: 2px solid transparent;
+            transition: border .2s;
+            display: inline-block;
+        }
+        .gantt-order.dragging {
+            opacity: 0.5;
+        }
+        .gantt-order.invalid {
+            border: 2px solid #e74c3c !important;
+            background: #ffeaea;
+            color: #e74c3c;
+        }
+        .gantt-dropzone {
+            min-height: 38px;
+        }
+        .gantt-dropzone.over {
+            background: #d6eaff;
+            border-radius: 6px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            margin-top: 0.5rem;
+            font-size: 0.97rem;
+            font-weight: 600;
+        }
+        .modal-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.25);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            padding: 2rem 2.5rem;
+            max-width: 680px;
+            width: 100%;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        @media (max-width: 900px) {
+            .container-main { flex-direction: column; gap: 1.5rem; padding: 1rem; }
+            .kpi-panel { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo"/>
+        <nav>
+            <a href="carteira-pedidos.html">Carteira de Pedidos</a>
+            <a href="replanejamento-drag-drop.html" class="active">Replanejamento</a>
+            <a href="workflow-aprovacao.html">Workflow de Aprovação</a>
+        </nav>
+    </header>
+    <main class="container-main">
+        <section class="gantt-area">
+            <h2 style="margin-top:0; color:#0072ce;">Cockpit de Replanejamento</h2>
+            <div style="margin-bottom:1.2rem; color:#6b7280; font-size:1.08rem;">Arraste as ordens entre dias e linhas para simular diferentes cenários de produção. O sistema recalcula KPIs em tempo real e valida restrições de setup.</div>
+            <div id="gantt-error" class="error-msg" style="display:none;"></div>
+            <table class="gantt-table" aria-label="Gantt Chart de Sequenciamento de Produção">
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>01/07</th>
+                        <th>02/07</th>
+                        <th>03/07</th>
+                        <th>04/07</th>
+                        <th>05/07</th>
+                        <th>06/07</th>
+                        <th>07/07</th>
+                    </tr>
+                </thead>
+                <tbody id="gantt-body">
+                    <!-- Linhas e ordens serão renderizadas via JS -->
+                </tbody>
+            </table>
+        </section>
+        <aside class="kpi-panel">
+            <h3>KPIs do Cenário Atual</h3>
+            <div class="kpi-list" id="kpi-list">
+                <!-- KPIs serão renderizados via JS -->
+            </div>
+            <div style="margin-top:2rem;">
+                <button class="btn" id="btn-comparar">Comparar Cenários</button>
+                <button class="btn-outline" id="btn-aprovar">Submeter para Aprovação</button>
+            </div>
+        </aside>
+    </main>
+    <!-- Modal de comparação de cenários -->
+    <div id="modal-comparar" class="modal-bg" style="display:none;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalCompararTitulo">
+            <button class="modal-close" aria-label="Fechar" onclick="closeModal('modal-comparar')">&times;</button>
+            <h2 id="modalCompararTitulo" style="color:#0072ce;">Comparação de Cenários</h2>
+            <table style="width:100%;margin-top:1.5rem;border-collapse:separate;border-spacing:0 0.5rem;">
+                <thead>
+                    <tr style="background:#f0f4fa;">
+                        <th style="padding:0.5rem 0.7rem;">KPI</th>
+                        <th style="padding:0.5rem 0.7rem;">Cenário Base</th>
+                        <th style="padding:0.5rem 0.7rem;">Cenário Ajustado</th>
+                    </tr>
+                </thead>
+                <tbody id="comparar-tbody">
+                    <!-- KPIs comparativos via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Modal de workflow de aprovação -->
+    <div id="modal-aprovar" class="modal-bg" style="display:none;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalAprovarTitulo">
+            <button class="modal-close" aria-label="Fechar" onclick="closeModal('modal-aprovar')">&times;</button>
+            <h2 id="modalAprovarTitulo" style="color:#0072ce;">Submeter para Aprovação</h2>
+            <form id="form-aprovar" style="margin-top:1.5rem;">
+                <label for="justificativa" style="font-weight:600;">Justificativa da alteração:</label><br>
+                <textarea id="justificativa" name="justificativa" rows="4" style="width:100%;margin-top:0.5rem;border-radius:6px;border:1px solid #e2e8f0;padding:0.7rem;font-size:1rem;resize:vertical;" required></textarea>
+                <div style="margin-top:1.5rem;text-align:right;">
+                    <button type="submit" class="btn">Enviar para Aprovação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Dados de exemplo realistas para Gantt Chart
+        const equipamentos = [
+            { id: 'linha1', nome: 'Linha Comprimidos 01' },
+            { id: 'linha2', nome: 'Linha Líquidos 02' },
+            { id: 'linha3', nome: 'Linha Embalagem 03' }
+        ];
+        const dias = ['01/07','02/07','03/07','04/07','05/07','06/07','07/07'];
+        // Cada ordem tem: id, produto, cor, sku, quantidade, setup, kpiImpacto
+        let ordensBase = [
+            { id: 'O1001', eq: 'linha1', dia: 0, produto: 'Amoxicilina 500mg', sku: 'AMOX500', quantidade: 12000, setup: 'A', cor: '#0072ce', kpi: { faturamento: 80000, margem: 32000, atendimento: 12000 } },
+            { id: 'O1002', eq: 'linha1', dia: 1, produto: 'Ibuprofeno 600mg', sku: 'IBU600', quantidade: 10000, setup: 'B', cor: '#fbbf24', kpi: { faturamento: 60000, margem: 25000, atendimento: 10000 } },
+            { id: 'O1003', eq: 'linha2', dia: 0, produto: 'Dipirona Solução', sku: 'DIPIRONA', quantidade: 8000, setup: 'A', cor: '#27ae60', kpi: { faturamento: 40000, margem: 18000, atendimento: 8000 } },
+            { id: 'O1004', eq: 'linha2', dia: 2, produto: 'Paracetamol 750mg', sku: 'PARA750', quantidade: 9000, setup: 'B', cor: '#e74c3c', kpi: { faturamento: 45000, margem: 16000, atendimento: 9000 } },
+            { id: 'O1005', eq: 'linha3', dia: 1, produto: 'Embalagem Blister', sku: 'EMB-BLIS', quantidade: 20000, setup: 'C', cor: '#8e44ad', kpi: { faturamento: 20000, margem: 7000, atendimento: 20000 } },
+            { id: 'O1006', eq: 'linha3', dia: 3, produto: 'Embalagem Cartucho', sku: 'EMB-CART', quantidade: 15000, setup: 'C', cor: '#00b894', kpi: { faturamento: 18000, margem: 6000, atendimento: 15000 } }
+        ];
+        // Cópia para cenário ajustado
+        let ordensAjustado = JSON.parse(JSON.stringify(ordensBase));
+        let kpisBase = calcularKPIs(ordensBase);
+        let kpisAjustado = calcularKPIs(ordensAjustado);
+        let ordemSelecionada = null;
+        let dragOrigin = null;
+        let erroSetup = false;
+        function renderGantt(ordens) {
+            const tbody = document.getElementById('gantt-body');
+            tbody.innerHTML = '';
+            equipamentos.forEach(eq => {
+                let tr = document.createElement('tr');
+                let tdEq = document.createElement('td');
+                tdEq.className = 'gantt-row-label';
+                tdEq.textContent = eq.nome;
+                tr.appendChild(tdEq);
+                for (let d = 0; d < dias.length; d++) {
+                    let td = document.createElement('td');
+                    td.className = 'gantt-dropzone';
+                    td.dataset.eq = eq.id;
+                    td.dataset.dia = d;
+                    td.ondragover = e => { e.preventDefault(); td.classList.add('over'); };
+                    td.ondragleave = () => td.classList.remove('over');
+                    td.ondrop = e => {
+                        td.classList.remove('over');
+                        if (!ordemSelecionada) return;
+                        // Validação de roda de setup (exemplo: não pode alternar A->C direto)
+                        let violacao = false;
+                        let ordensNoDia = ordens.filter(o => o.eq === eq.id && o.dia === d);
+                        if (ordensNoDia.length > 0) violacao = true; // só 1 ordem por célula
+                        // Regra: não pode alternar de setup A para C direto
+                        let anterior = ordens.filter(o => o.eq === eq.id && o.dia === d-1)[0];
+                        if (anterior && ((anterior.setup === 'A' && ordemSelecionada.setup === 'C') || (anterior.setup === 'C' && ordemSelecionada.setup === 'A'))) violacao = true;
+                        if (violacao) {
+                            erroSetup = true;
+                            ordemSelecionada.invalid = true;
+                            renderGantt(ordens);
+                            showError('Violação de roda de setup: não é permitido alternar diretamente entre certos tipos de setup ou sobrepor ordens.');
+                            setTimeout(()=>{ hideError(); }, 3000);
+                            return;
+                        }
+                        erroSetup = false;
+                        ordemSelecionada.invalid = false;
+                        // Atualiza posição
+                        ordemSelecionada.eq = eq.id;
+                        ordemSelecionada.dia = d;
+                        // Recalcula KPIs
+                        kpisAjustado = calcularKPIs(ordensAjustado);
+                        renderGantt(ordens);
+                        renderKPIs('kpi-list', kpisAjustado);
+                    };
+                    // Renderiza ordem se houver
+                    let ordem = ordens.find(o => o.eq === eq.id && o.dia === d);
+                    if (ordem) {
+                        let div = document.createElement('div');
+                        div.className = 'gantt-order';
+                        if (ordem.invalid) div.classList.add('invalid');
+                        div.draggable = true;
+                        div.style.background = ordem.cor + '22';
+                        div.style.borderColor = ordem.cor;
+                        div.innerHTML = `<span style="font-weight:700;">${ordem.produto}</span><br><span style="font-size:0.93em;color:#555;">${ordem.sku}</span>`;
+                        div.ondragstart = e => {
+                            ordemSelecionada = ordem;
+                            dragOrigin = { eq: ordem.eq, dia: ordem.dia };
+                            div.classList.add('dragging');
+                        };
+                        div.ondragend = e => {
+                            div.classList.remove('dragging');
+                            ordemSelecionada = null;
+                        };
+                        td.appendChild(div);
+                    }
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            });
+        }
+        function renderKPIs(elId, kpis) {
+            const el = document.getElementById(elId);
+            el.innerHTML = `
+                <div class="kpi"><span>Faturamento Previsto</span><span class="value">R$ ${kpis.faturamento.toLocaleString('pt-BR')}</span></div>
+                <div class="kpi"><span>Margem Líquida</span><span class="value">R$ ${kpis.margem.toLocaleString('pt-BR')}</span></div>
+                <div class="kpi"><span>Atendimento de Pedidos</span><span class="value">${kpis.atendimento.toLocaleString('pt-BR')} un.</span></div>
+            `;
+        }
+        function calcularKPIs(ordens) {
+            let faturamento = 0, margem = 0, atendimento = 0;
+            ordens.forEach(o => {
+                faturamento += o.kpi.faturamento;
+                margem += o.kpi.margem;
+                atendimento += o.kpi.atendimento;
+            });
+            return { faturamento, margem, atendimento };
+        }
+        function showError(msg) {
+            document.getElementById('gantt-error').textContent = msg;
+            document.getElementById('gantt-error').style.display = '';
+        }
+        function hideError() {
+            document.getElementById('gantt-error').style.display = 'none';
+        }
+        // Modal
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        document.getElementById('btn-comparar').onclick = function() {
+            // Renderiza tabela comparativa
+            let tbody = document.getElementById('comparar-tbody');
+            tbody.innerHTML = `
+                <tr><td>Faturamento Previsto</td><td>R$ ${kpisBase.faturamento.toLocaleString('pt-BR')}</td><td>R$ ${kpisAjustado.faturamento.toLocaleString('pt-BR')}</td></tr>
+                <tr><td>Margem Líquida</td><td>R$ ${kpisBase.margem.toLocaleString('pt-BR')}</td><td>R$ ${kpisAjustado.margem.toLocaleString('pt-BR')}</td></tr>
+                <tr><td>Atendimento de Pedidos</td><td>${kpisBase.atendimento.toLocaleString('pt-BR')} un.</td><td>${kpisAjustado.atendimento.toLocaleString('pt-BR')} un.</td></tr>
+            `;
+            document.getElementById('modal-comparar').style.display = '';
+        };
+        document.getElementById('btn-aprovar').onclick = function() {
+            document.getElementById('modal-aprovar').style.display = '';
+        };
+        document.getElementById('form-aprovar').onsubmit = function(e) {
+            e.preventDefault();
+            alert('Solicitação enviada para aprovação!');
+            closeModal('modal-aprovar');
+        };
+        // Inicialização
+        renderGantt(ordensAjustado);
+        renderKPIs('kpi-list', kpisAjustado);
+    </script>
+</body>
+</html>
