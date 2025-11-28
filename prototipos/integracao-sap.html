@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integração SAP - PCP Eurofarma</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+  <script src="prototipos/assets/js/sap-integration-mock.js"></script>
+  <style>
+    body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f7f9fc; }
+    .main-wrapper { max-width: 1200px; margin: 0 auto; padding: 40px 0; }
+    .header-pcp { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .header-pcp h1 { color: #00358e; font-size: 2.3rem; font-weight: 700; }
+    .header-pcp .back-link { color: #00358e; text-decoration: underline; font-size: 1rem; }
+    .status-box { background: #e6f0ff; border-left: 5px solid #00358e; padding: 16px 24px; margin-bottom: 24px; border-radius: 6px; display: flex; align-items: center; }
+    .status-label { font-weight: 600; color: #00358e; margin-right: 12px; }
+    .status-success { color: #1ca67a; }
+    .status-falha, .status-erro { color: #d32f2f; }
+    .status-pendente { color: #fbc02d; }
+    .log-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #00358e22; margin-bottom: 32px; }
+    .log-table th, .log-table td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; text-align: left; }
+    .log-table th { background: #00358e; color: #fff; font-weight: 700; }
+    .log-table tr:last-child td { border-bottom: none; }
+    .btn-pcp { background: #00358e; color: #fff; border: none; border-radius: 4px; padding: 12px 28px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .btn-pcp:hover { background: #1a4fa3; }
+    .audit-title { font-size: 1.2rem; color: #00358e; font-weight: 600; margin-bottom: 10px; }
+    .modal-bg { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: #00358e55; z-index: 999; align-items: center; justify-content: center; }
+    .modal-content { background: #fff; border-radius: 8px; padding: 32px; max-width: 400px; box-shadow: 0 4px 24px #00358e33; text-align: center; }
+    .modal-content h2 { color: #00358e; font-size: 1.3rem; margin-bottom: 18px; }
+    .modal-content p { color: #333; margin-bottom: 22px; }
+    .modal-content .btn-pcp { margin: 0 8px; }
+    @media (max-width: 700px) {
+      .main-wrapper { padding: 16px 0; }
+      .header-pcp { flex-direction: column; gap: 12px; }
+      .log-table th, .log-table td { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <div class="header-pcp">
+      <h1>Integração SAP - Log de Auditoria</h1>
+      <a href="dashboard.html" class="back-link" aria-label="Voltar para Dashboard">&larr; Voltar ao Dashboard</a>
+    </div>
+    <div class="status-box">
+      <span class="status-label">Status Atual:</span>
+      <span id="statusAtual" class="status-pendente">Aguardando envio</span>
+    </div>
+    <div style="margin-bottom: 24px;">
+      <button class="btn-pcp" id="btnEnviarPlano">Enviar Plano Aprovado para SAP</button>
+    </div>
+    <div class="audit-title">Histórico de Transações</div>
+    <table class="log-table" aria-label="Log de Auditoria de Integração SAP">
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Ação</th>
+          <th>Status</th>
+          <th>Mensagem</th>
+        </tr>
+      </thead>
+      <tbody id="logBody">
+        <!-- logs inseridos via JS -->
+      </tbody>
+    </table>
+    <div class="audit-title">Plano de Produção Aprovado</div>
+    <table class="log-table" aria-label="Plano de Produção">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Descrição</th>
+          <th>Quantidade</th>
+        </tr>
+      </thead>
+      <tbody id="planoBody">
+        <!-- plano inserido via JS -->
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-bg" id="modalConfirm">
+    <div class="modal-content">
+      <h2>Confirmação de Envio</h2>
+      <p>Deseja realmente enviar o plano de produção aprovado para o SAP?<br>Esta ação será registrada no log de auditoria.</p>
+      <button class="btn-pcp" id="btnConfirmEnvio">Confirmar</button>
+      <button class="btn-pcp" id="btnCancelarEnvio">Cancelar</button>
+    </div>
+  </div>
+  <script>
+    // Preenche plano aprovado
+    function renderPlano() {
+      const plano = window.PCPSAP.MOCK_PLAN;
+      const tbody = document.getElementById('planoBody');
+      tbody.innerHTML = '';
+      plano.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.sku}</td><td>${p.descricao}</td><td>${p.quantidade}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    // Preenche log de auditoria
+    function renderLog() {
+      const logs = window.PCPSAP.consultarLogTransacoes();
+      const tbody = document.getElementById('logBody');
+      tbody.innerHTML = '';
+      logs.forEach(l => {
+        let statusClass = 'status-pendente';
+        if (l.status === 'Sucesso') statusClass = 'status-success';
+        else if (l.status === 'Falha' || l.status === 'Erro') statusClass = 'status-erro';
+        else if (l.status === 'Rollback realizado') statusClass = 'status-falha';
+        tbody.innerHTML += `<tr><td>${l.data}</td><td>${l.acao}</td><td class="${statusClass}">${l.status}</td><td>${l.mensagem}</td></tr>`;
+      });
+    }
+    // Atualiza status
+    function updateStatus() {
+      const status = window.PCPSAP.statusAtual();
+      const el = document.getElementById('statusAtual');
+      el.textContent = status;
+      el.className = status === 'Sucesso' ? 'status-success' : (status === 'Falha' || status === 'Erro' ? 'status-erro' : 'status-pendente');
+    }
+    // Modal de confirmação
+    const modal = document.getElementById('modalConfirm');
+    document.getElementById('btnEnviarPlano').onclick = () => {
+      modal.style.display = 'flex';
+    };
+    document.getElementById('btnCancelarEnvio').onclick = () => {
+      modal.style.display = 'none';
+    };
+    document.getElementById('btnConfirmEnvio').onclick = () => {
+      modal.style.display = 'none';
+      const plano = window.PCPSAP.MOCK_PLAN;
+      const res = window.PCPSAP.enviarPlanoParaSAP(plano);
+      renderLog();
+      updateStatus();
+      if (res.rollback) {
+        alert('Falha na integração. Plano revertido automaticamente.');
+      } else if (res.sucesso) {
+        alert('Plano enviado com sucesso ao SAP.');
+      } else {
+        alert('Erro ao enviar plano. Consulte o log de auditoria.');
+      }
+    };
+    // Inicialização
+    renderPlano();
+    renderLog();
+    updateStatus();
+  </script>
+</body>
+</html>
