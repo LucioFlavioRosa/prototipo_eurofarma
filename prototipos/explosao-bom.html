@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explosão de BOM | Plataforma PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css">
+    <style>
+      body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f5f7fa; }
+      .container { max-width: 1280px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px; }
+      .flex-row { display: flex; gap: 36px; flex-wrap: wrap; }
+      .flex-col { flex: 1 1 420px; min-width: 340px; }
+      .side-panel { flex: 0 0 340px; background: #f9fafb; border-radius: 10px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+      .form-group { margin-bottom: 18px; }
+      .btn-primary { background: #002776; border: none; color: #fff; padding: 10px 24px; border-radius: 6px; font-weight: 600; transition: background .2s; }
+      .btn-primary:hover { background: #0050b3; }
+      .progress { background: #e9ecef; border-radius: 8px; height: 18px; margin-bottom: 8px; }
+      .progress-bar { height: 18px; border-radius: 8px; font-size: 0.95em; font-weight: 600; line-height: 18px; }
+      .progress-verde { background: #8dc63f; }
+      .progress-amarelo { background: #ffe066; color: #856404; }
+      .progress-vermelho { background: #f44336; color: #fff; }
+      .alert-gargalo { color: #a71d2a; font-weight: 700; margin-bottom: 12px; }
+      .jstree-default .jstree-anchor { font-size: 1.05em; }
+      .info-table { width: 100%; border-collapse: collapse; margin: 10px 0 0 0; }
+      .info-table th, .info-table td { padding: 4px 8px; border-bottom: 1px solid #eee; font-size: 0.98em; }
+      .info-table th { color: #002776; font-weight: 700; }
+      @media (max-width: 900px) { .container { padding: 12px; } .flex-row { flex-direction: column; gap: 20px; } .side-panel { min-width: 0; } }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" style="height:48px;">
+      <nav>
+        <a href="pmp-mensal.html" style="margin-right:24px;color:#555;">PMP Mensal</a>
+        <a href="explosao-bom.html" style="margin-right:24px;color:#002776;font-weight:700;">Explosão BOM</a>
+        <a href="capacidade-fabril.html" style="color:#555;">Capacidade Fabril</a>
+      </nav>
+    </header>
+    <h1 style="font-size:2.1em;font-weight:800;color:#002776;margin-bottom:12px;">Explosão de Estrutura de Produto (BOM)</h1>
+    <p style="color:#444;margin-bottom:24px;">Visualize o desdobramento completo do produto acabado, estoques, lead times e gargalos fabris para tomada de decisão ágil e segura.</p>
+    <div class="form-group" style="max-width:400px;">
+      <label for="produtoBOM">Produto Acabado</label>
+      <select id="produtoBOM" class="form-control" style="width:100%;">
+        <option value="ABX-500MG-30">Amoxicilina 500mg c/30</option>
+        <option value="ONC-20MG-10">Oncozol 20mg c/10</option>
+        <option value="GEN-1G-20">Genérico 1g c/20</option>
+      </select>
+    </div>
+    <div class="flex-row">
+      <div class="flex-col">
+        <div id="arvoreBOM"></div>
+      </div>
+      <aside class="side-panel">
+        <h2 style="font-size:1.15em;color:#002776;font-weight:700;margin-bottom:12px;">Validação de Capacidade Fabril</h2>
+        <div id="validaCapacidade">
+          <div style="margin-bottom:12px;">
+            <strong>Equipamento:</strong> Misturador 1<br>
+            <span>Carga: 32h / Capacidade: 40h</span>
+            <div class="progress"><div class="progress-bar progress-verde" style="width:80%">80%</div></div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <strong>Equipamento:</strong> Encapsuladora 2<br>
+            <span>Carga: 38h / Capacidade: 40h</span>
+            <div class="progress"><div class="progress-bar progress-amarelo" style="width:95%">95%</div></div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <strong>Equipamento:</strong> Blister Pack 3<br>
+            <span>Carga: 42h / Capacidade: 40h</span>
+            <div class="progress"><div class="progress-bar progress-vermelho" style="width:105%">105%</div></div>
+            <div class="alert-gargalo">Gargalo detectado!</div>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:18px;width:100%;" onclick="window.print()">Exportar BOM (PDF)</button>
+      </aside>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+  <script>
+    function getBOMData(produto) {
+      if(produto === 'ABX-500MG-30') {
+        return [
+          {
+            id: 'pa', text: 'Amoxicilina 500mg c/30', state: { opened: true },
+            children: [
+              {
+                id: 'granel', text: 'Granel Amoxicilina',
+                children: [
+                  {
+                    id: 'primaria', text: 'Embalagem Primária: Blister PVC',
+                    children: [
+                      { id: 'secundaria', text: 'Embalagem Secundária: Cartucho Papel' }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ];
+      } else if(produto === 'ONC-20MG-10') {
+        return [
+          {
+            id: 'pa', text: 'Oncozol 20mg c/10', state: { opened: true },
+            children: [
+              { id: 'granel', text: 'Granel Oncozol',
+                children: [
+                  { id: 'primaria', text: 'Embalagem Primária: Frasco Vidro',
+                    children: [
+                      { id: 'secundaria', text: 'Embalagem Secundária: Caixa Cartonada' }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ];
+      } else {
+        return [
+          {
+            id: 'pa', text: 'Genérico 1g c/20', state: { opened: true },
+            children: [
+              { id: 'granel', text: 'Granel Genérico',
+                children: [
+                  { id: 'primaria', text: 'Embalagem Primária: Blister Alumínio',
+                    children: [
+                      { id: 'secundaria', text: 'Embalagem Secundária: Caixa Papel' }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ];
+      }
+    }
+    function getInfoTable(nodeId) {
+      // Dados simulados realistas
+      if(nodeId==='pa') return '<table class="info-table"><tr><th>Qtd. Necessária</th><td>8.000</td></tr><tr><th>Estoque</th><td>12.000</td></tr><tr><th>Lead Time</th><td>0d</td></tr></table>';
+      if(nodeId==='granel') return '<table class="info-table"><tr><th>Qtd. Necessária</th><td>7.500</td></tr><tr><th>Estoque</th><td>6.000</td></tr><tr><th>Lead Time</th><td>3d</td></tr></table>';
+      if(nodeId==='primaria') return '<table class="info-table"><tr><th>Qtd. Necessária</th><td>8.000</td></tr><tr><th>Estoque</th><td>9.000</td></tr><tr><th>Lead Time</th><td>2d</td></tr></table>';
+      if(nodeId==='secundaria') return '<table class="info-table"><tr><th>Qtd. Necessária</th><td>8.000</td></tr><tr><th>Estoque</th><td>7.500</td></tr><tr><th>Lead Time</th><td>1d</td></tr></table>';
+      return '';
+    }
+    function renderBOMTree(produto) {
+      $('#arvoreBOM').jstree('destroy');
+      $('#arvoreBOM').jstree({
+        core: { data: getBOMData(produto) }
+      });
+      $('#arvoreBOM').on('select_node.jstree', function(e, data) {
+        var info = getInfoTable(data.node.id);
+        $('.jstree-anchor').removeClass('jstree-selected-custom');
+        $(data.event.currentTarget).addClass('jstree-selected-custom');
+        if(info) {
+          $(data.event.currentTarget).append('<div class="info-popover">'+info+'</div>');
+        }
+      });
+    }
+    $(document).ready(function() {
+      renderBOMTree($('#produtoBOM').val());
+      $('#produtoBOM').change(function() {
+        renderBOMTree($(this).val());
+      });
+    });
+  </script>
+</body>
+</html>
