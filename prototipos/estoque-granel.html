@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Gestão de Estoque de Granel | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f7f9fb; margin: 0; }
+        header { background: #00205b; color: #fff; padding: 24px 0 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .container { max-width: 1240px; margin: 0 auto; padding: 32px 16px; }
+        h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; color: #00205b; }
+        .filtros { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filtros select { padding: 8px 12px; border-radius: 4px; border: 1px solid #cfd8dc; background: #fff; font-size: 1rem; }
+        .estoque-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; margin-bottom: 32px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); }
+        .estoque-table th, .estoque-table td { padding: 12px 10px; text-align: left; }
+        .estoque-table th { background: #e3eaf6; font-weight: 600; color: #00205b; }
+        .estoque-table tr { border-bottom: 1px solid #f0f0f0; }
+        .estoque-table tr:last-child { border-bottom: none; }
+        .status-disponivel { color: #388e3c; font-weight: 600; }
+        .status-amarelo { color: #fbc02d; font-weight: 600; }
+        .status-vermelho { color: #d32f2f; font-weight: 600; }
+        .alerta { background: #fffde7; color: #fbc02d; padding: 8px 14px; border-radius: 4px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+        .grafico-section { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 32px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); }
+        .grafico-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #00205b; }
+        .necessidade-section { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); }
+        .necessidade-section h2 { font-size: 1.3rem; color: #00205b; margin-bottom: 12px; }
+        .necessidade-table { width: 100%; border-collapse: collapse; }
+        .necessidade-table th, .necessidade-table td { padding: 10px 8px; }
+        .necessidade-table th { background: #e3eaf6; font-weight: 600; color: #00205b; }
+        .btn-primario { background: #0057b8; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 18px; }
+        .btn-primario:hover { background: #003d7a; }
+        @media (max-width: 900px) {
+            .container { padding: 16px; }
+            .grafico-section, .necessidade-section { padding: 14px; }
+            .estoque-table th, .estoque-table td, .necessidade-table th, .necessidade-table td { padding: 8px 4px; }
+        }
+        @media (max-width: 600px) {
+            .filtros { flex-direction: column; gap: 10px; }
+            .grafico-section, .necessidade-section { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" style="height:48px;">
+            <nav>
+                <a href="/prototipos/estoque-granel.html" style="color:#fff;font-weight:600;margin-right:18px;">Estoque Granel</a>
+                <a href="/prototipos/manutencao-oee.html" style="color:#fff;font-weight:600;margin-right:18px;">Manutenção OEE</a>
+                <a href="/prototipos/comunicacao-replanejamento.html" style="color:#fff;font-weight:600;">Comunicação</a>
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        <h1>Gestão de Estoque de Granel</h1>
+        <div class="filtros">
+            <select id="filtroPlanta" aria-label="Filtrar por Planta">
+                <option value="">Todas as Plantas</option>
+                <option value="Barueri">Barueri</option>
+                <option value="Itapevi">Itapevi</option>
+                <option value="Ribeirão Preto">Ribeirão Preto</option>
+            </select>
+            <select id="filtroProduto" aria-label="Filtrar por Produto Final">
+                <option value="">Todos os Produtos</option>
+                <option value="Amoxicilina 500mg">Amoxicilina 500mg</option>
+                <option value="Dipirona 1g">Dipirona 1g</option>
+                <option value="Losartana 50mg">Losartana 50mg</option>
+            </select>
+            <select id="filtroStatus" aria-label="Filtrar por Status">
+                <option value="">Todos os Status</option>
+                <option value="disponivel">Disponível</option>
+                <option value="amarelo">Próximo ao Vencimento</option>
+                <option value="vermelho">Vencido</option>
+            </select>
+        </div>
+        <div id="alerta-vencimento" class="alerta" style="display:none;">
+            <span style="font-size:1.3em;">&#9888;</span> Existem lotes próximos ao vencimento ou vencidos!
+        </div>
+        <div class="grafico-section">
+            <div class="grafico-title">Cobertura de Granel por Produto (Meta: 2-3 meses)</div>
+            <canvas id="graficoCobertura" height="220" aria-label="Cobertura de Granel por Produto"></canvas>
+        </div>
+        <table class="estoque-table" id="tabelaEstoque" aria-label="Tabela de Estoque de Granel">
+            <thead>
+                <tr>
+                    <th>Código do Granel</th>
+                    <th>Produto Final Relacionado</th>
+                    <th>Quantidade em Estoque (kg)</th>
+                    <th>Cobertura (meses)</th>
+                    <th>Data de Fabricação</th>
+                    <th>Shelf Life Restante (dias)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Conteúdo dinâmico JS -->
+            </tbody>
+        </table>
+        <section class="necessidade-section">
+            <h2>Necessidade de Produção de Granel (Próximos 3 meses)</h2>
+            <table class="necessidade-table" aria-label="Necessidade de Produção de Granel">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Necessidade Total (kg)</th>
+                        <th>Prioridade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Amoxicilina 500mg</td>
+                        <td>12.000</td>
+                        <td>Alta</td>
+                    </tr>
+                    <tr>
+                        <td>Dipirona 1g</td>
+                        <td>8.500</td>
+                        <td>Média</td>
+                    </tr>
+                    <tr>
+                        <td>Losartana 50mg</td>
+                        <td>6.000</td>
+                        <td>Alta</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn-primario" onclick="programarProducao()">Programar Produção de Granel</button>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dados de exemplo realistas
+        const dadosEstoque = [
+            { codigo: 'GRN-20230601-A', produto: 'Amoxicilina 500mg', planta: 'Barueri', quantidade: 3500, cobertura: 1.8, fabricacao: '2023-06-01', shelf: 25, status: 'amarelo' },
+            { codigo: 'GRN-20230710-B', produto: 'Dipirona 1g', planta: 'Itapevi', quantidade: 4000, cobertura: 2.2, fabricacao: '2023-07-10', shelf: 120, status: 'disponivel' },
+            { codigo: 'GRN-20230515-C', produto: 'Losartana 50mg', planta: 'Barueri', quantidade: 2800, cobertura: 1.0, fabricacao: '2023-05-15', shelf: 5, status: 'vermelho' },
+            { codigo: 'GRN-20230801-D', produto: 'Amoxicilina 500mg', planta: 'Ribeirão Preto', quantidade: 5000, cobertura: 2.7, fabricacao: '2023-08-01', shelf: 180, status: 'disponivel' },
+            { codigo: 'GRN-20230720-E', produto: 'Dipirona 1g', planta: 'Barueri', quantidade: 2500, cobertura: 1.2, fabricacao: '2023-07-20', shelf: 35, status: 'amarelo' },
+            { codigo: 'GRN-20230630-F', produto: 'Losartana 50mg', planta: 'Itapevi', quantidade: 3200, cobertura: 2.0, fabricacao: '2023-06-30', shelf: 75, status: 'disponivel' }
+        ];
+        const statusLabel = {
+            'disponivel': '<span class="status-disponivel">Disponível</span>',
+            'amarelo': '<span class="status-amarelo">Próximo ao Vencimento</span>',
+            'vermelho': '<span class="status-vermelho">Vencido</span>'
+        };
+        function renderTabela() {
+            const planta = document.getElementById('filtroPlanta').value;
+            const produto = document.getElementById('filtroProduto').value;
+            const status = document.getElementById('filtroStatus').value;
+            let alerta = false;
+            let html = '';
+            dadosEstoque.forEach(lote => {
+                if ((planta && lote.planta !== planta) || (produto && lote.produto !== produto) || (status && lote.status !== status)) return;
+                if (lote.status === 'amarelo' || lote.status === 'vermelho') alerta = true;
+                html += `<tr>
+                    <td>${lote.codigo}</td>
+                    <td>${lote.produto}</td>
+                    <td>${lote.quantidade.toLocaleString('pt-BR')}</td>
+                    <td>${lote.cobertura.toFixed(1)}</td>
+                    <td>${new Date(lote.fabricacao).toLocaleDateString('pt-BR')}</td>
+                    <td>${lote.shelf}</td>
+                    <td>${statusLabel[lote.status]}</td>
+                </tr>`;
+            });
+            document.querySelector('#tabelaEstoque tbody').innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:#888;">Nenhum lote encontrado.</td></tr>';
+            document.getElementById('alerta-vencimento').style.display = alerta ? 'flex' : 'none';
+        }
+        document.getElementById('filtroPlanta').addEventListener('change', renderTabela);
+        document.getElementById('filtroProduto').addEventListener('change', renderTabela);
+        document.getElementById('filtroStatus').addEventListener('change', renderTabela);
+        renderTabela();
+        // Gráfico de barras - Cobertura por Produto
+        const ctx = document.getElementById('graficoCobertura').getContext('2d');
+        const produtos = ['Amoxicilina 500mg', 'Dipirona 1g', 'Losartana 50mg'];
+        const cobertura = [
+            dadosEstoque.filter(x=>x.produto==='Amoxicilina 500mg').reduce((a,b)=>a+b.cobertura,0),
+            dadosEstoque.filter(x=>x.produto==='Dipirona 1g').reduce((a,b)=>a+b.cobertura,0),
+            dadosEstoque.filter(x=>x.produto==='Losartana 50mg').reduce((a,b)=>a+b.cobertura,0)
+        ];
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: produtos,
+                datasets: [{
+                    label: 'Cobertura (meses)',
+                    data: cobertura,
+                    backgroundColor: cobertura.map(v => v >= 2 ? '#388e3c' : (v >= 1.5 ? '#fbc02d' : '#d32f2f')),
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(2)+' meses' } }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 4, title: { display: true, text: 'Meses' }, grid: { color: '#e3eaf6' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        // Botão Programar Produção
+        function programarProducao() {
+            const produto = document.getElementById('filtroProduto').value;
+            let url = '/prototipos/sequenciamento-aps.html';
+            if (produto) url += '?produto=' + encodeURIComponent(produto);
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
