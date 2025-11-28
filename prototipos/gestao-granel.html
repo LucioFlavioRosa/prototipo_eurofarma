@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Estoque de Granel | PCP Eurofarma</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body { font-family: 'Lato', Arial, sans-serif; background: #f6f8fa; }
+      .main-wrapper { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+      .section-title { color: #00358e; font-size: 2.2rem; font-weight: 700; margin-bottom: 24px; }
+      .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.06); padding: 24px; margin-bottom: 32px; }
+      .panel h2 { font-size: 1.3rem; color: #00358e; margin-bottom: 18px; }
+      .granel-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+      .granel-table th, .granel-table td { border: 1px solid #e3e8ee; padding: 10px 16px; text-align: center; font-size: 1rem; }
+      .granel-table th { background: #00358e; color: #fff; font-weight: 700; }
+      .alert-vencimento { color: #c00; font-weight: 700; background: #fff3f3; border-radius: 4px; padding: 4px 10px; }
+      .alert-normal { color: #00358e; font-weight: 600; }
+      .coverage-panel { margin-top: 32px; }
+      .coverage-panel h2 { margin-bottom: 16px; }
+      .nav-flow { margin-bottom: 24px; }
+      .nav-flow a { color: #00358e; font-weight: 600; margin-right: 18px; text-decoration: none; }
+      .nav-flow a.active { text-decoration: underline; }
+      .btn-primary { background: #00358e; color: #fff; border: none; padding: 10px 28px; border-radius: 5px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+      .btn-primary:hover { background: #022956; }
+      @media (max-width: 800px) { .main-wrapper { padding: 12px; } .panel { padding: 12px; } }
+    </style>
+</head>
+<body class="frontend eurofarma main-container">
+  <div class="main-wrapper">
+    <div class="nav-flow">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="gestao-granel.html" class="active">Gestão de Granel</a>
+      <a href="simulacao-cenarios.html">Simulação de Cenários</a>
+      <a href="sequenciamento.html">Sequenciamento</a>
+    </div>
+    <h1 class="section-title">Gestão de Estoque de Granel</h1>
+    <div class="panel">
+      <h2>Necessidade de Granel (Horizonte 3 meses)</h2>
+      <table class="granel-table" aria-label="Tabela de necessidade de granel">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Produto</th>
+            <th>Estoque Atual (kg)</th>
+            <th>Necessidade Próx. 3 meses (kg)</th>
+            <th>Shelf Life (dias)</th>
+            <th>Vencimento</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GRN-001</td>
+            <td>Paracetamol Granel</td>
+            <td>3.200</td>
+            <td>5.400</td>
+            <td>45</td>
+            <td>2024-07-15</td>
+            <td><span class="alert-normal">OK</span></td>
+          </tr>
+          <tr>
+            <td>GRN-002</td>
+            <td>Ibuprofeno Granel</td>
+            <td>2.100</td>
+            <td>4.800</td>
+            <td>20</td>
+            <td>2024-06-28</td>
+            <td><span class="alert-vencimento">Vencendo em 10 dias</span></td>
+          </tr>
+          <tr>
+            <td>GRN-003</td>
+            <td>Dipirona Granel</td>
+            <td>1.800</td>
+            <td>3.900</td>
+            <td>60</td>
+            <td>2024-08-05</td>
+            <td><span class="alert-normal">OK</span></td>
+          </tr>
+          <tr>
+            <td>GRN-004</td>
+            <td>Amoxicilina Granel</td>
+            <td>900</td>
+            <td>2.500</td>
+            <td>15</td>
+            <td>2024-06-22</td>
+            <td><span class="alert-vencimento">Vencendo em 4 dias</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel coverage-panel">
+      <h2>Gráfico de Cobertura de Estoque</h2>
+      <canvas id="coverageChart" height="110"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Integração Visual com Sequenciamento de Embalagem</h2>
+      <p style="color:#022956; font-size:1.05rem;">Abaixo, visualização dos SKUs de granel vinculados ao sequenciamento de embalagem dos próximos meses:</p>
+      <table class="granel-table" aria-label="Tabela de integração com sequenciamento">
+        <thead>
+          <tr>
+            <th>SKU Granel</th>
+            <th>SKU Embalagem</th>
+            <th>Quantidade Embalar (unid)</th>
+            <th>Data Programada</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GRN-001</td>
+            <td>PCT-500MG</td>
+            <td>12.000</td>
+            <td>2024-07-20</td>
+            <td><span class="alert-normal">Agendado</span></td>
+          </tr>
+          <tr>
+            <td>GRN-002</td>
+            <td>IBU-400MG</td>
+            <td>9.500</td>
+            <td>2024-06-29</td>
+            <td><span class="alert-vencimento">Atenção: Granel vencendo</span></td>
+          </tr>
+          <tr>
+            <td>GRN-003</td>
+            <td>DIP-1G</td>
+            <td>7.800</td>
+            <td>2024-08-10</td>
+            <td><span class="alert-normal">Agendado</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:40px;">
+      <a href="simulacao-cenarios.html" class="btn-primary">Voltar para Simulação de Cenários</a>
+      <a href="sequenciamento.html" class="btn-primary" style="margin-left:18px;">Avançar para Sequenciamento</a>
+    </div>
+  </div>
+  <script>
+    // Exemplo de gráfico de cobertura de estoque
+    const ctx = document.getElementById('coverageChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jun', 'Jul', 'Ago'],
+        datasets: [
+          {
+            label: 'Paracetamol Granel',
+            data: [3200, 2100, 800],
+            borderColor: '#00358e',
+            backgroundColor: 'rgba(0,53,142,0.08)',
+            fill: true
+          },
+          {
+            label: 'Ibuprofeno Granel',
+            data: [2100, 900, 0],
+            borderColor: '#f7b500',
+            backgroundColor: 'rgba(247,181,0,0.08)',
+            fill: true
+          },
+          {
+            label: 'Dipirona Granel',
+            data: [1800, 1200, 600],
+            borderColor: '#022956',
+            backgroundColor: 'rgba(2,41,86,0.08)',
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: false }
+        },
+        scales: {
+          y: { title: { display: true, text: 'Estoque (kg)' }, beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
