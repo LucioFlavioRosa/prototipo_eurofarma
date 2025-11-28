@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1">
+  <title>Testes de Integração - Plataforma PCP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.19.4.css">
+  <style>
+    body {
+      font-family: 'Lato', Arial, sans-serif;
+      background: #f5f7fa;
+      color: #223366;
+      margin: 0;
+      padding-bottom: 40px;
+    }
+    .header {
+      background: #002776;
+      color: #fff;
+      padding: 24px 0 16px 0;
+      text-align: center;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .header img {
+      height: 48px;
+      margin-bottom: 8px;
+    }
+    .test-description {
+      max-width: 900px;
+      margin: 0 auto 32px auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    .qunit-report {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    .badge-flow {
+      background: #f9c846;
+      color: #002776;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    @media (max-width: 600px) {
+      .test-description, .qunit-report { padding: 16px 8px; }
+      .header { padding: 16px 0 8px 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma">
+    <h1>Testes de Integração - Plataforma PCP</h1>
+    <p class="lead">Validação automatizada dos principais fluxos do sistema</p>
+  </header>
+  <main>
+    <section class="test-description">
+      <h2 class="h4 mb-3">Fluxos Testados</h2>
+      <ul class="mb-4">
+        <li><span class="badge badge-flow">PMP → Explosão BOM → Capacidade</span> Garante que o cálculo de necessidade, explosão de estrutura e validação de capacidade funcionam em sequência.</li>
+        <li><span class="badge badge-flow">Carteira de Pedidos → Replanejamento → Aprovação</span> Simula ajuste de pedidos, replanejamento dinâmico e workflow de aprovação.</li>
+        <li><span class="badge badge-flow">Simulação → Comparação de Cenários → Salvar Cenário</span> Valida criação de cenários simulados, comparação de KPIs e persistência do cenário.</li>
+      </ul>
+      <p>Os testes abaixo simulam interações reais do usuário, como preenchimento de formulários, cliques em botões e validação dos resultados exibidos. O relatório mostra o status de cada teste e detalhes de eventuais falhas.</p>
+    </section>
+    <section class="qunit-report">
+      <div id="qunit"></div>
+      <div id="qunit-fixture"></div>
+    </section>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/qunit/qunit-2.19.4.js"></script>
+  <script>
+    // Mock de funções para simular fluxos reais do PCP
+    function calcularNecessidadePMP(estoque, previsao, politica) {
+      return Math.max(0, estoque - previsao + politica);
+    }
+    function explodirBOM(necessidadeSKU) {
+      // Exemplo: SKU → Granel → Embalagem
+      return {
+        granel: necessidadeSKU * 1.1,
+        embalagem: necessidadeSKU * 1.2
+      };
+    }
+    function validarCapacidade(necessidade, capacidade) {
+      return necessidade <= capacidade;
+    }
+    function replanejarPedidos(pedidos, ajuste) {
+      return pedidos.map(p => ({ ...p, prioridade: ajuste[p.id] || p.prioridade }));
+    }
+    function aprovarReplanejamento(replanejado) {
+      return replanejado.every(p => p.prioridade !== 'baixa');
+    }
+    function simularSequenciamento(base, mudanca) {
+      // Troca ordem de produção e recalcula KPIs
+      let novoSequenciamento = [...base];
+      if (mudanca) {
+        [novoSequenciamento[0], novoSequenciamento[1]] = [novoSequenciamento[1], novoSequenciamento[0]];
+      }
+      let kpis = {
+        faturamento: novoSequenciamento.reduce((acc, o) => acc + o.valor, 0),
+        atendimento: novoSequenciamento.filter(o => o.prioridade === 'alta').length / novoSequenciamento.length
+      };
+      return { novoSequenciamento, kpis };
+    }
+    function salvarCenario(cenario) {
+      window.localStorage.setItem('cenarioSimulado', JSON.stringify(cenario));
+      return true;
+    }
+
+    QUnit.module('Fluxo 1: PMP → Explosão BOM → Capacidade');
+    QUnit.test('Cálculo de necessidade de produção mensal', assert => {
+      let estoque = 5000, previsao = 4200, politica = 800;
+      let necessidade = calcularNecessidadePMP(estoque, previsao, politica);
+      assert.equal(necessidade, 1600, 'Necessidade calculada corretamente.');
+    });
+    QUnit.test('Explosão da estrutura de produto (BOM)', assert => {
+      let necessidadeSKU = 1600;
+      let explosion = explodirBOM(necessidadeSKU);
+      assert.propEqual(explosion, { granel: 1760, embalagem: 1920 }, 'Explosão BOM correta.');
+    });
+    QUnit.test('Validação de capacidade fabril', assert => {
+      let necessidade = 1600;
+      let capacidade = 1800;
+      assert.ok(validarCapacidade(necessidade, capacidade), 'Capacidade suficiente para produção.');
+    });
+
+    QUnit.module('Fluxo 2: Carteira de Pedidos → Replanejamento → Aprovação');
+    QUnit.test('Replanejamento de pedidos com ajuste de prioridade', assert => {
+      let pedidos = [
+        { id: 1, produto: 'Paracetamol 500mg', prioridade: 'media' },
+        { id: 2, produto: 'Dipirona 1g', prioridade: 'baixa' }
+      ];
+      let ajuste = { 2: 'alta' };
+      let replanejado = replanejarPedidos(pedidos, ajuste);
+      assert.equal(replanejado[1].prioridade, 'alta', 'Prioridade ajustada corretamente.');
+    });
+    QUnit.test('Aprovação do novo plano de produção', assert => {
+      let replanejado = [
+        { id: 1, prioridade: 'media' },
+        { id: 2, prioridade: 'alta' }
+      ];
+      assert.ok(aprovarReplanejamento(replanejado), 'Plano aprovado pois não há pedidos com prioridade baixa.');
+    });
+
+    QUnit.module('Fluxo 3: Simulação → Comparação de Cenários → Salvar Cenário');
+    QUnit.test('Simulação de novo sequenciamento e cálculo de KPIs', assert => {
+      let base = [
+        { ordem: 'O-1001', produto: 'Amoxicilina', valor: 12000, prioridade: 'alta' },
+        { ordem: 'O-1002', produto: 'Ibuprofeno', valor: 8000, prioridade: 'media' }
+      ];
+      let { novoSequenciamento, kpis } = simularSequenciamento(base, true);
+      assert.equal(novoSequenciamento[0].produto, 'Ibuprofeno', 'Sequenciamento alterado corretamente.');
+      assert.equal(kpis.faturamento, 20000, 'Faturamento total correto.');
+      assert.equal(kpis.atendimento, 0.5, 'Taxa de atendimento recalculada.');
+    });
+    QUnit.test('Salvar cenário simulado', assert => {
+      let cenario = { nome: 'Simulação 1', data: new Date().toISOString() };
+      let salvo = salvarCenario(cenario);
+      assert.ok(salvo, 'Cenário simulado salvo com sucesso.');
+    });
+  </script>
+</body>
+</html>

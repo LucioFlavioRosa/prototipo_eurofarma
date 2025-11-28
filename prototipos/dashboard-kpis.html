@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Dashboard Executivo de KPIs | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      body {
+        font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+        background: #f4f6fa;
+        margin: 0;
+        color: #222;
+      }
+      .header {
+        background: #003366;
+        color: #fff;
+        padding: 24px 0 16px 0;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      .filtros-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+        background: #fff;
+        padding: 18px 0 10px 0;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      }
+      .filtros-bar select {
+        padding: 8px 16px;
+        border: 1px solid #cfd8dc;
+        border-radius: 6px;
+        font-size: 1rem;
+        background: #f7fafc;
+      }
+      .actions-bar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        max-width: 1300px;
+        margin: 0 auto 12px auto;
+        padding: 0 16px;
+      }
+      .btn-exportar {
+        background: #003366;
+        color: #fff;
+        border: none;
+        padding: 10px 26px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+        margin-left: 8px;
+      }
+      .btn-exportar:hover {
+        background: #0056b3;
+      }
+      .refresh {
+        margin-left: 18px;
+        font-size: 1.1rem;
+        color: #003366;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .refresh .spin {
+        display: inline-block;
+        animation: spin 1.2s linear infinite;
+      }
+      @keyframes spin {
+        100% { transform: rotate(360deg); }
+      }
+      .kpis-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+        gap: 28px;
+        max-width: 1300px;
+        margin: 32px auto 32px auto;
+        padding: 0 16px;
+      }
+      .kpi-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 26px 20px 18px 20px;
+        display: flex;
+        flex-direction: column;
+        min-height: 260px;
+      }
+      .kpi-card h2 {
+        font-size: 1.13rem;
+        font-weight: 700;
+        color: #003366;
+        margin: 0 0 10px 0;
+      }
+      .kpi-chart {
+        width: 100%;
+        height: 180px;
+        margin-top: 8px;
+      }
+      .kpi-gauge {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto;
+      }
+      .kpi-heatmap {
+        width: 100%;
+        height: 160px;
+        margin-top: 12px;
+      }
+      @media (max-width: 900px) {
+        .kpis-grid {
+          max-width: 98vw;
+        }
+      }
+      @media (max-width: 600px) {
+        .kpis-grid { grid-template-columns: 1fr; }
+        .actions-bar { padding: 0 2vw; }
+      }
+    </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Dashboard Executivo de KPIs</h1>
+  </div>
+  <form class="filtros-bar" id="filtrosForm" autocomplete="off">
+    <label for="periodo">
+      <span style="font-weight:600; color:#003366;">Período:</span>
+      <select id="periodo" name="periodo">
+        <option value="2024-01">Jan/2024</option>
+        <option value="2024-02">Fev/2024</option>
+        <option value="2024-03">Mar/2024</option>
+        <option value="2024-04">Abr/2024</option>
+        <option value="2024-05" selected>Mai/2024</option>
+        <option value="2024-06">Jun/2024</option>
+      </select>
+    </label>
+    <label for="planta">
+      <span style="font-weight:600; color:#003366;">Planta:</span>
+      <select id="planta" name="planta">
+        <option value="todas">Todas</option>
+        <option value="itabuna">Itabuna</option>
+        <option value="itaboraí">Itaboraí</option>
+        <option value="barueri">Barueri</option>
+      </select>
+    </label>
+    <label for="familia">
+      <span style="font-weight:600; color:#003366;">Família de Produtos:</span>
+      <select id="familia" name="familia">
+        <option value="todas">Todas</option>
+        <option value="antibióticos">Antibióticos</option>
+        <option value="analgésicos">Analgésicos</option>
+        <option value="hormonais">Hormonais</option>
+      </select>
+    </label>
+  </form>
+  <div class="actions-bar">
+    <button class="btn-exportar" type="button" aria-label="Exportar Relatório">Exportar Relatório</button>
+    <span class="refresh" id="refreshStatus"><svg class="spin" width="20" height="20" viewBox="0 0 24 24"><path fill="#003366" d="M12 4V1L7 6l5 5V7c3.31 0 6 2.69 6 6 0 1.07-.28 2.08-.77 2.95l1.46 1.46A7.963 7.963 0 0020 13c0-4.42-3.58-8-8-8zm-6.23 2.05l-1.46-1.46A7.963 7.963 0 004 11c0 4.42 3.58 8 8 8v3l5-5-5-5v3c-3.31 0-6-2.69-6-6 0-1.07.28-2.08.77-2.95z"/></svg>Atualizando...</span>
+  </div>
+  <section class="kpis-grid">
+    <div class="kpi-card">
+      <h2>Acuracidade do Plano</h2>
+      <canvas id="kpiAcuracidade" class="kpi-chart" aria-label="Gráfico de linha da acuracidade do plano" role="img"></canvas>
+    </div>
+    <div class="kpi-card">
+      <h2>Taxa de Atendimento OTIF</h2>
+      <canvas id="kpiOTIF" class="kpi-gauge" aria-label="Indicador de OTIF" role="img"></canvas>
+    </div>
+    <div class="kpi-card">
+      <h2>Utilização de Capacidade por Planta</h2>
+      <canvas id="kpiCapacidade" class="kpi-chart" aria-label="Gráfico de barras empilhadas de utilização de capacidade" role="img"></canvas>
+    </div>
+    <div class="kpi-card">
+      <h2>Faturamento Realizado vs. Planejado</h2>
+      <canvas id="kpiFaturamento" class="kpi-chart" aria-label="Gráfico de barras comparativas de faturamento" role="img"></canvas>
+    </div>
+    <div class="kpi-card">
+      <h2>Tempo Médio de Setup</h2>
+      <canvas id="kpiSetup" class="kpi-chart" aria-label="Gráfico de linha do tempo médio de setup" role="img"></canvas>
+    </div>
+    <div class="kpi-card">
+      <h2>Ociosidade de Máquinas</h2>
+      <canvas id="kpiOciosidade" class="kpi-heatmap" aria-label="Heatmap de ociosidade de máquinas" role="img"></canvas>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Dados realistas para KPIs
+    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const acuracidade = [92, 94, 90, 96, 93, 95];
+    const otif = 97; // %
+    const capacidade = {
+      Itabuna: [80, 85, 82, 90, 88, 89],
+      Itaboraí: [75, 78, 80, 81, 83, 85],
+      Barueri: [68, 72, 70, 74, 75, 77]
+    };
+    const faturamentoReal = [12.4, 13.1, 12.7, 14.2, 13.8, 14.6];
+    const faturamentoPlan = [12.0, 13.0, 13.0, 14.0, 14.0, 14.5];
+    const setup = [2.8, 2.7, 2.6, 2.5, 2.4, 2.3]; // horas
+    const ociosidade = [
+      [2, 3, 1, 0, 2, 1], // Linha 1
+      [1, 2, 2, 1, 0, 1], // Linha 2
+      [3, 2, 1, 2, 1, 0], // Linha 3
+      [0, 1, 2, 1, 2, 3]  // Linha 4
+    ];
+    const linhas = ['Linha 1', 'Linha 2', 'Linha 3', 'Linha 4'];
+    // Gráfico de Acuracidade
+    let chartAcuracidade;
+    function renderAcuracidade() {
+      const ctx = document.getElementById('kpiAcuracidade').getContext('2d');
+      chartAcuracidade && chartAcuracidade.destroy();
+      chartAcuracidade = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: meses,
+          datasets: [{
+            label: 'Acuracidade (%)',
+            data: acuracidade,
+            borderColor: '#003366',
+            backgroundColor: 'rgba(0,51,102,0.09)',
+            tension: 0.3,
+            pointRadius: 5,
+            pointBackgroundColor: '#003366',
+            fill: true
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { min: 80, max: 100, grid: { color: '#e3e8ee' } },
+            x: { grid: { color: '#e3e8ee' } }
+          }
+        }
+      });
+    }
+    // Gauge OTIF
+    let chartOTIF;
+    function renderOTIF() {
+      const ctx = document.getElementById('kpiOTIF').getContext('2d');
+      chartOTIF && chartOTIF.destroy();
+      chartOTIF = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['OTIF', 'Restante'],
+          datasets: [{
+            data: [otif, 100-otif],
+            backgroundColor: ['#43a047', '#e3e8ee'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+            annotation: {
+              annotations: {
+                label: {
+                  type: 'label',
+                  xValue: 0.5,
+                  yValue: 0.5,
+                  content: otif + '%',
+                  font: { size: 24, weight: 'bold' },
+                  color: '#003366'
+                }
+              }
+            }
+          }
+        },
+        plugins: [{
+          id: 'centerText',
+          afterDraw(chart) {
+            const {ctx, chartArea: {width, height}} = chart;
+            ctx.save();
+            ctx.font = 'bold 2.1rem Lato, Arial';
+            ctx.fillStyle = '#003366';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(otif + '%', width/2, height/2+10);
+            ctx.restore();
+          }
+        }]
+      });
+    }
+    // Barras empilhadas Capacidade
+    let chartCapacidade;
+    function renderCapacidade() {
+      const ctx = document.getElementById('kpiCapacidade').getContext('2d');
+      chartCapacidade && chartCapacidade.destroy();
+      chartCapacidade = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: meses,
+          datasets: [
+            {
+              label: 'Itabuna',
+              data: capacidade.Itabuna,
+              backgroundColor: '#003366',
+              stack: 'Stack1'
+            },
+            {
+              label: 'Itaboraí',
+              data: capacidade.Itaboraí,
+              backgroundColor: '#1976d2',
+              stack: 'Stack1'
+            },
+            {
+              label: 'Barueri',
+              data: capacidade.Barueri,
+              backgroundColor: '#43a047',
+              stack: 'Stack1'
+            }
+          ]
+        },
+        options: {
+          plugins: { legend: { position: 'bottom' } },
+          responsive: true,
+          scales: {
+            x: { stacked: true, grid: { color: '#e3e8ee' } },
+            y: { stacked: true, min: 0, max: 250, grid: { color: '#e3e8ee' }, title: { display: true, text: 'Capacidade (%)' } }
+          }
+        }
+      });
+    }
+    // Faturamento Realizado vs Planejado
+    let chartFaturamento;
+    function renderFaturamento() {
+      const ctx = document.getElementById('kpiFaturamento').getContext('2d');
+      chartFaturamento && chartFaturamento.destroy();
+      chartFaturamento = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: meses,
+          datasets: [
+            {
+              label: 'Realizado',
+              data: faturamentoReal,
+              backgroundColor: '#003366',
+              borderRadius: 8,
+              maxBarThickness: 28
+            },
+            {
+              label: 'Planejado',
+              data: faturamentoPlan,
+              backgroundColor: '#43a047',
+              borderRadius: 8,
+              maxBarThickness: 28
+            }
+          ]
+        },
+        options: {
+          plugins: { legend: { position: 'bottom' } },
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'R$ milhões' }, grid: { color: '#e3e8ee' } },
+            x: { grid: { color: '#e3e8ee' } }
+          }
+        }
+      });
+    }
+    // Tempo Médio de Setup
+    let chartSetup;
+    function renderSetup() {
+      const ctx = document.getElementById('kpiSetup').getContext('2d');
+      chartSetup && chartSetup.destroy();
+      chartSetup = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: meses,
+          datasets: [{
+            label: 'Setup (h)',
+            data: setup,
+            borderColor: '#1976d2',
+            backgroundColor: 'rgba(25,118,210,0.09)',
+            tension: 0.3,
+            pointRadius: 5,
+            pointBackgroundColor: '#1976d2',
+            fill: true
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { min: 2, max: 3, grid: { color: '#e3e8ee' } },
+            x: { grid: { color: '#e3e8ee' } }
+          }
+        }
+      });
+    }
+    // Heatmap Ociosidade
+    let chartOciosidade;
+    function renderOciosidade() {
+      const ctx = document.getElementById('kpiOciosidade').getContext('2d');
+      chartOciosidade && chartOciosidade.destroy();
+      chartOciosidade = new Chart(ctx, {
+        type: 'matrix',
+        data: {
+          datasets: [{
+            label: 'Ociosidade (h)',
+            data: linhas.flatMap((linha, i) => meses.map((mes, j) => ({ x: mes, y: linha, v: ociosidade[i][j] }))),
+            backgroundColor: ctx => {
+              const v = ctx.raw.v;
+              if (v === 0) return '#43a047';
+              if (v === 1) return '#fbc02d';
+              if (v === 2) return '#1976d2';
+              return '#e53935';
+            },
+            width: ({chart}) => (chart.chartArea || {}).width / meses.length - 8,
+            height: ({chart}) => (chart.chartArea || {}).height / linhas.length - 8
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `Ociosidade: ${ctx.raw.v}h` } } },
+          scales: {
+            x: { type: 'category', labels: meses, grid: { color: '#e3e8ee' }, title: { display: true, text: 'Mês' } },
+            y: { type: 'category', labels: linhas, grid: { color: '#e3e8ee' }, title: { display: true, text: 'Linha' } }
+          }
+        }
+      });
+    }
+    // Plugin Matrix para Chart.js
+    Chart.register({
+      id: 'matrix',
+      beforeInit(chart) {
+        if (chart.config.type === 'matrix') {
+          chart.config.type = 'bar';
+        }
+      },
+      afterDatasetDraw(chart, args, options) {
+        if (chart.config.type !== 'bar' || !args.meta.dataset.options.data) return;
+        const ctx = chart.ctx;
+        args.meta.data.forEach((bar, i) => {
+          const d = args.meta.dataset.options.data[i];
+          if (!d) return;
+          ctx.save();
+          ctx.fillStyle = args.meta.dataset.backgroundColor({raw: d});
+          ctx.fillRect(bar.x - bar.width/2, bar.y - bar.height/2, bar.width, bar.height);
+          ctx.restore();
+        });
+      }
+    });
+    // Atualização automática
+    function refreshAll() {
+      renderAcuracidade();
+      renderOTIF();
+      renderCapacidade();
+      renderFaturamento();
+      renderSetup();
+      renderOciosidade();
+    }
+    document.querySelector('.btn-exportar').addEventListener('click', () => {
+      alert('Relatório exportado em PDF/Excel (simulação).');
+    });
+    document.getElementById('filtrosForm').addEventListener('change', () => {
+      // Simulação: apenas muda os dados de acuracidade e KPIs para mostrar dinamismo
+      // Em um sistema real, aqui seria feita nova consulta aos dados filtrados
+      refreshAll();
+    });
+    // Simula atualização automática a cada 15s
+    setInterval(() => {
+      document.getElementById('refreshStatus').style.opacity = 1;
+      setTimeout(() => { document.getElementById('refreshStatus').style.opacity = 0.5; }, 1200);
+      refreshAll();
+    }, 15000);
+    // Inicialização
+    refreshAll();
+  </script>
+</body>
+</html>

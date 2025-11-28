@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Carteira de Pedidos - PCP Eurofarma</title>
+    <meta name="description" content="Gestão de carteira de pedidos com filtros, painel lateral e gráficos.">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f5f7fa; margin: 0; color: #1d2d44; }
+        header {
+            background: #fff;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+        }
+        .logo { height: 48px; }
+        nav a {
+            color: #1d2d44;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color .2s;
+        }
+        nav a.active, nav a:hover { color: #0072ce; }
+        .container-main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            align-items: flex-end;
+        }
+        .filtros label {
+            font-weight: 600;
+            color: #0072ce;
+        }
+        .filtros select, .filtros input {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background: #f8fafc;
+        }
+        .pedidos-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.2rem;
+            font-size: 0.98rem;
+        }
+        .pedidos-table th, .pedidos-table td {
+            text-align: left;
+            padding: 0.6rem 0.7rem;
+        }
+        .pedidos-table th {
+            background: #f0f4fa;
+            font-weight: 700;
+        }
+        .status-estoque { color: #27ae60; font-weight: 700; }
+        .status-planejado { color: #0072ce; font-weight: 700; }
+        .status-risco { color: #e74c3c; font-weight: 700; }
+        .risco-icone {
+            color: #e74c3c;
+            font-size: 1.2em;
+            margin-right: 0.3em;
+            vertical-align: middle;
+        }
+        .table-row:hover { background: #e6f0fa; cursor: pointer; }
+        .offcanvas {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 400px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: -2px 0 12px rgba(0,0,0,0.08);
+            z-index: 1200;
+            transition: right 0.35s cubic-bezier(.4,0,.2,1);
+            padding: 2rem 1.5rem 2rem 2rem;
+            overflow-y: auto;
+        }
+        .offcanvas.open { right: 0; }
+        .offcanvas-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .offcanvas h3 { color: #0072ce; margin-top: 0; }
+        .btn {
+            background: #0072ce;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background .2s;
+        }
+        .btn:hover { background: #005fa3; }
+        .grafico-pizza {
+            width: 260px;
+            height: 260px;
+            margin: 0 auto;
+            display: block;
+        }
+        @media (max-width: 900px) {
+            .container-main { padding: 1rem; }
+            .offcanvas { width: 100vw; right: -100vw; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo"/>
+        <nav>
+            <a href="carteira-pedidos.html" class="active">Carteira de Pedidos</a>
+            <a href="replanejamento-drag-drop.html">Replanejamento</a>
+            <a href="workflow-aprovacao.html">Workflow de Aprovação</a>
+        </nav>
+    </header>
+    <main class="container-main">
+        <h2 style="margin-top:0; color:#0072ce;">Carteira de Pedidos</h2>
+        <form class="filtros" id="filtros-form" onsubmit="return false;">
+            <div>
+                <label for="filtro-status">Status</label><br>
+                <select id="filtro-status">
+                    <option value="">Todos</option>
+                    <option value="Em Estoque">Em Estoque</option>
+                    <option value="Planejado">Planejado</option>
+                    <option value="Em Risco">Em Risco</option>
+                </select>
+            </div>
+            <div>
+                <label for="filtro-cliente">Cliente</label><br>
+                <input id="filtro-cliente" type="text" placeholder="Nome do Cliente"/>
+            </div>
+            <div>
+                <label for="filtro-produto">Produto</label><br>
+                <input id="filtro-produto" type="text" placeholder="Produto"/>
+            </div>
+            <div>
+                <label for="filtro-periodo">Período</label><br>
+                <input id="filtro-periodo" type="month"/>
+            </div>
+            <div style="align-self:flex-end;">
+                <button class="btn" type="button" onclick="filtrarPedidos()">Filtrar</button>
+            </div>
+        </form>
+        <div style="display:flex;flex-wrap:wrap;gap:2rem;align-items:flex-start;">
+            <div style="flex:2;min-width:320px;">
+                <table class="pedidos-table" aria-label="Tabela de Pedidos">
+                    <thead>
+                        <tr>
+                            <th>Nº Pedido</th>
+                            <th>Cliente</th>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Data de Entrega</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pedidos-tbody">
+                        <!-- Linhas via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="flex:1;min-width:260px;">
+                <canvas id="grafico-pizza" class="grafico-pizza" aria-label="Distribuição de Pedidos por Status"></canvas>
+            </div>
+        </div>
+    </main>
+    <aside id="offcanvas" class="offcanvas" aria-label="Detalhes do Pedido" tabindex="-1">
+        <button class="offcanvas-close" aria-label="Fechar" onclick="fecharOffcanvas()">&times;</button>
+        <div id="offcanvas-content"></div>
+    </aside>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dados realistas de pedidos
+        const pedidos = [
+            { numero: 'P20240123', cliente: 'Hospital São Paulo', produto: 'Amoxicilina 500mg', quantidade: 1200, entrega: '2024-07-03', status: 'Em Estoque', historico: [{data:'2024-06-29',acao:'Criado'},{data:'2024-07-01',acao:'Confirmado'}], estoque: 3500, sequenciamento: 'O1001', sugestao: null },
+            { numero: 'P20240124', cliente: 'Drogaria Raia', produto: 'Ibuprofeno 600mg', quantidade: 800, entrega: '2024-07-05', status: 'Planejado', historico: [{data:'2024-06-30',acao:'Criado'}], estoque: 0, sequenciamento: 'O1002', sugestao: null },
+            { numero: 'P20240125', cliente: 'Hospital Sírio-Libanês', produto: 'Dipirona Solução', quantidade: 600, entrega: '2024-07-04', status: 'Em Risco', historico: [{data:'2024-07-01',acao:'Criado'},{data:'2024-07-02',acao:'Estoque insuficiente'}], estoque: 0, sequenciamento: null, sugestao: 'Antecipar produção de Dipirona' },
+            { numero: 'P20240126', cliente: 'Drogasil', produto: 'Paracetamol 750mg', quantidade: 900, entrega: '2024-07-06', status: 'Planejado', historico: [{data:'2024-07-01',acao:'Criado'}], estoque: 0, sequenciamento: 'O1004', sugestao: null },
+            { numero: 'P20240127', cliente: 'Hospital Albert Einstein', produto: 'Embalagem Blister', quantidade: 2000, entrega: '2024-07-02', status: 'Em Estoque', historico: [{data:'2024-06-29',acao:'Criado'},{data:'2024-07-01',acao:'Confirmado'}], estoque: 5000, sequenciamento: 'O1005', sugestao: null },
+            { numero: 'P20240128', cliente: 'Hospital São Paulo', produto: 'Embalagem Cartucho', quantidade: 1500, entrega: '2024-07-07', status: 'Em Risco', historico: [{data:'2024-07-01',acao:'Criado'},{data:'2024-07-03',acao:'Pedido fora do plano'}], estoque: 0, sequenciamento: null, sugestao: 'Antecipar produção de Embalagem Cartucho' }
+        ];
+        let pedidosFiltrados = [...pedidos];
+        function renderPedidos() {
+            const tbody = document.getElementById('pedidos-tbody');
+            tbody.innerHTML = '';
+            pedidosFiltrados.forEach(p => {
+                let tr = document.createElement('tr');
+                tr.className = 'table-row';
+                tr.tabIndex = 0;
+                tr.onclick = () => abrirOffcanvas(p);
+                tr.innerHTML = `
+                    <td>${p.numero}</td>
+                    <td>${p.cliente}</td>
+                    <td>${p.produto}</td>
+                    <td>${p.quantidade}</td>
+                    <td>${(new Date(p.entrega)).toLocaleDateString('pt-BR')}</td>
+                    <td>${p.status === 'Em Risco' ? '<span class="risco-icone" title="Em Risco">&#9888;</span>' : ''}<span class="status-${p.status.replace(' ','').toLowerCase()}">${p.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        function filtrarPedidos() {
+            const status = document.getElementById('filtro-status').value;
+            const cliente = document.getElementById('filtro-cliente').value.toLowerCase();
+            const produto = document.getElementById('filtro-produto').value.toLowerCase();
+            const periodo = document.getElementById('filtro-periodo').value;
+            pedidosFiltrados = pedidos.filter(p => {
+                let ok = true;
+                if (status && p.status !== status) ok = false;
+                if (cliente && !p.cliente.toLowerCase().includes(cliente)) ok = false;
+                if (produto && !p.produto.toLowerCase().includes(produto)) ok = false;
+                if (periodo) {
+                    let mes = periodo.split('-')[1];
+                    let ano = periodo.split('-')[0];
+                    let dataEntrega = new Date(p.entrega);
+                    if (dataEntrega.getMonth()+1 !== parseInt(mes) || dataEntrega.getFullYear() !== parseInt(ano)) ok = false;
+                }
+                return ok;
+            });
+            renderPedidos();
+            renderGrafico();
+        }
+        function abrirOffcanvas(pedido) {
+            const aside = document.getElementById('offcanvas');
+            aside.classList.add('open');
+            let html = `<h3>Pedido ${pedido.numero}</h3>
+                <div><b>Cliente:</b> ${pedido.cliente}</div>
+                <div><b>Produto:</b> ${pedido.produto}</div>
+                <div><b>Quantidade:</b> ${pedido.quantidade}</div>
+                <div><b>Data de Entrega:</b> ${(new Date(pedido.entrega)).toLocaleDateString('pt-BR')}</div>
+                <div><b>Status:</b> <span class="status-${pedido.status.replace(' ','').toLowerCase()}">${pedido.status}</span></div>
+                <hr style="margin:1rem 0;">
+                <div><b>Estoque Disponível:</b> ${pedido.estoque}</div>
+                <div><b>Sequenciamento Relacionado:</b> ${pedido.sequenciamento ? pedido.sequenciamento : '<span style="color:#888;">N/A</span>'}</div>
+                <div><b>Histórico:</b><ul style="padding-left:1.2rem;">${pedido.historico.map(h=>`<li>${h.data}: ${h.acao}</li>`).join('')}</ul></div>
+                ${pedido.sugestao ? `<div style="margin:1rem 0 0.5rem 0;"><b>Sugestão:</b> <span style="color:#e67e22;">${pedido.sugestao}</span></div>` : ''}
+                <button class="btn" onclick="anteciparProducao('${pedido.produto}')">Antecipar Produção</button>
+            `;
+            document.getElementById('offcanvas-content').innerHTML = html;
+        }
+        function fecharOffcanvas() {
+            document.getElementById('offcanvas').classList.remove('open');
+        }
+        function anteciparProducao(produto) {
+            // Redireciona para replanejamento com ordem pré-selecionada
+            window.location.href = 'replanejamento-drag-drop.html?produto=' + encodeURIComponent(produto);
+        }
+        // Gráfico de pizza
+        let chart = null;
+        function renderGrafico() {
+            let statusCount = { 'Em Estoque': 0, 'Planejado': 0, 'Em Risco': 0 };
+            pedidosFiltrados.forEach(p => statusCount[p.status]++);
+            const ctx = document.getElementById('grafico-pizza').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Em Estoque', 'Planejado', 'Em Risco'],
+                    datasets: [{
+                        data: [statusCount['Em Estoque'], statusCount['Planejado'], statusCount['Em Risco']],
+                        backgroundColor: ['#27ae60','#0072ce','#e74c3c']
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { callbacks: { label: ctx => ctx.label+': '+ctx.parsed+' pedidos' } }
+                    }
+                }
+            });
+        }
+        // Inicialização
+        renderPedidos();
+        renderGrafico();
+    </script>
+</body>
+</html>

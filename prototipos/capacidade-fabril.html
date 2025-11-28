@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capacidade vs. Demanda | Plataforma PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+      body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f5f7fa; }
+      .container { max-width: 1280px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px; }
+      .filters-row { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; }
+      .filters-row .form-group { min-width: 180px; }
+      .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px; }
+      .card-linha { background: #f9fafb; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); padding: 24px; display: flex; flex-direction: column; min-height: 320px; }
+      .linha-titulo { font-size: 1.15em; font-weight: 700; color: #002776; margin-bottom: 10px; }
+      .gauge-container { width: 100%; height: 160px; margin-bottom: 12px; }
+      .produtos-lista { margin-bottom: 10px; }
+      .produtos-lista ul { margin: 0 0 0 16px; padding: 0; }
+      .produtos-lista li { font-size: 0.98em; }
+      .turnos { font-size: 0.97em; color: #555; margin-bottom: 8px; }
+      .acoes-corretivas { margin-top: 36px; background: #e6f4ea; border-radius: 8px; padding: 18px; }
+      .acoes-corretivas h3 { font-size: 1.08em; color: #218838; font-weight: 700; margin-bottom: 10px; }
+      .acoes-corretivas .btn-primary { margin-right: 12px; margin-bottom: 8px; }
+      @media (max-width: 900px) { .container { padding: 12px; } .cards-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" style="height:48px;">
+      <nav>
+        <a href="pmp-mensal.html" style="margin-right:24px;color:#555;">PMP Mensal</a>
+        <a href="explosao-bom.html" style="margin-right:24px;color:#555;">Explosão BOM</a>
+        <a href="capacidade-fabril.html" style="color:#002776;font-weight:700;">Capacidade Fabril</a>
+      </nav>
+    </header>
+    <h1 style="font-size:2.1em;font-weight:800;color:#002776;margin-bottom:12px;">Capacidade vs. Demanda</h1>
+    <p style="color:#444;margin-bottom:24px;">Acompanhe a utilização das linhas de produção, identifique gargalos e aplique ações corretivas sugeridas para garantir o atendimento do plano de produção.</p>
+    <form id="filtrosCapacidade" class="filters-row" autocomplete="off">
+      <div class="form-group">
+        <label for="mes">Mês</label>
+        <select id="mes" class="form-control">
+          <option value="07/2024">Julho/2024</option>
+          <option value="08/2024">Agosto/2024</option>
+          <option value="09/2024">Setembro/2024</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="planta">Planta</label>
+        <select id="planta" class="form-control">
+          <option value="Todas">Todas</option>
+          <option value="Itapevi">Itapevi</option>
+          <option value="Ribeirão Preto">Ribeirão Preto</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="tipoLinha">Tipo de Linha</label>
+        <select id="tipoLinha" class="form-control">
+          <option value="Todas">Todas</option>
+          <option value="Comprimidos">Comprimidos</option>
+          <option value="Injetáveis">Injetáveis</option>
+          <option value="Sólidos">Sólidos</option>
+        </select>
+      </div>
+    </form>
+    <div class="cards-grid" id="gridLinhas">
+      <!-- Cards das linhas de produção -->
+      <div class="card-linha" data-linha="Comprimidos 1">
+        <div class="linha-titulo">Linha de Comprimidos 1</div>
+        <div class="gauge-container" id="gauge-comprimidos1"></div>
+        <div class="produtos-lista">
+          <strong>Produtos Programados:</strong>
+          <ul>
+            <li>Amoxicilina 500mg c/30</li>
+            <li>Genérico 1g c/20</li>
+          </ul>
+        </div>
+        <div class="turnos">Turnos: 2 | Horas Extras: Não</div>
+      </div>
+      <div class="card-linha" data-linha="Injetáveis 2">
+        <div class="linha-titulo">Linha de Injetáveis 2</div>
+        <div class="gauge-container" id="gauge-injetaveis2"></div>
+        <div class="produtos-lista">
+          <strong>Produtos Programados:</strong>
+          <ul>
+            <li>Oncozol 20mg c/10</li>
+          </ul>
+        </div>
+        <div class="turnos">Turnos: 3 | Horas Extras: Sim</div>
+      </div>
+      <div class="card-linha" data-linha="Comprimidos 2">
+        <div class="linha-titulo">Linha de Comprimidos 2</div>
+        <div class="gauge-container" id="gauge-comprimidos2"></div>
+        <div class="produtos-lista">
+          <strong>Produtos Programados:</strong>
+          <ul>
+            <li>Genérico 1g c/20</li>
+            <li>Ibuprofeno 600mg c/20</li>
+          </ul>
+        </div>
+        <div class="turnos">Turnos: 2 | Horas Extras: Não</div>
+      </div>
+    </div>
+    <section class="acoes-corretivas">
+      <h3>Ações Corretivas Sugeridas</h3>
+      <button class="btn-primary" onclick="aplicarAcao('comprimidos2')">Adicionar turno extra na Linha de Comprimidos 2</button>
+      <button class="btn-primary" onclick="aplicarAcao('injetaveis2')">Realocar Oncozol para Linha de Injetáveis 2</button>
+    </section>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+  <script>
+    function renderGauge(id, value) {
+      Highcharts.chart(id, {
+        chart: { type: 'solidgauge', height: 160, backgroundColor: 'transparent' },
+        title: null,
+        pane: {
+          center: ['50%', '60%'],
+          size: '100%',
+          startAngle: -90,
+          endAngle: 90,
+          background: {
+            backgroundColor: '#e9ecef',
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
+          }
+        },
+        tooltip: { enabled: false },
+        yAxis: {
+          min: 0,
+          max: 120,
+          stops: [
+            [0.8, '#8dc63f'], // verde
+            [0.95, '#ffe066'], // amarelo
+            [1.0, '#f44336'] // vermelho
+          ],
+          lineWidth: 0,
+          tickPositions: [],
+          labels: { enabled: false }
+        },
+        plotOptions: {
+          solidgauge: {
+            dataLabels: {
+              y: 20,
+              borderWidth: 0,
+              useHTML: true,
+              format: '<div style="text-align:center"><span style="font-size:2em;color:#002776">{y}%</span><br/><span style="font-size:1em;color:#888">Utilização</span></div>'
+            }
+          }
+        },
+        credits: { enabled: false },
+        series: [{
+          name: 'Utilização',
+          data: [value],
+          dataLabels: { format: '<div style="text-align:center"><span style="font-size:2em;color:#002776">{y}%</span><br/><span style="font-size:1em;color:#888">Utilização</span></div>' },
+          tooltip: { valueSuffix: '%' }
+        }]
+      });
+    }
+    function atualizarGauges(valores) {
+      renderGauge('gauge-comprimidos1', valores.comprimidos1);
+      renderGauge('gauge-injetaveis2', valores.injetaveis2);
+      renderGauge('gauge-comprimidos2', valores.comprimidos2);
+    }
+    $(document).ready(function() {
+      atualizarGauges({ comprimidos1: 78, injetaveis2: 92, comprimidos2: 98 });
+      $('#filtrosCapacidade select').change(function() {
+        // Simulação dinâmica de filtros
+        var mes = $('#mes').val();
+        if(mes==='08/2024') atualizarGauges({ comprimidos1: 85, injetaveis2: 88, comprimidos2: 105 });
+        else if(mes==='09/2024') atualizarGauges({ comprimidos1: 70, injetaveis2: 80, comprimidos2: 90 });
+        else atualizarGauges({ comprimidos1: 78, injetaveis2: 92, comprimidos2: 98 });
+      });
+    });
+    function aplicarAcao(linha) {
+      if(linha==='comprimidos2') {
+        atualizarGauges({ comprimidos1: 78, injetaveis2: 92, comprimidos2: 85 });
+        alert('Turno extra aplicado na Linha de Comprimidos 2. Utilização recalculada!');
+      }
+      if(linha==='injetaveis2') {
+        atualizarGauges({ comprimidos1: 78, injetaveis2: 80, comprimidos2: 98 });
+        alert('Oncozol realocado para Linha de Injetáveis 2. Utilização recalculada!');
+      }
+    }
+  </script>
+</body>
+</html>

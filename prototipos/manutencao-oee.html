@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Integração com Manutenção Preditiva | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f7f9fb; margin: 0; }
+        header { background: #00205b; color: #fff; padding: 24px 0 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .container { max-width: 1240px; margin: 0 auto; padding: 32px 16px; }
+        h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; color: #00205b; }
+        .filtros { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filtros select { padding: 8px 12px; border-radius: 4px; border: 1px solid #cfd8dc; background: #fff; font-size: 1rem; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 36px; }
+        .equip-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); padding: 20px 18px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+        .equip-nome { font-size: 1.1rem; font-weight: 700; color: #00205b; }
+        .oee-indicador { font-size: 2.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .oee-verde { color: #388e3c; }
+        .oee-amarelo { color: #fbc02d; }
+        .oee-vermelho { color: #d32f2f; }
+        .manut-list { font-size: 0.98rem; color: #00205b; margin-bottom: 4px; }
+        .manut-list li { margin-bottom: 2px; }
+        .capacidade { font-size: 1rem; color: #0057b8; font-weight: 600; }
+        .alerta-oee { background: #fffde7; color: #fbc02d; padding: 6px 12px; border-radius: 4px; font-size: 1rem; display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+        .grafico-section { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 32px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); }
+        .grafico-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #00205b; }
+        .btn-primario { background: #0057b8; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; align-self: flex-end; }
+        .btn-primario:hover { background: #003d7a; }
+        @media (max-width: 900px) {
+            .container { padding: 16px; }
+            .grafico-section { padding: 14px; }
+        }
+        @media (max-width: 600px) {
+            .filtros { flex-direction: column; gap: 10px; }
+            .grafico-section { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" style="height:48px;">
+            <nav>
+                <a href="/prototipos/estoque-granel.html" style="color:#fff;font-weight:600;margin-right:18px;">Estoque Granel</a>
+                <a href="/prototipos/manutencao-oee.html" style="color:#fff;font-weight:600;margin-right:18px;">Manutenção OEE</a>
+                <a href="/prototipos/comunicacao-replanejamento.html" style="color:#fff;font-weight:600;">Comunicação</a>
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        <h1>Integração com Manutenção Preditiva</h1>
+        <div class="filtros">
+            <select id="filtroPlanta" aria-label="Filtrar por Planta">
+                <option value="">Todas as Plantas</option>
+                <option value="Barueri">Barueri</option>
+                <option value="Itapevi">Itapevi</option>
+                <option value="Ribeirão Preto">Ribeirão Preto</option>
+            </select>
+            <select id="filtroTipo" aria-label="Filtrar por Tipo de Equipamento">
+                <option value="">Todos os Tipos</option>
+                <option value="Enchedora">Enchedora</option>
+                <option value="Blister">Blister</option>
+                <option value="Misturador">Misturador</option>
+            </select>
+        </div>
+        <div class="cards-grid" id="equipamentosGrid">
+            <!-- Cards dinâmicos -->
+        </div>
+        <div class="grafico-section">
+            <div class="grafico-title">Evolução do OEE (Últimos 12 meses)</div>
+            <canvas id="graficoOEE" height="220" aria-label="Evolução do OEE"></canvas>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dados de exemplo realistas
+        const equipamentos = [
+            {
+                nome: 'Enchedora 1', tipo: 'Enchedora', planta: 'Barueri', oee: 91, capacidade: 180, 
+                manutencoes: ['2023-08-10', '2023-09-15'],
+                quebras: [2,1,0], // últimos 3 meses
+                oeeHistorico: [89,90,91,92,93,91,90,91,90,91,92,91]
+            },
+            {
+                nome: 'Blister 3', tipo: 'Blister', planta: 'Itapevi', oee: 68, capacidade: 155, 
+                manutencoes: ['2023-08-20'],
+                quebras: [3,2,4],
+                oeeHistorico: [75,77,80,79,76,74,70,68,69,70,68,68]
+            },
+            {
+                nome: 'Misturador 2', tipo: 'Misturador', planta: 'Barueri', oee: 81, capacidade: 140, 
+                manutencoes: ['2023-09-01', '2023-09-25'],
+                quebras: [1,0,1],
+                oeeHistorico: [80,81,82,83,82,81,80,81,80,81,80,81]
+            },
+            {
+                nome: 'Enchedora 2', tipo: 'Enchedora', planta: 'Ribeirão Preto', oee: 87, capacidade: 175, 
+                manutencoes: ['2023-08-18'],
+                quebras: [0,1,1],
+                oeeHistorico: [85,86,87,88,87,86,87,88,87,87,86,87]
+            }
+        ];
+        function getOeeClass(oee) {
+            if (oee > 85) return 'oee-verde';
+            if (oee >= 70) return 'oee-amarelo';
+            return 'oee-vermelho';
+        }
+        function renderEquipamentos() {
+            const planta = document.getElementById('filtroPlanta').value;
+            const tipo = document.getElementById('filtroTipo').value;
+            let html = '';
+            equipamentos.forEach(eq => {
+                if ((planta && eq.planta !== planta) || (tipo && eq.tipo !== tipo)) return;
+                let alerta = eq.oee < 70 ? '<div class="alerta-oee"><span style="font-size:1.2em;">&#9888;</span> OEE abaixo do ideal!</div>' : '';
+                html += `<div class="equip-card">
+                    <div class="equip-nome">${eq.nome} <span style="font-size:0.95em;color:#888;font-weight:400;">(${eq.planta})</span></div>
+                    <div class="oee-indicador ${getOeeClass(eq.oee)}">${eq.oee}% <span style="font-size:0.8em;font-weight:400;">OEE</span></div>
+                    ${alerta}
+                    <div class="capacidade">Capacidade Ajustada: ${eq.capacidade}h/mês</div>
+                    <div style="font-size:0.98em;">Manutenções programadas:</div>
+                    <ul class="manut-list">${eq.manutencoes.map(d=>`<li>${new Date(d).toLocaleDateString('pt-BR')}</li>`).join('')}</ul>
+                    <div style="font-size:0.98em;">Histórico de Quebras (últimos 3 meses):</div>
+                    <canvas id="graficoQuebras${eq.nome.replace(/\s/g,'')}" width="220" height="60" aria-label="Histórico de Quebras"></canvas>
+                    <button class="btn-primario" onclick="ajustarCapacidade('${eq.nome}')">Ajustar Capacidade no PMP</button>
+                </div>`;
+            });
+            document.getElementById('equipamentosGrid').innerHTML = html || '<div style="color:#888;">Nenhum equipamento encontrado.</div>';
+            // Render gráficos de quebras
+            equipamentos.forEach(eq => {
+                if ((planta && eq.planta !== planta) || (tipo && eq.tipo !== tipo)) return;
+                const ctx = document.getElementById('graficoQuebras'+eq.nome.replace(/\s/g,'')).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mês -2','Mês -1','Mês Atual'],
+                        datasets: [{
+                            data: eq.quebras,
+                            backgroundColor: '#0057b8',
+                            borderRadius: 4,
+                            barThickness: 16
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, max: 5, grid: { color: '#e3eaf6' } }, x: { grid: { display: false } } },
+                        responsive: false
+                    }
+                });
+            });
+        }
+        document.getElementById('filtroPlanta').addEventListener('change', renderEquipamentos);
+        document.getElementById('filtroTipo').addEventListener('change', renderEquipamentos);
+        renderEquipamentos();
+        // Gráfico de linha - Evolução OEE
+        const ctxOEE = document.getElementById('graficoOEE').getContext('2d');
+        const meses = ['Set','Out','Nov','Dez','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago'];
+        new Chart(ctxOEE, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: equipamentos.map(eq => ({
+                    label: eq.nome,
+                    data: eq.oeeHistorico,
+                    borderColor: eq.oee > 85 ? '#388e3c' : (eq.oee >= 70 ? '#fbc02d' : '#d32f2f'),
+                    backgroundColor: 'rgba(0,87,184,0.07)',
+                    tension: 0.18,
+                    pointRadius: 3
+                }))
+            },
+            options: {
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, title: { display: true, text: 'OEE (%)' }, grid: { color: '#e3eaf6' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        // Botão Ajustar Capacidade
+        function ajustarCapacidade(nome) {
+            window.location.href = '/prototipos/pmp-mensal.html?equipamento=' + encodeURIComponent(nome);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "plataforma-pcp-eurofarma-prototipo",
+  "version": "1.0.0",
+  "description": "Protótipo de plataforma PCP (Planejamento e Controle da Produção) para indústria farmacêutica, com integração SAP e recursos avançados de simulação, dashboard e replanejamento.",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8080 prototipos"
+  },
+  "author": "Squad PCP Eurofarma (UX, Frontend, Backend, SAP)",
+  "license": "MIT",
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "dhtmlx-gantt": "^8.0.2",
+    "datatables.net": "^2.0.3",
+    "jstree": "^3.3.15",
+    "bootstrap": "^5.3.2",
+    "jquery": "^3.7.1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>Comunicação Pós-Replanejamento | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <style>
+        body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f7f9fb; margin: 0; }
+        header { background: #00205b; color: #fff; padding: 24px 0 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .container { max-width: 1240px; margin: 0 auto; padding: 32px 16px; }
+        h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; color: #00205b; }
+        .config-section { background: #fff; border-radius: 8px; padding: 20px 18px; margin-bottom: 28px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; }
+        .config-group { display: flex; flex-direction: column; gap: 8px; }
+        .config-group label { font-weight: 600; color: #00205b; }
+        .config-checkboxes { display: flex; gap: 12px; }
+        .config-checkboxes label { font-weight: 400; color: #0057b8; }
+        .btn-primario { background: #0057b8; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-left: 16px; }
+        .btn-primario:hover { background: #003d7a; }
+        .dashboard-gauge { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 32px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); display: flex; align-items: center; gap: 24px; }
+        .gauge-label { font-size: 1.1rem; font-weight: 600; color: #00205b; }
+        .timeline-section { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 8px rgba(0,32,91,0.05); }
+        .timeline-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #00205b; }
+        .filtros { display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+        .filtros select, .filtros input[type="date"] { padding: 8px 12px; border-radius: 4px; border: 1px solid #cfd8dc; background: #fff; font-size: 1rem; }
+        .timeline { border-left: 3px solid #0057b8; margin-left: 12px; padding-left: 18px; }
+        .timeline-item { margin-bottom: 28px; position: relative; }
+        .timeline-dot { width: 18px; height: 18px; background: #0057b8; border-radius: 50%; position: absolute; left: -28px; top: 2px; border: 2px solid #fff; box-shadow: 0 0 0 2px #0057b8; }
+        .timeline-header { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .timeline-header .tipo { font-size: 1rem; font-weight: 600; color: #0057b8; }
+        .timeline-header .status { font-size: 0.98em; font-weight: 600; margin-left: 8px; }
+        .status-lido { color: #388e3c; }
+        .status-naolido { color: #fbc02d; }
+        .timeline-content { display: none; background: #f7f9fb; border-radius: 6px; padding: 12px 16px; margin-top: 8px; font-size: 0.98em; color: #00205b; }
+        .timeline-item.expanded .timeline-content { display: block; }
+        .timeline-item.expanded .timeline-header { font-weight: 700; }
+        @media (max-width: 900px) {
+            .container { padding: 16px; }
+            .dashboard-gauge, .timeline-section, .config-section { padding: 12px; }
+        }
+        @media (max-width: 600px) {
+            .config-section { flex-direction: column; gap: 18px; }
+            .filtros { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
+            <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" style="height:48px;">
+            <nav>
+                <a href="/prototipos/estoque-granel.html" style="color:#fff;font-weight:600;margin-right:18px;">Estoque Granel</a>
+                <a href="/prototipos/manutencao-oee.html" style="color:#fff;font-weight:600;margin-right:18px;">Manutenção OEE</a>
+                <a href="/prototipos/comunicacao-replanejamento.html" style="color:#fff;font-weight:600;">Comunicação</a>
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        <h1>Comunicação Automática pós-Replanejamento</h1>
+        <section class="config-section">
+            <div class="config-group">
+                <label>Canais de Notificação</label>
+                <div class="config-checkboxes">
+                    <label><input type="checkbox" checked> E-mail</label>
+                    <label><input type="checkbox" checked> SMS</label>
+                    <label><input type="checkbox" checked> Push</label>
+                </div>
+            </div>
+            <div class="config-group">
+                <label>Perfis Destinatários</label>
+                <div class="config-checkboxes">
+                    <label><input type="checkbox" checked> Produção</label>
+                    <label><input type="checkbox" checked> Almoxarifado</label>
+                    <label><input type="checkbox" checked> Qualidade</label>
+                    <label><input type="checkbox" checked> Logística</label>
+                </div>
+            </div>
+            <button class="btn-primario" onclick="abrirModal()">Enviar Notificação Manual</button>
+        </section>
+        <section class="dashboard-gauge">
+            <div class="gauge-label">Taxa de Leitura das Notificações</div>
+            <canvas id="gaugeLeitura" width="180" height="110" aria-label="Taxa de Leitura"></canvas>
+            <div style="font-size:1.3em;font-weight:600;color:#388e3c;">92%</div>
+        </section>
+        <section class="timeline-section">
+            <div class="timeline-title">Histórico de Notificações Enviadas</div>
+            <div class="filtros">
+                <input type="date" id="filtroDataIni" aria-label="Data Inicial">
+                <input type="date" id="filtroDataFim" aria-label="Data Final">
+                <select id="filtroTipo" aria-label="Tipo de Notificação">
+                    <option value="">Todos os Tipos</option>
+                    <option value="Replanejamento">Replanejamento</option>
+                    <option value="Antecipação">Antecipação</option>
+                    <option value="Alerta de Ruptura">Alerta de Ruptura</option>
+                </select>
+                <select id="filtroDestinatario" aria-label="Destinatário">
+                    <option value="">Todos os Destinatários</option>
+                    <option value="Produção">Produção</option>
+                    <option value="Almoxarifado">Almoxarifado</option>
+                    <option value="Qualidade">Qualidade</option>
+                    <option value="Logística">Logística</option>
+                </select>
+            </div>
+            <div class="timeline" id="timeline">
+                <!-- Timeline dinâmica -->
+            </div>
+        </section>
+        <!-- Modal Notificação Manual -->
+        <div id="modalNotificacao" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,32,91,0.13);z-index:1000;align-items:center;justify-content:center;">
+            <form style="background:#fff;border-radius:8px;max-width:420px;width:94vw;padding:28px;box-shadow:0 2px 16px rgba(0,32,91,0.12);display:flex;flex-direction:column;gap:16px;" onsubmit="enviarNotificacaoManual(event)">
+                <h2 style="font-size:1.3rem;color:#00205b;margin-bottom:6px;">Enviar Notificação Manual</h2>
+                <label>Tipo de Notificação
+                    <select required><option>Replanejamento</option><option>Antecipação</option><option>Alerta de Ruptura</option></select>
+                </label>
+                <label>Destinatários
+                    <select multiple style="height:60px;">
+                        <option>Produção</option>
+                        <option>Almoxarifado</option>
+                        <option>Qualidade</option>
+                        <option>Logística</option>
+                    </select>
+                </label>
+                <label>Mensagem
+                    <textarea required style="width:100%;min-height:70px;"></textarea>
+                </label>
+                <div style="display:flex;gap:12px;justify-content:flex-end;">
+                    <button type="button" onclick="fecharModal()" style="background:#cfd8dc;color:#00205b;padding:8px 18px;border-radius:4px;border:none;font-weight:600;">Cancelar</button>
+                    <button type="submit" class="btn-primario">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Gauge Chart
+        const ctxGauge = document.getElementById('gaugeLeitura').getContext('2d');
+        new Chart(ctxGauge, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [92, 8],
+                    backgroundColor: ['#388e3c','#e3eaf6'],
+                    borderWidth: 0,
+                    circumference: 180,
+                    rotation: 270
+                }]
+            },
+            options: {
+                cutout: '80%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                responsive: false
+            }
+        });
+        // Timeline de notificações (exemplo realista)
+        const notificacoes = [
+            {
+                data: '2023-08-14 08:32', tipo: 'Replanejamento', destinatarios: ['Produção','Almoxarifado'], status: 'Lido', mensagem: 'Sequenciamento alterado: Ordem #872 priorizada para linha 2. Nova previsão de entrega: 18/08/2023.'
+            },
+            {
+                data: '2023-08-13 17:21', tipo: 'Alerta de Ruptura', destinatarios: ['Qualidade','Logística'], status: 'Não Lido', mensagem: 'Risco de ruptura detectado para Dipirona 1g. Estoque insuficiente para pedido #1245.'
+            },
+            {
+                data: '2023-08-12 10:05', tipo: 'Antecipação', destinatarios: ['Produção'], status: 'Lido', mensagem: 'Pedido urgente do cliente Hospital São Lucas antecipado para 15/08/2023.'
+            },
+            {
+                data: '2023-08-10 15:44', tipo: 'Replanejamento', destinatarios: ['Produção','Qualidade'], status: 'Lido', mensagem: 'Alteração no sequenciamento: Ordem #865 movida para início do ciclo.'
+            }
+        ];
+        function renderTimeline() {
+            const tipo = document.getElementById('filtroTipo').value;
+            const dest = document.getElementById('filtroDestinatario').value;
+            const ini = document.getElementById('filtroDataIni').value;
+            const fim = document.getElementById('filtroDataFim').value;
+            let html = '';
+            notificacoes.forEach((n, idx) => {
+                if ((tipo && n.tipo !== tipo) || (dest && !n.destinatarios.includes(dest))) return;
+                if (ini && n.data < ini) return;
+                if (fim && n.data > fim) return;
+                html += `<div class="timeline-item" data-idx="${idx}">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-header">
+                        <span style="font-size:1.1em;">${new Date(n.data).toLocaleString('pt-BR')}</span>
+                        <span class="tipo">${n.tipo}</span>
+                        <span style="color:#888;font-size:0.97em;">Dest: ${n.destinatarios.join(', ')}</span>
+                        <span class="status ${n.status==='Lido'?'status-lido':'status-naolido'}">${n.status==='Lido'?'Lido':'Não Lido'}</span>
+                        <span style="margin-left:auto;font-size:1.2em;">&#9660;</span>
+                    </div>
+                    <div class="timeline-content">${n.mensagem}</div>
+                </div>`;
+            });
+            document.getElementById('timeline').innerHTML = html || '<div style="color:#888;">Nenhuma notificação encontrada.</div>';
+            // Expansão
+            document.querySelectorAll('.timeline-header').forEach((el, i) => {
+                el.onclick = function() {
+                    const item = el.parentElement;
+                    item.classList.toggle('expanded');
+                }
+            });
+        }
+        document.getElementById('filtroTipo').addEventListener('change', renderTimeline);
+        document.getElementById('filtroDestinatario').addEventListener('change', renderTimeline);
+        document.getElementById('filtroDataIni').addEventListener('change', renderTimeline);
+        document.getElementById('filtroDataFim').addEventListener('change', renderTimeline);
+        renderTimeline();
+        // Modal Notificação Manual
+        function abrirModal() {
+            document.getElementById('modalNotificacao').style.display = 'flex';
+        }
+        function fecharModal() {
+            document.getElementById('modalNotificacao').style.display = 'none';
+        }
+        function enviarNotificacaoManual(e) {
+            e.preventDefault();
+            fecharModal();
+            alert('Notificação enviada com sucesso!');
+        }
+    </script>
+</body>
+</html>
