@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+  <meta name="description" content="Sequenciamento ótimo de produção - APS Eurofarma">
+  <title>Sequenciamento Ótimo (APS) | Eurofarma PCP</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
+  <style>
+    body {
+      font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif;
+      background: #f6f8fa;
+      margin: 0;
+      color: #1a2341;
+    }
+    .aps-container {
+      display: flex;
+      height: 100vh;
+      min-height: 700px;
+    }
+    .aps-sidebar {
+      width: 270px;
+      background: #fff;
+      border-right: 1px solid #e0e6ef;
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 32px;
+    }
+    .aps-sidebar h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #00529b;
+      letter-spacing: 0.5px;
+    }
+    .aps-filtros label {
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #1a2341;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .aps-filtros select, .aps-filtros input[type="month"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #cfd8e3;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 18px;
+      background: #f7fafd;
+      color: #1a2341;
+    }
+    .aps-kpis {
+      background: #f7fafd;
+      border-radius: 8px;
+      padding: 18px 14px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .aps-kpi {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: #1a2341;
+    }
+    .aps-kpi .valor {
+      font-weight: 700;
+      color: #00529b;
+    }
+    .aps-actions {
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #00529b 0%, #00b2e3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,82,155,0.07);
+    }
+    .btn-primary:active {
+      background: linear-gradient(90deg, #00437a 0%, #0090b6 100%);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #00529b;
+      border: 1px solid #00529b;
+      border-radius: 4px;
+      padding: 10px 0;
+      font-size: 1.02rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover {
+      background: #eaf3fa;
+    }
+    .aps-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-width: 0;
+      background: #f6f8fa;
+    }
+    .aps-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px 12px 32px;
+      background: #fff;
+      border-bottom: 1px solid #e0e6ef;
+    }
+    .aps-header h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #00529b;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+    .aps-header .toggle-view {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .toggle-btn {
+      background: #eaf3fa;
+      border: 1px solid #cfd8e3;
+      border-radius: 4px;
+      padding: 6px 16px;
+      font-size: 0.98rem;
+      color: #00529b;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-btn.active {
+      background: linear-gradient(90deg, #00529b 0%, #00b2e3 100%);
+      color: #fff;
+      border: none;
+    }
+    .aps-gantt-wrapper {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+      background: #f6f8fa;
+      overflow: hidden;
+      padding: 0 24px 0 24px;
+      display: flex;
+      flex-direction: column;
+    }
+    #gantt_here {
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+      background: #f6f8fa;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,82,155,0.06);
+      margin-top: 12px;
+    }
+    .aps-legenda {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 18px 0 0 0;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #1a2341;
+    }
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legenda-cor {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: inline-block;
+      border: 1px solid #cfd8e3;
+    }
+    /* Mini-mapa */
+    .gantt-minimap {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      background: #fff;
+      border: 1px solid #cfd8e3;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,82,155,0.10);
+      width: 260px;
+      height: 70px;
+      z-index: 10;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.95;
+    }
+    /* Zoom controls */
+    .gantt-zoom {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      z-index: 20;
+      display: flex;
+      gap: 8px;
+    }
+    .gantt-zoom-btn {
+      background: #fff;
+      border: 1px solid #00529b;
+      color: #00529b;
+      font-size: 1.15rem;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,82,155,0.08);
+      transition: background 0.2s, color 0.2s;
+    }
+    .gantt-zoom-btn:hover {
+      background: #eaf3fa;
+      color: #003366;
+    }
+    /* Loader */
+    .aps-loader {
+      position: absolute;
+      left: 0; right: 0; top: 0; bottom: 0;
+      background: rgba(255,255,255,0.7);
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #00529b;
+      pointer-events: all;
+    }
+    .aps-loader .lds-dual-ring {
+      display: inline-block;
+      width: 48px;
+      height: 48px;
+    }
+    .aps-loader .lds-dual-ring:after {
+      content: " ";
+      display: block;
+      width: 40px;
+      height: 40px;
+      margin: 4px;
+      border-radius: 50%;
+      border: 6px solid #00b2e3;
+      border-color: #00b2e3 transparent #00529b transparent;
+      animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 1100px) {
+      .aps-sidebar { width: 180px; padding: 18px 8px 8px 8px; }
+      .aps-header { padding: 16px 10px 8px 10px; }
+      .aps-main { padding: 0; }
+      .aps-gantt-wrapper { padding: 0 4px; }
+    }
+    @media (max-width: 800px) {
+      .aps-container { flex-direction: column; }
+      .aps-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e0e6ef; flex-direction: row; gap: 12px; padding: 10px 4px; }
+      .aps-main { min-width: 0; }
+      .aps-header { flex-direction: column; gap: 8px; padding: 8px 4px; }
+      .aps-gantt-wrapper { padding: 0 2px; }
+      .gantt-minimap { right: 4px; bottom: 4px; width: 98vw; max-width: 260px; }
+    }
+  </style>
+  <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+</head>
+<body>
+  <div class="aps-container">
+    <!-- Painel lateral esquerdo: Filtros e KPIs -->
+    <aside class="aps-sidebar" aria-label="Filtros e KPIs">
+      <div>
+        <h2>Filtros</h2>
+        <form class="aps-filtros" id="filtrosForm">
+          <label for="planta">Planta</label>
+          <select id="planta" name="planta">
+            <option value="todas">Todas</option>
+            <option value="itaboraí">Itaboraí</option>
+            <option value="itaboraí2">Itaboraí 2</option>
+            <option value="são-paulo">São Paulo</option>
+            <option value="barueri">Barueri</option>
+          </select>
+          <label for="mes">Mês</label>
+          <input type="month" id="mes" name="mes" value="2024-07">
+          <label for="linha">Linha de Produção</label>
+          <select id="linha" name="linha">
+            <option value="todas">Todas</option>
+            <option value="linha-1">Linha 1 - Sólidos</option>
+            <option value="linha-2">Linha 2 - Líquidos</option>
+            <option value="linha-3">Linha 3 - Injetáveis</option>
+            <option value="linha-4">Linha 4 - Embalagem</option>
+          </select>
+        </form>
+      </div>
+      <div>
+        <h2>KPIs</h2>
+        <div class="aps-kpis" id="kpisPanel">
+          <div class="aps-kpi"><span>Faturamento Previsto</span><span class="valor" id="kpi-faturamento">R$ 8.200.000</span></div>
+          <div class="aps-kpi"><span>Margem Líquida</span><span class="valor" id="kpi-margem">R$ 2.450.000</span></div>
+          <div class="aps-kpi"><span>Taxa de Atendimento</span><span class="valor" id="kpi-atendimento">97,8%</span></div>
+          <div class="aps-kpi"><span>Tempo Total de Setup</span><span class="valor" id="kpi-setup">42h</span></div>
+        </div>
+      </div>
+      <div class="aps-actions">
+        <button class="btn-primary" id="btnOtimizar"><span id="otimizarText">Otimizar Sequenciamento</span><span id="otimizarSpinner" style="display:none;margin-left:10px;"><span class="lds-dual-ring"></span></span></button>
+        <button class="btn-secondary" id="btnSalvar">Salvar Cenário</button>
+      </div>
+    </aside>
+    <!-- Conteúdo principal: Gantt -->
+    <main class="aps-main">
+      <div class="aps-header">
+        <h1>Sequenciamento Ótimo de Produção (APS)</h1>
+        <div class="toggle-view">
+          <span>Visualizar por:</span>
+          <button class="toggle-btn active" id="toggleEquip">Equipamento</button>
+          <button class="toggle-btn" id="toggleProduto">Produto</button>
+        </div>
+      </div>
+      <div class="aps-gantt-wrapper">
+        <div class="gantt-zoom">
+          <button class="gantt-zoom-btn" id="zoomOut" title="Diminuir Zoom" aria-label="Diminuir Zoom">-</button>
+          <button class="gantt-zoom-btn" id="zoomIn" title="Aumentar Zoom" aria-label="Aumentar Zoom">+</button>
+        </div>
+        <div id="gantt_here" aria-label="Gráfico Gantt de Sequenciamento"></div>
+        <div class="aps-legenda" id="legendaCores">
+          <span>Legenda:</span>
+          <span class="legenda-item"><span class="legenda-cor" style="background:#1e88e5;"></span>Antibióticos</span>
+          <span class="legenda-item"><span class="legenda-cor" style="background:#43a047;"></span>Cardiológicos</span>
+          <span class="legenda-item"><span class="legenda-cor" style="background:#fbc02d;"></span>Oncológicos</span>
+          <span class="legenda-item"><span class="legenda-cor" style="background:#d81b60;"></span>Dermatológicos</span>
+          <span class="legenda-item"><span class="legenda-cor" style="background:#8e24aa;"></span>Vitaminas</span>
+        </div>
+        <div class="gantt-minimap" id="ganttMiniMap" aria-label="Mini-mapa do Gantt"></div>
+        <div class="aps-loader" id="ganttLoader" style="display:none;">
+          <span class="lds-dual-ring"></span> Otimizando Sequenciamento...
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    // --- Dados de exemplo realistas para Gantt ---
+    const familias = {
+      'Antibióticos': '#1e88e5',
+      'Cardiológicos': '#43a047',
+      'Oncológicos': '#fbc02d',
+      'Dermatológicos': '#d81b60',
+      'Vitaminas': '#8e24aa'
+    };
+    const equipamentos = [
+      {id:1, nome:'Linha 1 - Sólidos'},
+      {id:2, nome:'Linha 2 - Líquidos'},
+      {id:3, nome:'Linha 3 - Injetáveis'},
+      {id:4, nome:'Linha 4 - Embalagem'}
+    ];
+    const produtos = [
+      {id:101, nome:'Amoxicilina 500mg', familia:'Antibióticos'},
+      {id:102, nome:'Atorvastatina 20mg', familia:'Cardiológicos'},
+      {id:103, nome:'Imatinibe 400mg', familia:'Oncológicos'},
+      {id:104, nome:'Cetoconazol Creme', familia:'Dermatológicos'},
+      {id:105, nome:'Vitamina D3 2000UI', familia:'Vitaminas'}
+    ];
+    const ordens = [
+      {id:201, ordem:'OP-24001', produto:101, equipamento:1, inicio:'2024-07-01', fim:'2024-07-05', qtd:120000, setup:4, statusMP:'Liberada'},
+      {id:202, ordem:'OP-24002', produto:102, equipamento:2, inicio:'2024-07-03', fim:'2024-07-08', qtd:90000, setup:3, statusMP:'Aguardando QC'},
+      {id:203, ordem:'OP-24003', produto:103, equipamento:3, inicio:'2024-07-04', fim:'2024-07-12', qtd:45000, setup:6, statusMP:'Liberada'},
+      {id:204, ordem:'OP-24004', produto:104, equipamento:1, inicio:'2024-07-07', fim:'2024-07-10', qtd:60000, setup:2, statusMP:'Em Trânsito'},
+      {id:205, ordem:'OP-24005', produto:105, equipamento:4, inicio:'2024-07-02', fim:'2024-07-06', qtd:80000, setup:3, statusMP:'Liberada'},
+      {id:206, ordem:'OP-24006', produto:101, equipamento:2, inicio:'2024-07-09', fim:'2024-07-14', qtd:100000, setup:4, statusMP:'Liberada'},
+      {id:207, ordem:'OP-24007', produto:102, equipamento:3, inicio:'2024-07-13', fim:'2024-07-18', qtd:95000, setup:3, statusMP:'Aguardando QC'},
+      {id:208, ordem:'OP-24008', produto:103, equipamento:4, inicio:'2024-07-11', fim:'2024-07-16', qtd:50000, setup:6, statusMP:'Liberada'},
+      {id:209, ordem:'OP-24009', produto:104, equipamento:1, inicio:'2024-07-12', fim:'2024-07-17', qtd:70000, setup:2, statusMP:'Em Trânsito'},
+      {id:210, ordem:'OP-24010', produto:105, equipamento:2, inicio:'2024-07-15', fim:'2024-07-20', qtd:85000, setup:3, statusMP:'Liberada'}
+    ];
+    // Eventos críticos (manutenções, feriados)
+    const eventos = [
+      {id:'evt1', data:'2024-07-09', tipo:'Manutenção', equipamento:2, descricao:'Manutenção Preventiva'},
+      {id:'evt2', data:'2024-07-15', tipo:'Feriado', equipamento:null, descricao:'Feriado Nacional'},
+      {id:'evt3', data:'2024-07-18', tipo:'Manutenção', equipamento:3, descricao:'Manutenção Programada'}
+    ];
+
+    // --- Funções utilitárias ---
+    function getProduto(prodId) {
+      return produtos.find(p => p.id === prodId);
+    }
+    function getEquipamento(equipId) {
+      return equipamentos.find(e => e.id === equipId);
+    }
+    function getFamilia(prodId) {
+      const prod = getProduto(prodId);
+      return prod ? prod.familia : '';
+    }
+    function getCorFamilia(prodId) {
+      const familia = getFamilia(prodId);
+      return familias[familia] || '#bdbdbd';
+    }
+
+    // --- Inicialização do Gantt ---
+    function buildGantt(viewMode) {
+      gantt.clearAll();
+      // Configuração de escala
+      gantt.config.scale_unit = 'day';
+      gantt.config.date_scale = '%d/%m';
+      gantt.config.subscales = [
+        {unit:'week', step:1, date:'%Wª sem'}
+      ];
+      gantt.config.min_column_width = 40;
+      gantt.config.row_height = 48;
+      gantt.config.bar_height = 32;
+      gantt.config.grid_width = 220;
+      gantt.config.show_grid = true;
+      gantt.config.readonly = true;
+      gantt.config.show_progress = false;
+      gantt.config.drag_move = false;
+      gantt.config.drag_resize = false;
+      gantt.config.drag_progress = false;
+      gantt.config.drag_links = false;
+      gantt.config.fit_tasks = true;
+      gantt.templates.task_class = function(start, end, task) {
+        return 'gantt-bar-fam-' + (getFamilia(task.produto)||'').replace(/[^a-zA-Z]/g,'').toLowerCase();
+      };
+      gantt.templates.task_text = function(start, end, task) {
+        const prod = getProduto(task.produto);
+        return prod ? prod.nome : '';
+      };
+      gantt.templates.tooltip_text = function(start, end, task) {
+        const prod = getProduto(task.produto);
+        return `<b>Ordem:</b> ${task.ordem}<br><b>Produto:</b> ${prod ? prod.nome : ''}<br><b>Quantidade:</b> ${task.qtd.toLocaleString('pt-BR')} un.<br><b>Tempo de Setup:</b> ${task.setup}h<br><b>Status Matéria-Prima:</b> ${task.statusMP}`;
+      };
+      // Eventos críticos
+      gantt.addMarker({
+        start_date: new Date('2024-07-09'),
+        css: 'gantt-critical-marker',
+        title: 'Manutenção Preventiva (Linha 2)'
+      });
+      gantt.addMarker({
+        start_date: new Date('2024-07-15'),
+        css: 'gantt-holiday-marker',
+        title: 'Feriado Nacional'
+      });
+      gantt.addMarker({
+        start_date: new Date('2024-07-18'),
+        css: 'gantt-critical-marker',
+        title: 'Manutenção Programada (Linha 3)'
+      });
+      // Zoom
+      gantt.ext.zoom.init({
+        levels: [
+          {
+            name: 'days',
+            scale_height: 60,
+            min_column_width: 40,
+            scales: [
+              {unit: 'day', step: 1, format: '%d/%m'},
+              {unit: 'week', step: 1, format: 'Semana %W'}
+            ]
+          },
+          {
+            name: 'weeks',
+            scale_height: 60,
+            min_column_width: 80,
+            scales: [
+              {unit: 'week', step: 1, format: 'Semana %W'},
+              {unit: 'month', step: 1, format: '%M'}
+            ]
+          },
+          {
+            name: 'months',
+            scale_height: 60,
+            min_column_width: 120,
+            scales: [
+              {unit: 'month', step: 1, format: '%M %Y'}
+            ]
+          }
+        ]
+      });
+      gantt.ext.zoom.setLevel('days');
+      // Agrupamento
+      if(viewMode === 'equipamento') {
+        gantt.config.resource_property = 'equipamento';
+        gantt.config.resource_render_empty_cells = false;
+        gantt.config.columns = [
+          {name:'text', label:'Linha de Produção', tree:true, width:'*'}
+        ];
+        // Agrupar por equipamento
+        const groups = equipamentos.map(e => ({id:e.id, text:e.nome}));
+        gantt.serverList('equipamentos', groups);
+        gantt.config.resource_store = 'equipamentos';
+        gantt.config.resource_property = 'equipamento';
+      } else {
+        gantt.config.resource_property = 'produto';
+        gantt.config.resource_render_empty_cells = false;
+        gantt.config.columns = [
+          {name:'text', label:'Produto', tree:true, width:'*'}
+        ];
+        // Agrupar por produto
+        const groups = produtos.map(p => ({id:p.id, text:p.nome}));
+        gantt.serverList('produtos', groups);
+        gantt.config.resource_store = 'produtos';
+        gantt.config.resource_property = 'produto';
+      }
+      // Dados das tarefas
+      const tasks = {
+        data: ordens.map(o => ({
+          id: o.id,
+          text: getProduto(o.produto).nome,
+          start_date: o.inicio,
+          end_date: o.fim,
+          ordem: o.ordem,
+          produto: o.produto,
+          equipamento: o.equipamento,
+          qtd: o.qtd,
+          setup: o.setup,
+          statusMP: o.statusMP
+        })),
+        // Agrupamento
+        resources: viewMode === 'equipamento' ? equipamentos : produtos
+      };
+      gantt.init('gantt_here');
+      gantt.parse(tasks);
+      // Mini-mapa
+      setTimeout(renderMiniMap, 400);
+    }
+    // --- Mini-mapa ---
+    function renderMiniMap() {
+      const minimap = document.getElementById('ganttMiniMap');
+      minimap.innerHTML = '';
+      const canvas = document.createElement('canvas');
+      canvas.width = 240;
+      canvas.height = 56;
+      minimap.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      // Desenhar barras simplificadas
+      ordens.forEach((o, idx) => {
+        const diaIni = (new Date(o.inicio)).getDate();
+        const diaFim = (new Date(o.fim)).getDate();
+        const y = 6 + (idx % 4) * 12;
+        ctx.fillStyle = getCorFamilia(o.produto);
+        ctx.fillRect(10 + diaIni*6, y, (diaFim-diaIni+1)*6, 8);
+      });
+      // Eventos críticos
+      eventos.forEach(ev => {
+        const dia = (new Date(ev.data)).getDate();
+        ctx.fillStyle = ev.tipo==='Feriado' ? '#f44336' : '#ff9800';
+        ctx.fillRect(10 + dia*6, 2, 2, 48);
+      });
+    }
+    // --- Zoom ---
+    document.getElementById('zoomIn').onclick = function(){ gantt.ext.zoom.zoomIn(); };
+    document.getElementById('zoomOut').onclick = function(){ gantt.ext.zoom.zoomOut(); };
+    // --- Toggle de visualização ---
+    let viewMode = 'equipamento';
+    document.getElementById('toggleEquip').onclick = function(){
+      viewMode = 'equipamento';
+      this.classList.add('active');
+      document.getElementById('toggleProduto').classList.remove('active');
+      buildGantt(viewMode);
+    };
+    document.getElementById('toggleProduto').onclick = function(){
+      viewMode = 'produto';
+      this.classList.add('active');
+      document.getElementById('toggleEquip').classList.remove('active');
+      buildGantt(viewMode);
+    };
+    // --- Filtros ---
+    document.getElementById('filtrosForm').onchange = function(){
+      // Simular filtro: para protótipo, só filtra visualmente
+      const planta = document.getElementById('planta').value;
+      const linha = document.getElementById('linha').value;
+      let filtered = ordens;
+      if(linha !== 'todas') {
+        const linhaNum = parseInt(linha.split('-')[1]);
+        filtered = filtered.filter(o => o.equipamento === linhaNum);
+      }
+      // Para planta, não há ligação direta no mock, mas poderia filtrar por equipamento/planta
+      // Atualiza Gantt
+      gantt.clearAll();
+      gantt.parse({data: filtered.map(o => ({
+        id: o.id,
+        text: getProduto(o.produto).nome,
+        start_date: o.inicio,
+        end_date: o.fim,
+        ordem: o.ordem,
+        produto: o.produto,
+        equipamento: o.equipamento,
+        qtd: o.qtd,
+        setup: o.setup,
+        statusMP: o.statusMP
+      }))});
+      setTimeout(renderMiniMap, 400);
+    };
+    // --- Otimizar Sequenciamento (simulação) ---
+    document.getElementById('btnOtimizar').onclick = function(){
+      document.getElementById('otimizarText').style.display = 'none';
+      document.getElementById('otimizarSpinner').style.display = 'inline-block';
+      document.getElementById('ganttLoader').style.display = 'flex';
+      setTimeout(function(){
+        // Simula reorganização das ordens (troca algumas datas)
+        ordens[0].inicio = '2024-07-03'; ordens[0].fim = '2024-07-07';
+        ordens[1].inicio = '2024-07-01'; ordens[1].fim = '2024-07-06';
+        ordens[2].inicio = '2024-07-08'; ordens[2].fim = '2024-07-13';
+        ordens[3].inicio = '2024-07-10'; ordens[3].fim = '2024-07-13';
+        ordens[4].inicio = '2024-07-04'; ordens[4].fim = '2024-07-08';
+        // Atualiza KPIs
+        document.getElementById('kpi-faturamento').textContent = 'R$ 8.500.000';
+        document.getElementById('kpi-margem').textContent = 'R$ 2.610.000';
+        document.getElementById('kpi-atendimento').textContent = '99,1%';
+        document.getElementById('kpi-setup').textContent = '38h';
+        buildGantt(viewMode);
+        document.getElementById('otimizarText').style.display = 'inline';
+        document.getElementById('otimizarSpinner').style.display = 'none';
+        document.getElementById('ganttLoader').style.display = 'none';
+      }, 1800);
+    };
+    // --- Salvar Cenário ---
+    document.getElementById('btnSalvar').onclick = function(){
+      alert('Cenário salvo com sucesso!');
+    };
+    // --- Estilos customizados para barras por família ---
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .gantt-bar-fam-antibioticos .gantt_task_content { background: #1e88e5 !important; }
+      .gantt-bar-fam-cardiologicos .gantt_task_content { background: #43a047 !important; }
+      .gantt-bar-fam-oncologicos .gantt_task_content { background: #fbc02d !important; }
+      .gantt-bar-fam-dermatologicos .gantt_task_content { background: #d81b60 !important; }
+      .gantt-bar-fam-vitaminas .gantt_task_content { background: #8e24aa !important; }
+      .gantt-critical-marker { background: repeating-linear-gradient(135deg,#ff9800 0 4px,transparent 4px 8px) !important; width:2px !important; }
+      .gantt-holiday-marker { background: #f44336 !important; width:2px !important; }
+    `;
+    document.head.appendChild(style);
+    // --- Inicialização ---
+    buildGantt(viewMode);
+  </script>
+</body>
+</html>
