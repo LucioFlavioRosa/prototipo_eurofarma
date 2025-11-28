@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação de Cenários 'E Se' | PCP Eurofarma</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css">
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <script src="assets/js/scenario-simulator.js"></script>
+    <style>
+      body { font-family: 'Lato', Arial, sans-serif; background: #f6f8fa; }
+      .main-wrapper { max-width: 1200px; margin: 0 auto; padding: 32px 16px; }
+      .section-title { color: #00358e; font-size: 2.2rem; font-weight: 700; margin-bottom: 24px; }
+      .panel { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,0.06); padding: 24px; margin-bottom: 32px; }
+      .panel h2 { font-size: 1.3rem; color: #00358e; margin-bottom: 18px; }
+      .form-group { margin-bottom: 16px; }
+      label { font-weight: 600; color: #022956; }
+      input, select { width: 100%; padding: 8px; border: 1px solid #dbe4ee; border-radius: 4px; font-size: 1rem; }
+      .btn-primary { background: #00358e; color: #fff; border: none; padding: 10px 28px; border-radius: 5px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+      .btn-primary:hover { background: #022956; }
+      .kpi-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+      .kpi-table th, .kpi-table td { border: 1px solid #e3e8ee; padding: 10px 16px; text-align: center; font-size: 1rem; }
+      .kpi-table th { background: #00358e; color: #fff; font-weight: 700; }
+      .kpi-table tr.base-row { background: #f0f4fa; }
+      .kpi-table tr.sim-row { background: #e6f2ff; }
+      .save-btn { background: #f7b500; color: #00358e; border: none; padding: 8px 20px; border-radius: 4px; font-weight: 600; margin-top: 12px; cursor: pointer; }
+      .scenario-list { margin-top: 24px; }
+      .scenario-list h3 { font-size: 1.1rem; color: #00358e; margin-bottom: 10px; }
+      .scenario-list ul { list-style: none; padding: 0; }
+      .scenario-list li { background: #f6f8fa; border-radius: 4px; margin-bottom: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+      .scenario-list button { background: #00358e; color: #fff; border: none; border-radius: 3px; padding: 4px 12px; font-size: 0.95rem; cursor: pointer; }
+      .nav-flow { margin-bottom: 24px; }
+      .nav-flow a { color: #00358e; font-weight: 600; margin-right: 18px; text-decoration: none; }
+      .nav-flow a.active { text-decoration: underline; }
+      @media (max-width: 800px) { .main-wrapper { padding: 12px; } .panel { padding: 12px; } }
+    </style>
+</head>
+<body class="frontend eurofarma main-container">
+  <div class="main-wrapper">
+    <div class="nav-flow">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="gestao-granel.html">Gestão de Granel</a>
+      <a href="simulacao-cenarios.html" class="active">Simulação de Cenários</a>
+      <a href="sequenciamento.html">Sequenciamento</a>
+    </div>
+    <h1 class="section-title">Simulação de Cenários 'E Se'</h1>
+    <div class="panel">
+      <h2>Ajuste de Parâmetros</h2>
+      <form id="sim-form" autocomplete="off">
+        <div class="form-group">
+          <label for="capacidade">Capacidade Total (unidades/mês)</label>
+          <input type="number" id="capacidade" name="capacidade" min="10000" max="100000" value="50000">
+        </div>
+        <div class="form-group">
+          <label for="turnos">Turnos de Produção</label>
+          <select id="turnos" name="turnos">
+            <option value="1">1 Turno</option>
+            <option value="2" selected>2 Turnos</option>
+            <option value="3">3 Turnos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="horas_extra">Horas Extras (por mês)</label>
+          <input type="number" id="horas_extra" name="horas_extra" min="0" max="500" value="120">
+        </div>
+        <div class="form-group">
+          <label for="politica_estoque">Política de Estoque de Segurança (%)</label>
+          <input type="number" id="politica_estoque" name="politica_estoque" min="5" max="30" value="15">
+        </div>
+        <button type="button" class="btn-primary" id="btn-simular">Simular Cenário</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h2>Comparação de KPIs</h2>
+      <table class="kpi-table" aria-label="Tabela de comparação de KPIs">
+        <thead>
+          <tr>
+            <th>KPI</th>
+            <th>Cenário Base</th>
+            <th>Cenário Simulado</th>
+            <th>Variação (%)</th>
+          </tr>
+        </thead>
+        <tbody id="kpi-table-body">
+          <tr class="base-row">
+            <td>Faturamento Previsto</td>
+            <td>R$ 8.200.000</td>
+            <td id="sim-faturamento">R$ 8.200.000</td>
+            <td id="var-faturamento">0%</td>
+          </tr>
+          <tr class="sim-row">
+            <td>Margem Líquida</td>
+            <td>R$ 2.750.000</td>
+            <td id="sim-margem">R$ 2.750.000</td>
+            <td id="var-margem">0%</td>
+          </tr>
+          <tr class="base-row">
+            <td>Taxa de Atendimento de Pedidos</td>
+            <td>96%</td>
+            <td id="sim-atendimento">96%</td>
+            <td id="var-atendimento">0%</td>
+          </tr>
+          <tr class="sim-row">
+            <td>Utilização de Capacidade</td>
+            <td>87%</td>
+            <td id="sim-utilizacao">87%</td>
+            <td id="var-utilizacao">0%</td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" class="save-btn" id="btn-save-scenario">Salvar Cenário</button>
+    </div>
+    <div class="scenario-list">
+      <h3>Cenários Salvos</h3>
+      <ul id="saved-scenarios">
+        <!-- Cenários salvos aparecerão aqui -->
+      </ul>
+    </div>
+    <div style="margin-top:40px;">
+      <a href="gestao-granel.html" class="btn-primary">Avançar para Gestão de Granel</a>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      window.ScenarioSimulator.initUI();
+    });
+  </script>
+</body>
+</html>
