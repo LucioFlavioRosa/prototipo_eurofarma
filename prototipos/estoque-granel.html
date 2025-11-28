@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <meta name="description" content="Gestão de Estoque de Granel - Plataforma PCP Eurofarma">
+    <meta name="author" content="Eurofarma">
+    <title>Gestão de Estoque de Granel | PCP Eurofarma</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css" />
+    <link rel="preload" as="style" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css" />
+    <link rel="preload" as="style" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css" />
+    <link rel="preload" as="style" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css" />
+    <link rel="preload" as="style" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css" />
+    <link rel="preload" as="style" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/FormBuilderInput-BWUiK1DW.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/Accordeon-D1S1yXhm.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/vue-slick-carousel-Di6UQQEn.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/YoutubePlayer-SMHC-KlY.css" />
+    <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css" />
+    <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+    <style>
+      body { background: #f7f9fb; font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; }
+      .main-header { background: #fff; border-bottom: 1px solid #e4e8ee; padding: 0.5rem 0; }
+      .main-header .logo { height: 42px; margin-right: 24px; }
+      .main-header nav a { color: #00529b; font-weight: 600; margin-right: 18px; text-decoration: none; transition: color .2s; }
+      .main-header nav a.active, .main-header nav a:hover { color: #0078d4; }
+      .container { max-width: 1200px; margin: 32px auto 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 32px 24px 40px 24px; }
+      .page-title { font-size: 2.1rem; font-weight: 700; color: #00529b; margin-bottom: 8px; }
+      .subtitle { color: #5a5a5a; font-size: 1.1rem; margin-bottom: 24px; }
+      .filters { display: flex; gap: 18px; margin-bottom: 18px; flex-wrap: wrap; }
+      .filters label { font-weight: 600; color: #00529b; margin-right: 6px; }
+      .filters select, .filters input { border: 1px solid #c8d0da; border-radius: 4px; padding: 6px 10px; min-width: 120px; }
+      .btn-primary { background: #00529b; color: #fff; border: none; border-radius: 4px; padding: 10px 22px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background .2s; }
+      .btn-primary:hover { background: #0078d4; }
+      .btn-link { background: none; border: none; color: #0078d4; text-decoration: underline; cursor: pointer; font-weight: 600; font-size: 1rem; margin-left: 18px; }
+      .table-responsive { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+      th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e8ee; }
+      th { background: #f3f6fa; color: #00529b; font-size: 1rem; font-weight: 700; }
+      tr:last-child td { border-bottom: none; }
+      .badge { display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 0.93rem; font-weight: 700; color: #fff; }
+      .badge-adequado { background: #2ecc71; }
+      .badge-baixo { background: #f1c40f; color: #333; }
+      .badge-critico { background: #e74c3c; }
+      .badge-vencendo { background: #e67e22; }
+      .alert-section { display: flex; gap: 32px; margin-bottom: 24px; flex-wrap: wrap; }
+      .alert-box { background: #fff8e1; border-left: 5px solid #e67e22; padding: 14px 20px; border-radius: 6px; min-width: 280px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+      .alert-box.critical { border-left-color: #e74c3c; background: #fff1f0; }
+      .alert-title { font-weight: 700; color: #e67e22; margin-bottom: 7px; font-size: 1.07rem; }
+      .alert-title.critical { color: #e74c3c; }
+      .alert-list { margin: 0; padding-left: 18px; font-size: 0.98rem; }
+      .chart-section { margin: 28px 0 18px 0; }
+      .chart-title { font-weight: 700; color: #00529b; margin-bottom: 10px; font-size: 1.1rem; }
+      @media (max-width: 900px) {
+        .container { padding: 18px 5vw; }
+        .chart-section { margin: 18px 0; }
+      }
+      @media (max-width: 600px) {
+        .filters { flex-direction: column; gap: 8px; }
+        .alert-section { flex-direction: column; gap: 12px; }
+        .container { padding: 10px 1vw; }
+      }
+    </style>
+</head>
+<body>
+  <header class="main-header" aria-label="Cabeçalho principal">
+    <div style="display:flex; align-items:center; max-width:1200px; margin:0 auto; padding:0 18px;">
+      <img src="https://eurofarma.com.br/images/thumb-logo-padrao.png" alt="Logo Eurofarma" class="logo" />
+      <nav aria-label="Navegação principal">
+        <a href="../dashboard.html">Dashboard</a>
+        <a href="../pmp-mensal.html">PMP Mensal</a>
+        <a href="estoque-granel.html" class="active">Estoque de Granel</a>
+        <a href="../sequenciamento-gantt.html">Sequenciamento</a>
+        <a href="../kpis.html">KPIs</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app" aria-label="Conteúdo principal">
+    <h1 class="page-title">Gestão de Estoque de Granel</h1>
+    <div class="subtitle">Monitoramento inteligente do estoque de granel farmacêutico, com alertas e visualização dinâmica para tomada de decisão ágil.</div>
+    <div class="filters" aria-label="Filtros de pesquisa">
+      <div>
+        <label for="filtro-status">Status:</label>
+        <select id="filtro-status" onchange="filtrarTabela()">
+          <option value="">Todos</option>
+          <option value="Adequado">Adequado</option>
+          <option value="Baixo">Baixo</option>
+          <option value="Crítico">Crítico</option>
+          <option value="Vencendo">Vencendo</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtro-produto">Produto:</label>
+        <select id="filtro-produto" onchange="filtrarTabela()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtro-planta">Planta:</label>
+        <select id="filtro-planta" onchange="filtrarTabela()">
+          <option value="">Todas</option>
+          <option value="Itapevi">Itapevi</option>
+          <option value="Ribeirão Preto">Ribeirão Preto</option>
+          <option value="São Paulo">São Paulo</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="window.location.href='../pmp-mensal.html?filtro=granel'" aria-label="Planejar Produção de Granel">Planejar Produção de Granel</button>
+      <button class="btn-link" onclick="window.location.href='../sequenciamento-gantt.html?filtro=embalagem'" aria-label="Ver Sequenciamento de Embalagem">Ver Sequenciamento de Embalagem</button>
+    </div>
+    <div class="alert-section">
+      <div class="alert-box" id="alerta-vencendo">
+        <div class="alert-title">Granel Vencendo (próximos 30 dias)</div>
+        <ul class="alert-list" id="lista-vencendo"></ul>
+      </div>
+      <div class="alert-box critical" id="alerta-baixa">
+        <div class="alert-title critical">Cobertura Baixa (&lt; 30 dias)</div>
+        <ul class="alert-list" id="lista-baixa"></ul>
+      </div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-title">Cobertura de Estoque de Granel por Produto (dias)</div>
+      <canvas id="chartCobertura" height="220" aria-label="Gráfico de barras de cobertura de estoque de granel"></canvas>
+    </div>
+    <div class="table-responsive">
+      <table id="tabela-granel" aria-label="Tabela de Estoque de Granel">
+        <thead>
+          <tr>
+            <th>Produto (Granel)</th>
+            <th>Planta</th>
+            <th>Estoque Atual (kg)</th>
+            <th>Política de Estoque (kg)</th>
+            <th>Cobertura (dias)</th>
+            <th>Data de Validade</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Conteúdo gerado por JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer class="main-footer" style="text-align:center; color:#888; font-size:0.95rem; margin-top:32px; padding:18px 0 8px 0;">
+    &copy; 2024 Eurofarma - Plataforma PCP. Todos os direitos reservados.
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    // Dados realistas de exemplo
+    const dadosGranel = [
+      { produto: 'Granel de Paracetamol', planta: 'Itapevi', estoque: 4200, politica: 4000, cobertura: 35, validade: '2024-08-02', status: 'Adequado' },
+      { produto: 'Granel de Ibuprofeno', planta: 'Itapevi', estoque: 1500, politica: 3000, cobertura: 12, validade: '2024-07-10', status: 'Crítico' },
+      { produto: 'Granel de Amoxicilina', planta: 'Ribeirão Preto', estoque: 3200, politica: 3500, cobertura: 29, validade: '2024-07-25', status: 'Baixo' },
+      { produto: 'Granel de Dipirona', planta: 'São Paulo', estoque: 5000, politica: 4800, cobertura: 45, validade: '2024-09-15', status: 'Adequado' },
+      { produto: 'Granel de Losartana', planta: 'Itapevi', estoque: 800, politica: 2500, cobertura: 8, validade: '2024-06-28', status: 'Crítico' },
+      { produto: 'Granel de Metformina', planta: 'Ribeirão Preto', estoque: 4100, politica: 4000, cobertura: 33, validade: '2024-08-20', status: 'Adequado' },
+      { produto: 'Granel de Omeprazol', planta: 'São Paulo', estoque: 2100, politica: 3000, cobertura: 20, validade: '2024-07-18', status: 'Baixo' },
+      { produto: 'Granel de Azitromicina', planta: 'Itapevi', estoque: 950, politica: 2000, cobertura: 10, validade: '2024-07-02', status: 'Crítico' },
+      { produto: 'Granel de Cetirizina', planta: 'Ribeirão Preto', estoque: 3200, politica: 3200, cobertura: 31, validade: '2024-08-12', status: 'Adequado' },
+      { produto: 'Granel de Simeticona', planta: 'São Paulo', estoque: 1200, politica: 2500, cobertura: 17, validade: '2024-07-30', status: 'Baixo' }
+    ];
+
+    // Preencher filtro de produtos
+    const filtroProduto = document.getElementById('filtro-produto');
+    const produtosUnicos = [...new Set(dadosGranel.map(d => d.produto))];
+    produtosUnicos.forEach(prod => {
+      const opt = document.createElement('option');
+      opt.value = prod;
+      opt.textContent = prod;
+      filtroProduto.appendChild(opt);
+    });
+
+    // Função para gerar badge de status
+    function badgeStatus(status) {
+      switch(status) {
+        case 'Adequado': return '<span class="badge badge-adequado">Adequado</span>';
+        case 'Baixo': return '<span class="badge badge-baixo">Baixo</span>';
+        case 'Crítico': return '<span class="badge badge-critico">Crítico</span>';
+        case 'Vencendo': return '<span class="badge badge-vencendo">Vencendo</span>';
+        default: return status;
+      }
+    }
+
+    // Função para filtrar e exibir tabela
+    function filtrarTabela() {
+      const status = document.getElementById('filtro-status').value;
+      const produto = document.getElementById('filtro-produto').value;
+      const planta = document.getElementById('filtro-planta').value;
+      const tbody = document.querySelector('#tabela-granel tbody');
+      tbody.innerHTML = '';
+      let dados = dadosGranel.map(d => ({...d}));
+      // Atualiza status para 'Vencendo' se validade < 30 dias
+      const hoje = new Date();
+      dados.forEach(d => {
+        const dtVal = new Date(d.validade);
+        const diffDias = Math.floor((dtVal - hoje) / (1000*60*60*24));
+        if(diffDias <= 30 && diffDias >= 0 && d.status !== 'Crítico') d.status = 'Vencendo';
+      });
+      // Filtros
+      if(status) dados = dados.filter(d => d.status === status);
+      if(produto) dados = dados.filter(d => d.produto === produto);
+      if(planta) dados = dados.filter(d => d.planta === planta);
+      dados.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${d.produto}</td>
+          <td>${d.planta}</td>
+          <td>${d.estoque.toLocaleString('pt-BR')} kg</td>
+          <td>${d.politica.toLocaleString('pt-BR')} kg</td>
+          <td>${d.cobertura} dias</td>
+          <td>${new Date(d.validade).toLocaleDateString('pt-BR')}</td>
+          <td>${badgeStatus(d.status)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Preencher alertas
+    function preencherAlertas() {
+      const hoje = new Date();
+      const listaVencendo = document.getElementById('lista-vencendo');
+      const listaBaixa = document.getElementById('lista-baixa');
+      listaVencendo.innerHTML = '';
+      listaBaixa.innerHTML = '';
+      dadosGranel.forEach(d => {
+        const dtVal = new Date(d.validade);
+        const diffDias = Math.floor((dtVal - hoje) / (1000*60*60*24));
+        if(diffDias <= 30 && diffDias >= 0 && d.status !== 'Crítico') {
+          const li = document.createElement('li');
+          li.textContent = `${d.produto} (${d.planta}) - Vence em ${diffDias} dias [${dtVal.toLocaleDateString('pt-BR')}]`;
+          listaVencendo.appendChild(li);
+        }
+        if(d.cobertura < 30) {
+          const li = document.createElement('li');
+          li.textContent = `${d.produto} (${d.planta}) - Cobertura: ${d.cobertura} dias`;
+          listaBaixa.appendChild(li);
+        }
+      });
+      if(!listaVencendo.children.length) listaVencendo.innerHTML = '<li>Nenhum item vencendo nos próximos 30 dias.</li>';
+      if(!listaBaixa.children.length) listaBaixa.innerHTML = '<li>Todos os produtos com cobertura adequada.</li>';
+    }
+
+    // Gráfico de barras
+    function renderizarGrafico() {
+      const ctx = document.getElementById('chartCobertura').getContext('2d');
+      const labels = dadosGranel.map(d => d.produto);
+      const data = dadosGranel.map(d => d.cobertura);
+      const bgColors = dadosGranel.map(d => {
+        if(d.cobertura < 15) return '#e74c3c';
+        if(d.cobertura < 30) return '#f1c40f';
+        return '#2ecc71';
+      });
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Cobertura (dias)',
+            data: data,
+            backgroundColor: bgColors,
+            borderRadius: 6,
+            maxBarThickness: 38
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            x: {
+              title: { display: false },
+              ticks: { color: '#00529b', font: { weight: 'bold' } }
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Dias de Cobertura', color: '#00529b', font: { weight: 'bold' } },
+              ticks: { color: '#00529b' }
+            }
+          }
+        }
+      });
+    }
+
+    // Inicialização
+    window.onload = function() {
+      filtrarTabela();
+      preencherAlertas();
+      renderizarGrafico();
+    };
+  </script>
+</body>
+</html>
