@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Testes de Integração - PCP Eurofarma</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+  <style>
+    body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f4f4f4; margin: 0; }
+    .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,53,142,.07); padding: 32px; }
+    h1 { color: #00358e; margin-bottom: 24px; }
+    .checklist { margin: 0 0 32px 0; }
+    .checklist li { margin-bottom: 16px; font-size: 1.1em; }
+    .checklist input[type=checkbox] { accent-color: #00358e; margin-right: 8px; }
+    .epico { font-weight: bold; color: #00358e; }
+    .fluxo { margin-bottom: 32px; }
+    .fluxo-step { background: #eaf1fb; border-radius: 6px; padding: 12px 18px; margin-bottom: 12px; display: flex; align-items: center; }
+    .fluxo-step .icon { margin-right: 12px; }
+    .fluxo-step .icon svg { width: 24px; height: 24px; fill: #00358e; }
+    .btn { background: #00358e; color: #fff; padding: 10px 22px; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; margin-top: 20px; }
+    .btn:disabled { background: #b3c7e6; cursor: not-allowed; }
+    .result { margin-top: 32px; font-size: 1.1em; color: #007a3d; font-weight: bold; }
+    @media (max-width: 600px) { .container { padding: 12px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Testes de Integração - Plataforma PCP</h1>
+    <div class="fluxo">
+      <h2>Fluxo Principal</h2>
+      <div class="fluxo-step"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4zm0 7h16v2H4zm0 7h16v2H4z"/></svg></span>1. Criar Plano Mestre de Produção</div>
+      <div class="fluxo-step"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2l4 4H8l4-4zm0 20l-4-4h8l-4 4z"/></svg></span>2. Explodir Estrutura de Produto</div>
+      <div class="fluxo-step"><span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8v2H8z"/></svg></span>3. Sequenciar Produção (APS)</div>
+      <div class="fluxo-step"><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg></span>4. Aprovar Sequenciamento</div>
+      <div class="fluxo-step"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg></span>5. Comunicar Mudanças</div>
+    </div>
+    <form id="integration-checklist">
+      <h2>Checklist de Épicos</h2>
+      <ul class="checklist">
+        <li><input type="checkbox" id="e01"> <span class="epico">E01</span> - Plano Mestre de Produção: cálculo automático, integração SAP, alertas de capacidade.</li>
+        <li><input type="checkbox" id="e02"> <span class="epico">E02</span> - Explosão de Estrutura: desdobramento, validação de capacidade fabril.</li>
+        <li><input type="checkbox" id="e03"> <span class="epico">E03</span> - Integração Bidirecional SAP MRP: envio de plano, auditoria, rollback.</li>
+        <li><input type="checkbox" id="e04"> <span class="epico">E04</span> - Sequenciamento Ótimo: algoritmo, Gantt Chart, KPIs.</li>
+        <li><input type="checkbox" id="e05"> <span class="epico">E05</span> - Replanejamento Dinâmico: drag-and-drop, múltiplos cenários.</li>
+        <li><input type="checkbox" id="e06"> <span class="epico">E06</span> - Carteira de Pedidos: alertas de ruptura, antecipação de produção.</li>
+        <li><input type="checkbox" id="e07"> <span class="epico">E07</span> - Workflow de Aprovação Multifábrica.</li>
+        <li><input type="checkbox" id="e08"> <span class="epico">E08</span> - Monitoramento de Matéria-Prima: alertas proativos.</li>
+        <li><input type="checkbox" id="e09"> <span class="epico">E09</span> - Dashboard Executivo de KPIs.</li>
+        <li><input type="checkbox" id="e10"> <span class="epico">E10</span> - Simulação de Cenários 'E Se'.</li>
+        <li><input type="checkbox" id="e11"> <span class="epico">E11</span> - Estoque de Granel e Política de Desacoplamento.</li>
+        <li><input type="checkbox" id="e12"> <span class="epico">E12</span> - Integração com Sistema de Manutenção Preditiva.</li>
+        <li><input type="checkbox" id="e13"> <span class="epico">E13</span> - Comunicação Automática pós-Replanejamento.</li>
+        <li><input type="checkbox" id="e14"> <span class="epico">E14</span> - Análise de Acuracidade de Previsão de Vendas.</li>
+        <li><input type="checkbox" id="e15"> <span class="epico">E15</span> - Gestão de Terceirização de Produção.</li>
+      </ul>
+      <button type="submit" class="btn">Validar Fluxo Completo</button>
+    </form>
+    <div class="result" id="result"></div>
+    <div style="margin-top:40px;">
+      <a href="../dashboard.html" class="btn">Retornar ao Cockpit PCP</a>
+    </div>
+  </div>
+  <script>
+    document.getElementById('integration-checklist').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const checks = Array.from(document.querySelectorAll('.checklist input')).map(chk => chk.checked);
+      const allChecked = checks.every(Boolean);
+      const resultDiv = document.getElementById('result');
+      if (allChecked) {
+        resultDiv.textContent = '✅ Todos os épicos validados! O fluxo PCP está integrado e funcional.';
+      } else {
+        resultDiv.textContent = '⚠️ Existem épicos não validados. Por favor, revise os módulos antes de prosseguir.';
+      }
+    });
+  </script>
+</body>
+</html>
