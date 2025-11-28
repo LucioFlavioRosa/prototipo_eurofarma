@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sequenciamento Ótimo - APS | PCP Eurofarma</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/ContentCarousel-BvmrVSqe.css">
+  <script type="module" src="https://eurofarma.com.br/build/assets/app-C3wuzaep.js"></script>
+  <script src="assets/js/aps-optimizer.js"></script>
+  <style>
+    body { font-family: 'Lato', 'Source Sans Pro', Arial, sans-serif; background: #f6f7fb; }
+    .aps-wrapper { display: flex; min-height: 100vh; }
+    .aps-sidebar { background: #00358e; color: #fff; width: 340px; padding: 32px 24px; box-shadow: 2px 0 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+    .aps-sidebar h2 { font-size: 1.4rem; margin-bottom: 24px; font-weight: 700; }
+    .aps-kpi { margin-bottom: 18px; }
+    .aps-kpi span { font-weight: 600; font-size: 1.1rem; }
+    .aps-kpi .aps-kpi-value { font-size: 1.3rem; font-weight: 900; margin-left: 8px; }
+    .btn-optimizar { background: #ffd600; color: #00358e; font-weight: 700; border: none; border-radius: 4px; padding: 12px 24px; font-size: 1.1rem; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+    .btn-optimizar:hover { background: #ffe46b; }
+    .aps-main { flex: 1; padding: 40px 32px; }
+    .aps-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .aps-header h1 { font-size: 2rem; color: #00358e; font-weight: 900; }
+    .aps-header .aps-nav { font-size: 1rem; }
+    .aps-header .aps-nav a { color: #00358e; text-decoration: underline; margin-left: 18px; }
+    .aps-gantt-container { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,53,142,0.07); padding: 32px; }
+    .aps-gantt-title { font-size: 1.3rem; font-weight: 700; color: #00358e; margin-bottom: 16px; }
+    .aps-gantt-chart { width: 100%; overflow-x: auto; margin-bottom: 24px; }
+    .aps-gantt-table { border-collapse: collapse; width: 100%; }
+    .aps-gantt-table th, .aps-gantt-table td { border: 1px solid #e0e5f2; padding: 8px 10px; text-align: left; }
+    .aps-gantt-table th { background: #f0f4fa; color: #00358e; font-weight: 700; }
+    .aps-gantt-bar { height: 28px; border-radius: 6px; display: inline-block; position: relative; }
+    .aps-gantt-bar[data-status="setup"] { background: #ffd600; }
+    .aps-gantt-bar[data-status="prod"] { background: #00358e; }
+    .aps-gantt-bar[data-status="wait"] { background: #e0e5f2; }
+    .aps-gantt-bar[data-status="blocked"] { background: #ff4d4f; }
+    .aps-gantt-bar .aps-gantt-label { position: absolute; left: 8px; top: 4px; color: #fff; font-size: 0.95rem; font-weight: 700; }
+    .aps-gantt-bar[data-status="setup"] .aps-gantt-label { color: #00358e; }
+    .aps-gantt-bar[data-status="blocked"] .aps-gantt-label { color: #fff; }
+    .aps-gantt-legend { margin-top: 12px; font-size: 0.95rem; }
+    .aps-gantt-legend span { margin-right: 18px; }
+    .aps-gantt-legend .legend-setup { color: #ffd600; font-weight: 700; }
+    .aps-gantt-legend .legend-prod { color: #00358e; font-weight: 700; }
+    .aps-gantt-legend .legend-blocked { color: #ff4d4f; font-weight: 700; }
+    .aps-gantt-legend .legend-wait { color: #e0e5f2; font-weight: 700; }
+    .aps-kpi-chart { margin-top: 32px; }
+    .aps-kpi-chart canvas { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,53,142,0.07); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="aps-wrapper">
+    <aside class="aps-sidebar">
+      <h2>KPIs do Sequenciamento</h2>
+      <div class="aps-kpi"><span>Faturamento Previsto:</span> <span class="aps-kpi-value" id="kpi-faturamento">R$ 2.450.000</span></div>
+      <div class="aps-kpi"><span>Margem Líquida:</span> <span class="aps-kpi-value" id="kpi-margem">R$ 1.120.000</span></div>
+      <div class="aps-kpi"><span>Taxa de Atendimento:</span> <span class="aps-kpi-value" id="kpi-atendimento">97,2%</span></div>
+      <button class="btn-optimizar" id="btn-optimizar" aria-label="Otimizar Sequenciamento">Otimizar Sequenciamento</button>
+      <div class="aps-kpi-chart">
+        <canvas id="kpiChart" width="260" height="180" aria-label="Gráfico de KPIs"></canvas>
+      </div>
+    </aside>
+    <main class="aps-main">
+      <div class="aps-header">
+        <h1>Sequenciamento Ótimo de Produção</h1>
+        <nav class="aps-nav">
+          <a href="cockpit-replanejamento.html">Cockpit de Replanejamento</a>
+        </nav>
+      </div>
+      <section class="aps-gantt-container">
+        <div class="aps-gantt-title">Gantt Chart - Ordens por Equipamento (Maio 2025)</div>
+        <div class="aps-gantt-chart">
+          <table class="aps-gantt-table" aria-label="Sequenciamento de Produção">
+            <thead>
+              <tr>
+                <th>Equipamento</th>
+                <th>SKU</th>
+                <th>Ordem</th>
+                <th>Início</th>
+                <th>Término</th>
+                <th>Status</th>
+                <th>Sequência</th>
+              </tr>
+            </thead>
+            <tbody id="gantt-body">
+              <tr>
+                <td>Reator 01</td>
+                <td>AMOX-500MG</td>
+                <td>#O-10234</td>
+                <td>02/05 08:00</td>
+                <td>02/05 16:00</td>
+                <td>Produção</td>
+                <td><div class="aps-gantt-bar" data-status="prod" style="width:120px"><span class="aps-gantt-label">AMOX-500MG</span></div></td>
+              </tr>
+              <tr>
+                <td>Reator 01</td>
+                <td>AMOX-875MG</td>
+                <td>#O-10235</td>
+                <td>02/05 17:00</td>
+                <td>02/05 19:00</td>
+                <td>Setup</td>
+                <td><div class="aps-gantt-bar" data-status="setup" style="width:40px"><span class="aps-gantt-label">Setup</span></div></td>
+              </tr>
+              <tr>
+                <td>Reator 01</td>
+                <td>AMOX-875MG</td>
+                <td>#O-10236</td>
+                <td>02/05 19:00</td>
+                <td>03/05 05:00</td>
+                <td>Produção</td>
+                <td><div class="aps-gantt-bar" data-status="prod" style="width:110px"><span class="aps-gantt-label">AMOX-875MG</span></div></td>
+              </tr>
+              <tr>
+                <td>Envasadora 02</td>
+                <td>AMOX-500MG</td>
+                <td>#O-20211</td>
+                <td>03/05 08:00</td>
+                <td>03/05 15:00</td>
+                <td>Produção</td>
+                <td><div class="aps-gantt-bar" data-status="prod" style="width:100px"><span class="aps-gantt-label">AMOX-500MG</span></div></td>
+              </tr>
+              <tr>
+                <td>Envasadora 02</td>
+                <td>AMOX-875MG</td>
+                <td>#O-20212</td>
+                <td>03/05 16:00</td>
+                <td>03/05 18:00</td>
+                <td>Setup</td>
+                <td><div class="aps-gantt-bar" data-status="setup" style="width:35px"><span class="aps-gantt-label">Setup</span></div></td>
+              </tr>
+              <tr>
+                <td>Envasadora 02</td>
+                <td>AMOX-875MG</td>
+                <td>#O-20213</td>
+                <td>03/05 18:00</td>
+                <td>04/05 02:00</td>
+                <td>Produção</td>
+                <td><div class="aps-gantt-bar" data-status="prod" style="width:105px"><span class="aps-gantt-label">AMOX-875MG</span></div></td>
+              </tr>
+              <tr>
+                <td>Blister 03</td>
+                <td>AMOX-500MG</td>
+                <td>#O-30301</td>
+                <td>04/05 09:00</td>
+                <td>04/05 17:00</td>
+                <td>Produção</td>
+                <td><div class="aps-gantt-bar" data-status="prod" style="width:110px"><span class="aps-gantt-label">AMOX-500MG</span></div></td>
+              </tr>
+              <tr>
+                <td>Blister 03</td>
+                <td>AMOX-875MG</td>
+                <td>#O-30302</td>
+                <td>04/05 18:00</td>
+                <td>04/05 20:00</td>
+                <td>Setup</td>
+                <td><div class="aps-gantt-bar" data-status="setup" style="width:30px"><span class="aps-gantt-label">Setup</span></div></td>
+              </tr>
+              <tr>
+                <td>Blister 03</td>
+                <td>AMOX-875MG</td>
+                <td>#O-30303</td>
+                <td>04/05 20:00</td>
+                <td>05/05 04:00</td>
+                <td>Produção</td>
+                <td><div class="aps-gantt-bar" data-status="prod" style="width:100px"><span class="aps-gantt-label">AMOX-875MG</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="aps-gantt-legend">
+          <span class="legend-setup">■ Setup</span>
+          <span class="legend-prod">■ Produção</span>
+          <span class="legend-blocked">■ Bloqueado</span>
+          <span class="legend-wait">■ Espera</span>
+        </div>
+      </section>
+      <section style="margin-top:40px;">
+        <h2 style="color:#00358e;font-size:1.2rem;font-weight:700;margin-bottom:18px;">Resumo do Sequenciamento</h2>
+        <table style="width:100%;background:#fff;border-radius:10px;box-shadow:0 2px 12px rgba(0,53,142,0.07);border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f0f4fa;color:#00358e;font-weight:700;">
+              <th>SKU</th>
+              <th>Quantidade</th>
+              <th>Faturamento (R$)</th>
+              <th>Margem (%)</th>
+              <th>Setup (h)</th>
+              <th>Capacidade Utilizada (%)</th>
+              <th>Status Matéria-Prima</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AMOX-500MG</td>
+              <td>120.000</td>
+              <td>980.000</td>
+              <td>46%</td>
+              <td>2</td>
+              <td>92%</td>
+              <td><span style="color:#27ae60;font-weight:700;">Liberada</span></td>
+            </tr>
+            <tr>
+              <td>AMOX-875MG</td>
+              <td>85.000</td>
+              <td>1.470.000</td>
+              <td>52%</td>
+              <td>2</td>
+              <td>95%</td>
+              <td><span style="color:#e67e22;font-weight:700;">Aguardando Liberação</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+  <script>
+    // KPIs Chart
+    const ctx = document.getElementById('kpiChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Faturamento', 'Margem Líquida', 'Taxa Atendimento'],
+        datasets: [{
+          data: [2450000, 1120000, 972],
+          backgroundColor: ['#00358e', '#ffd600', '#27ae60'],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: true, position: 'bottom', labels: { color: '#00358e', font: { size: 14 } } }
+        },
+        cutout: '70%',
+        responsive: false
+      }
+    });
+    // Botão de Otimização
+    document.getElementById('btn-optimizar').addEventListener('click', function() {
+      if(window.APSOptimizer) {
+        window.APSOptimizer.runOptimization();
+      } else {
+        alert('Algoritmo de otimização não carregado.');
+      }
+    });
+  </script>
+</body>
+</html>
