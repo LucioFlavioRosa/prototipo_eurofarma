@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Terceirização de Produção | PCP Eurofarma</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://eurofarma.com.br/build/assets/app-BmmMRu5z.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body { font-family: 'Lato', Arial, sans-serif; background: #f8fafc; }
+    .container-xxl { max-width: 1280px; margin: 0 auto; padding: 32px 16px; }
+    .card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: none; }
+    .card-header { background: #f4f6fb; border-bottom: 1px solid #e1e7ef; font-weight: 600; font-size: 1.1rem; }
+    .filter-bar { gap: 16px; }
+    .status-atrasado { color: #fff; background: #ff4d4f; border-radius: 6px; padding: 2px 10px; font-weight: 600; }
+    .status-entregue { color: #fff; background: #28a745; border-radius: 6px; padding: 2px 10px; font-weight: 600; }
+    .status-producao { color: #fff; background: #007bff; border-radius: 6px; padding: 2px 10px; font-weight: 600; }
+    .status-transito { color: #333; background: #ffc107; border-radius: 6px; padding: 2px 10px; font-weight: 600; }
+    .table thead th { background: #e9f0fb; }
+    .table tbody tr td { vertical-align: middle; }
+    .btn-novo { background: #003366; color: #fff; border-radius: 6px; border: none; padding: 8px 20px; font-weight: 600; }
+    .btn-novo:hover { background: #00509e; }
+    .modal-backdrop { z-index: 1040 !important; }
+    .modal { z-index: 1050 !important; }
+    .gantt-link { color: #003366; text-decoration: underline; cursor: pointer; }
+    @media (max-width: 991.98px) {
+      .container-xxl { padding: 16px 4px; }
+      .chart-row { flex-direction: column; gap: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main class="container-xxl">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="mb-0" style="color:#003366;font-size:2rem;">Gestão de Terceirização de Produção</h1>
+      <button class="btn-novo" onclick="abrirModalNovoPedido()"><i class="bi bi-plus-circle me-2"></i>Cadastrar Novo Pedido de Terceirização</button>
+    </div>
+    <div class="card mb-4 p-3">
+      <form class="row filter-bar align-items-end">
+        <div class="col-md-3 mb-2">
+          <label class="form-label">Fornecedor</label>
+          <select class="form-select" id="filtro-fornecedor">
+            <option value="todos">Todos</option>
+            <option value="farmaflex">FarmaFlex</option>
+            <option value="bioquimica">Bioquímica Brasil</option>
+            <option value="labnova">LabNova</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="filtro-status">
+            <option value="todos">Todos</option>
+            <option value="producao">Em Produção</option>
+            <option value="transito">Em Trânsito</option>
+            <option value="entregue">Entregue</option>
+            <option value="atrasado">Atrasado</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label">Período</label>
+          <input type="month" class="form-control" id="filtro-periodo" value="2024-06">
+        </div>
+        <div class="col-md-3 mb-2 text-end">
+          <button type="button" class="btn btn-primary px-4" onclick="aplicarFiltros()"><i class="bi bi-funnel me-2"></i>Aplicar Filtros</button>
+        </div>
+      </form>
+    </div>
+    <div class="row chart-row mb-4" style="gap:32px;">
+      <div class="col-lg-7">
+        <div class="card p-3 h-100">
+          <div class="card-header">Pedidos de Terceirização</div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Nº Pedido</th>
+                  <th>Fornecedor</th>
+                  <th>Produto</th>
+                  <th>Quantidade</th>
+                  <th>Data Solicitação</th>
+                  <th>Data Prevista Entrega</th>
+                  <th>Status</th>
+                  <th>Sequenciamento</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-terceirizacao">
+                <tr>
+                  <td>202406-001</td>
+                  <td>FarmaFlex</td>
+                  <td>Dipirona 500mg</td>
+                  <td>5.000</td>
+                  <td>02/06/2024</td>
+                  <td>19/06/2024</td>
+                  <td><span class="status-producao">Em Produção</span></td>
+                  <td><span class="gantt-link" onclick="abrirGantt('202406-001')">Ver no Gantt</span></td>
+                </tr>
+                <tr>
+                  <td>202406-002</td>
+                  <td>Bioquímica Brasil</td>
+                  <td>Amoxicilina 500mg</td>
+                  <td>3.200</td>
+                  <td>05/06/2024</td>
+                  <td>25/06/2024</td>
+                  <td><span class="status-transito">Em Trânsito</span></td>
+                  <td><span class="gantt-link" onclick="abrirGantt('202406-002')">Ver no Gantt</span></td>
+                </tr>
+                <tr>
+                  <td>202406-003</td>
+                  <td>LabNova</td>
+                  <td>Vitamina C 1g</td>
+                  <td>4.000</td>
+                  <td>01/06/2024</td>
+                  <td>15/06/2024</td>
+                  <td><span class="status-atrasado">Atrasado</span></td>
+                  <td><span class="gantt-link" onclick="abrirGantt('202406-003')">Ver no Gantt</span></td>
+                </tr>
+                <tr>
+                  <td>202406-004</td>
+                  <td>FarmaFlex</td>
+                  <td>Ibuprofeno 400mg</td>
+                  <td>2.500</td>
+                  <td>10/06/2024</td>
+                  <td>28/06/2024</td>
+                  <td><span class="status-entregue">Entregue</span></td>
+                  <td><span class="gantt-link" onclick="abrirGantt('202406-004')">Ver no Gantt</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 d-flex flex-column gap-4">
+        <div class="card p-3">
+          <div class="card-header">Performance de Fornecedores</div>
+          <canvas id="chart-fornecedores" height="100"></canvas>
+        </div>
+        <div class="card p-3">
+          <div class="card-header">Custo Interno vs. Terceirizado</div>
+          <canvas id="chart-custo" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Modal Novo Pedido -->
+  <div class="modal fade" id="modalNovoPedido" tabindex="-1" aria-labelledby="modalNovoPedidoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalNovoPedidoLabel">Cadastrar Novo Pedido de Terceirização</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formNovoPedido">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Fornecedor</label>
+                <select class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option value="FarmaFlex">FarmaFlex</option>
+                  <option value="Bioquímica Brasil">Bioquímica Brasil</option>
+                  <option value="LabNova">LabNova</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Produto</label>
+                <select class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option value="Dipirona 500mg">Dipirona 500mg</option>
+                  <option value="Amoxicilina 500mg">Amoxicilina 500mg</option>
+                  <option value="Vitamina C 1g">Vitamina C 1g</option>
+                  <option value="Ibuprofeno 400mg">Ibuprofeno 400mg</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Quantidade</label>
+                <input type="number" class="form-control" min="1" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Data Solicitação</label>
+                <input type="date" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Data Prevista Entrega</label>
+                <input type="date" class="form-control" required>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" form="formNovoPedido">Cadastrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Gantt Chart -->
+  <div class="modal fade" id="modalGantt" tabindex="-1" aria-labelledby="modalGanttLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalGanttLabel">Pedido no Sequenciamento (Gantt Chart)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <iframe src="sequenciamento-aps.html#pedido=" id="iframeGantt" width="100%" height="400" style="border:0;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.3/dist/chart.umd.min.js"></script>
+  <script>
+    // Header dinâmico
+    fetch('components/header.html').then(r=>r.text()).then(html=>{
+      document.getElementById('header-placeholder').innerHTML = html;
+    });
+    // Performance de Fornecedores
+    const ctxFor = document.getElementById('chart-fornecedores').getContext('2d');
+    new Chart(ctxFor, {
+      type: 'bar',
+      data: {
+        labels: ['FarmaFlex','Bioquímica Brasil','LabNova'],
+        datasets: [{
+          label: '% Entregas no Prazo',
+          data: [96, 88, 72],
+          backgroundColor: ['#28a745','#007bff','#ff4d4f']
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ctx.parsed.x+'%' } }
+        },
+        scales: {
+          x: { min: 0, max: 100, ticks: { stepSize: 20 } }
+        }
+      }
+    });
+    // Custo Interno vs Terceirizado
+    const ctxCusto = document.getElementById('chart-custo').getContext('2d');
+    new Chart(ctxCusto, {
+      type: 'pie',
+      data: {
+        labels: ['Interno','Terceirizado'],
+        datasets: [{
+          data: [68,32],
+          backgroundColor: ['#003366','#ffc107']
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: { callbacks: { label: ctx => ctx.label+': '+ctx.parsed+'%' } }
+        }
+      }
+    });
+    // Modal Novo Pedido
+    function abrirModalNovoPedido() {
+      var modal = new bootstrap.Modal(document.getElementById('modalNovoPedido'));
+      modal.show();
+    }
+    // Modal Gantt Chart
+    function abrirGantt(pedidoId) {
+      document.getElementById('iframeGantt').src = 'sequenciamento-aps.html#pedido='+pedidoId;
+      var modal = new bootstrap.Modal(document.getElementById('modalGantt'));
+      modal.show();
+    }
+    // Filtros dinâmicos (simulação)
+    function aplicarFiltros() {
+      alert('Filtros aplicados! (Simulação para protótipo)');
+    }
+    // Cadastro de novo pedido (simulação)
+    document.getElementById('formNovoPedido').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Novo pedido cadastrado! (Simulação para protótipo)');
+      bootstrap.Modal.getInstance(document.getElementById('modalNovoPedido')).hide();
+    });
+  </script>
+</body>
+</html>
